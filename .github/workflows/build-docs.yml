@@ -28,5 +28,7 @@ jobs:
         name: pdf
         path: |
           docs/konzept-neue-pcs/konzept.de.pdf
+          docs/konzept-neue-pcs/konzept.en.pdf
+          docs/konzept-neue-pcs/konzept.it.pdf
           
         retention-days: 7  # Keep artifacts for 7 days, modify as needed
