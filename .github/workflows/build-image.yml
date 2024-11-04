@@ -1,11 +1,15 @@
 name: build Debian Live image
 on:
   push:
+    branches-ignore:
+      - 'main'
     paths:
       - "debian-live/build.env"
       - "debian-live/build.sh"
       - "debian-live/config/**"
   pull_request:
+    branches-ignore:
+      - 'main'
     paths:
       - "debian-live/build.env"
       - "debian-live/build.sh"
@@ -44,7 +48,7 @@ jobs:
         with:
           name: iksdp-desktop-${{ env.RELEASE_VERSION }}
           artifacts: "~/build/debian-live-${{ env.DEBIAN_VERSION }}-${{ env.RELEASE_VERSION }}-${{ env.IMAGE_TIMESTAMP }}-${{ env.DEBIAN_ARCH }}.hybrid.iso"
-          bodyFile: "changeLogForRelease.md"
+          bodyFile: "~/changeLogForRelease.md"
           tag: ${{ env.RELEASE_VERSION }}
           draft: true
           makeLatest: "legacy"
