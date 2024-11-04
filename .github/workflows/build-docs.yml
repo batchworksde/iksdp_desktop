@@ -1,0 +1,32 @@
+name: build docs
+
+on:
+  # push:
+  #   paths:
+  #     - 'docs/**'
+  # pull_request:
+  #   paths:
+  #     - 'docs/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: create docs
+      run: | 
+        cd docs/konzept-neue-pcs
+        sh run_pandoc.sh
+    
+    - name: upload PDF
+      uses: actions/upload-artifact@v4
+      with:
+        name: pdf
+        path: |
+          docs/konzept-neue-pcs/konzept.de.pdf
+          
+        retention-days: 7  # Keep artifacts for 7 days, modify as needed
