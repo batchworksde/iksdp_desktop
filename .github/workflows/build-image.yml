@@ -1,0 +1,53 @@
+name: build Debian Live image
+on:
+  push:
+    paths:
+      - "debian-live/build.env"
+      - "debian-live/build.sh"
+      - "debian-live/config/**"
+  pull_request:
+    paths:
+      - "debian-live/build.env"
+      - "debian-live/build.sh"
+      - "debian-live/config/**"
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: checkout code
+        uses: "actions/checkout@v4"
+      - name: prepare environment
+        run: debian-live/build.sh prepareEnvironment
+      - name: remove not required folders from the build system
+        run: debian-live/build.sh cleanupRunner
+      - name: Fetch build system infos
+        run: debian-live/build.sh fetchRunnerInfos
+      - name: install prerequisites
+        run: debian-live/build.sh installPrerequisites
+      - name: config Debian Live image
+        run: debian-live/build.sh configImage
+      - name: build Debian Live image
+        run: debian-live/build.sh buildImage
+      - name: create build artifact
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: iksdp-desktop-${{ env.RELEASE_VERSION }}-${{ github.sha }}
+          path: "~/build/debian-live-${{ env.DEBIAN_VERSION }}-${{ env.RELEASE_VERSION }}-${{ env.IMAGE_TIMESTAMP }}-${{ env.DEBIAN_ARCH }}.hybrid.iso"
+          retention-days: 1
+          if-no-files-found: error
+      - name: create release
+        if: github.event_name == 'pull_request'
+        uses: ncipollo/release-action@v1
+        with:
+          name: iksdp-desktop-${{ env.RELEASE_VERSION }}
+          artifacts: "~/build/debian-live-${{ env.DEBIAN_VERSION }}-${{ env.RELEASE_VERSION }}-${{ env.IMAGE_TIMESTAMP }}-${{ env.DEBIAN_ARCH }}.hybrid.iso"
+          bodyFile: "changeLogForRelease.md"
+          tag: ${{ env.RELEASE_VERSION }}
+          draft: true
+          makeLatest: "legacy"
+          skipIfReleaseExists: true
+          allowUpdates: true
+          updateOnlyUnreleased: true

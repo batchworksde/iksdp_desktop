@@ -1,0 +1,28 @@
+# Use an official Alpine as a parent image
+FROM alpine:latest
+
+# Install required dependencies
+RUN apk add --no-cache \
+    chromium \
+    npm \
+    texlive-full \
+    && apk add --no-cache --virtual .build-deps \
+    build-base \
+    curl \
+    bash \
+    && npm install -g npm@latest && apk del .build-deps \
+    && rm -rf /var/cache/apk/* /tmp/* /usr/share/man /usr/share/doc
+
+# Install mermaid-filter
+RUN npm install --global mermaid-filter
+RUN apk add --no-cache pandoc
+
+
+# Set the default command to execute when creating a new container
+CMD ["/bin/bash"]
+
+# Define a working directory
+WORKDIR /app
+
+# # Copy the current directory contents into the container at /app
+# COPY . /app
