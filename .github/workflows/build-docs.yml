@@ -1,12 +1,12 @@
 name: build docs
 
 on:
-  # push:
-  #   paths:
-  #     - 'docs/**'
-  # pull_request:
-  #   paths:
-  #     - 'docs/**'
+  push:
+    paths:
+      - 'docs/konzept-neue-pcs/**'
+  pull_request:
+    paths:
+      - 'docs/konzept-neue-pcs/**'
   workflow_dispatch:
 
 jobs:
