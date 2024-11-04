@@ -7,15 +7,8 @@ on:
       - "debian-live/build.env"
       - "debian-live/build.sh"
       - "debian-live/config/**"
-  pull_request:
-    branches-ignore:
-      - 'main'
-    paths:
-      - "debian-live/build.env"
-      - "debian-live/build.sh"
-      - "debian-live/config/**"
 jobs:
-  build:
+  buildImageRelease:
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -35,21 +28,19 @@ jobs:
       - name: build Debian Live image
         run: debian-live/build.sh buildImage
       - name: create build artifact
-        if: github.event_name == 'push'
         uses: actions/upload-artifact@v4
         with:
-          name: iksdp-desktop-${{ env.RELEASE_VERSION }}-${{ github.sha }}
-          path: "~/build/debian-live-${{ env.DEBIAN_VERSION }}-${{ env.RELEASE_VERSION }}-${{ env.IMAGE_TIMESTAMP }}-${{ env.DEBIAN_ARCH }}.hybrid.iso"
+          name: iksdp-desktop-${{ env.RELEASE_VERSION }}
+          path: "${{ env.BUILD_DIR }}/debian-live-${{ env.DEBIAN_VERSION }}-${{ env.RELEASE_VERSION }}-${{ env.IMAGE_TIMESTAMP }}-${{ env.DEBIAN_ARCH }}.hybrid.iso"
           retention-days: 1
           if-no-files-found: error
       - name: create release
-        if: github.event_name == 'pull_request'
         uses: ncipollo/release-action@v1
         with:
           name: iksdp-desktop-${{ env.RELEASE_VERSION }}
-          artifacts: "~/build/debian-live-${{ env.DEBIAN_VERSION }}-${{ env.RELEASE_VERSION }}-${{ env.IMAGE_TIMESTAMP }}-${{ env.DEBIAN_ARCH }}.hybrid.iso"
-          bodyFile: "~/changeLogForRelease.md"
-          tag: ${{ env.RELEASE_VERSION }}
+          artifacts: "${{ env.BUILD_DIR }}/iksdp-desktop-source-${{ env.RELEASE_VERSION }}.tar.gz" 
+          bodyFile: "${{ env.BUILD_DIR }}/changeLogForRelease.md"
+          tag: "v${{ env.RELEASE_VERSION }}"
           draft: true
           makeLatest: "legacy"
           skipIfReleaseExists: true
