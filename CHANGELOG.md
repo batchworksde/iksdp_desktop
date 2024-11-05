@@ -13,5 +13,5 @@
 * Golang, Python3, Rust, Scratch
 * curl, wget, links2, jq
 * podman
-* vim, mc, screen, tmux
+* vim, mc, screen, tmux, htop
 * Flatpak support with [Flathub](https://flathub.org/) repo added

@@ -2,6 +2,7 @@ alsa-utils
 curl
 dosfstools
 ethtool
+htop
 iw
 less
 links2
