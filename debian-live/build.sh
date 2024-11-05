@@ -261,7 +261,7 @@ function installPrerequisites {
 function createChangeLogForRelease {
   loginfo "${FUNCNAME[0]}" "Extract the change description for the release from the CHANGELOG.md"
 
-  grep --perl-regexp --null-data --only-matching "## v${RELEASE_VERSION}[\s\S]*?(?=\n.*?#.{2}|$)" "${WORK_DIR}"/CHANGELOG.md > changeLogForRelease.md
+  grep --perl-regexp --null-data --only-matching "## v${RELEASE_VERSION}[\s\S]*?(?=\n.*?#.{2}|$)" "${WORK_DIR}"/CHANGELOG.md > ~/changeLogForRelease.md
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "changelog query failed"
     exit 1
