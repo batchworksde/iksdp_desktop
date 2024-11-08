@@ -4,5 +4,5 @@
 - ggf. das image in run_pandoc.sh anpassen
 
 
-Anschsprechpartner beim VDAPG - Andreas Siekmann +49 178 8253545
+Ansprechpartner beim VDAPG - Andreas Siekmann
 
