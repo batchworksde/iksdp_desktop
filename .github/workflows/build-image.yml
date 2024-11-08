@@ -42,6 +42,15 @@ jobs:
           path: "~/build/debian-live-${{ env.DEBIAN_VERSION }}-${{ env.RELEASE_VERSION }}-${{ env.IMAGE_TIMESTAMP }}-${{ env.DEBIAN_ARCH }}.hybrid.iso"
           retention-days: 1
           if-no-files-found: error
+      - name: upload iso
+        run: | 
+          mkdir -p ~/.ssh/
+          echo -n "${{ vars.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          eval $(ssh-agent -s)
+          echo "${{ secrets.SSH_UPLOAD_KEY }}" | tr -d '\r' | ssh-add -
+          ssh-add -l
+          scp -P 10022 ~/build/debian-live-${{ env.DEBIAN_VERSION }}-${{ env.RELEASE_VERSION }}-${{ env.IMAGE_TIMESTAMP }}-${{ env.DEBIAN_ARCH }}.hybrid.iso isotransfer@185.16.111.34:/data/www/
+
       - name: create release
         if: github.event_name == 'pull_request'
         uses: ncipollo/release-action@v1
