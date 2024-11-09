@@ -1,5 +1,6 @@
 cups
 firmware-iwlwifi
+firmware-misc-nonfree
 live-config
 wpasupplicant
 task-english
