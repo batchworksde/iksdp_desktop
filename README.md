@@ -3,7 +3,7 @@
 A Debian Linux based Desktop configuration for the International Kenya Scout Development Project [(IKSDP)](https://iksdpnyandiwa.net/).
 
 - [IKSDP desktop](#iksdp-desktop)
-  - [Download ISO](#Download)
+  - [Downloads](#downloads)
   - [Configuration](#configuration)
     - [Debian Live configuration](#debian-live-configuration)
     - [Github runner configuration](#github-runner-configuration)
@@ -11,9 +11,9 @@ A Debian Linux based Desktop configuration for the International Kenya Scout Dev
   - [Changelog](#changelog)
   - [Links](#links)
 
-## Download 
+## Downloads
 
-Recent ISO can be downloaded [here](http://iksdp.pfadfinderzentrum.org). 
+We create versioned [releases](https://github.com/batchworksde/iksdp_desktop/releases) for the IKSDP Desktop. Every release contains a link to the related ISO image.
 
 ## Configuration
 

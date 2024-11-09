@@ -27,22 +27,10 @@ jobs:
         run: debian-live/build.sh configImage
       - name: build Debian Live image
         run: debian-live/build.sh buildImage
-      - name: create build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: iksdp-desktop-${{ env.RELEASE_VERSION }}
-          path: "${{ env.BUILD_DIR }}/debian-live-${{ env.DEBIAN_VERSION }}-${{ env.RELEASE_VERSION }}-${{ env.IMAGE_TIMESTAMP }}-${{ env.DEBIAN_ARCH }}.hybrid.iso"
-          retention-days: 1
-          if-no-files-found: error
       - name: upload iso
-        run: | 
-          mkdir -p ~/.ssh/
-          echo -n "${{ vars.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
-          eval $(ssh-agent -s)
-          echo "${{ secrets.SSH_UPLOAD_KEY }}" | tr -d '\r' | ssh-add -
-          ssh-add -l
-          scp -P 10022 ~/build/debian-live-${{ env.DEBIAN_VERSION }}-${{ env.RELEASE_VERSION }}-${{ env.IMAGE_TIMESTAMP }}-${{ env.DEBIAN_ARCH }}.hybrid.iso isotransfer@185.16.111.34:/data/www/
-
+        env:
+          SSH_UPLOAD_KEY: ${{ secrets.SSH_UPLOAD_KEY }}
+        run: debian-live/build.sh uploadIso
       - name: create release
         uses: ncipollo/release-action@v1
         with:
