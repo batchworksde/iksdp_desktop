@@ -129,27 +129,39 @@ function buildImage {
 function prepareEnvironment {
   loginfo "${FUNCNAME[0]}" "Set Github env vars"
 
-  echo "IMAGE_TIMESTAMP=$(date +%Y%m%d%H%M%S)" >> "${GITHUB_ENV}"
+  echo "IMAGE_TIMESTAMP=$(date +%Y%m%d%H%M%S)" >>"${GITHUB_ENV}"
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "IMAGE_TIMESTAMP env var setup failed"
     exit 1
   fi
 
-  echo "RELEASE_VERSION=${RELEASE_VERSION}" >> "${GITHUB_ENV}"
+  echo "RELEASE_VERSION=${RELEASE_VERSION}" >>"${GITHUB_ENV}"
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "RELEASE_VERSION env var setup failed"
     exit 1
   fi
 
-  echo "DEBIAN_VERSION=${DEBIAN_VERSION}" >> "${GITHUB_ENV}"
+  echo "DEBIAN_VERSION=${DEBIAN_VERSION}" >>"${GITHUB_ENV}"
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "DEBIAN_VERSION env var setup failed"
     exit 1
   fi
 
-  echo "DEBIAN_ARCH=${DEBIAN_ARCH}" >> "${GITHUB_ENV}"
+  echo "DEBIAN_ARCH=${DEBIAN_ARCH}" >>"${GITHUB_ENV}"
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "DEBIAN_VERSION env var setup failed"
+    exit 1
+  fi
+
+  echo "BUILD_DIR=${BUILD_DIR}" >>"${GITHUB_ENV}"
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "BUILD_DIR env var setup failed"
+    exit 1
+  fi
+
+  echo "WORK_DIR=${WORK_DIR}" >>"${GITHUB_ENV}"
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "WORK_DIR env var setup failed"
     exit 1
   fi
 }
@@ -261,9 +273,25 @@ function installPrerequisites {
 function createChangeLogForRelease {
   loginfo "${FUNCNAME[0]}" "Extract the change description for the release from the CHANGELOG.md"
 
-  grep --perl-regexp --null-data --only-matching "## v${RELEASE_VERSION}[\s\S]*?(?=\n.*?#.{2}|$)" "${WORK_DIR}"/CHANGELOG.md > ~/changeLogForRelease.md
+  grep --perl-regexp --null-data --only-matching "## v${RELEASE_VERSION}[\s\S]*?(?=\n.*?#.{2}|$)" "${WORK_DIR}"/CHANGELOG.md | tr -d '\0' >"${BUILD_DIR}"/changeLogForRelease.md
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "changelog query failed"
+    exit 1
+  fi
+
+  grep --silent --perl-regexp --null-data --only-matching "## v${RELEASE_VERSION}[\s\S]*?(?=\n.*?#.{2}|$)" "${BUILD_DIR}"/changeLogForRelease.md
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "changeLogForRelease.md does not contain valid content"
+    exit 1
+  fi
+}
+
+function createSourceArchive {
+  loginfo "${FUNCNAME[0]}" "Create a source.tar.gz with the current code base"
+
+  tar --create --gzip --file="${BUILD_DIR}"/iksdp-desktop-source-"${RELEASE_VERSION}".tar.gz --directory="${WORK_DIR}" CHANGELOG.md README.md debian-live
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "tar.gz creation failed"
     exit 1
   fi
 }
@@ -288,6 +316,7 @@ case "${USE_CASE}" in
     configPackages
     configHooks
     fetchExternalPackages
+    createSourceArchive
     createChangeLogForRelease
     ;;
   "buildImage")
