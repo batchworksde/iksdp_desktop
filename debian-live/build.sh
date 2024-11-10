@@ -134,7 +134,7 @@ function configHooks {
 function fetchExternalPackages {
   loginfo "${FUNCNAME[0]}" "Fetch external Debian packages"
 
-  curl --silent --location https://zoom.us/client/"${DEBIAN_ZOOM_VERSION}"/zoom_amd64.deb --output "${BUILD_DIR}"/config/packages.chroot/zoom_amd64.deb
+  curl --silent --location https://zoom.us/client/latest/zoom_amd64.deb --output "${BUILD_DIR}"/config/packages.chroot/zoom_amd64.deb
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Zoom client download failed"
     exit 1
@@ -465,8 +465,8 @@ case "${USE_CASE}" in
     configPackages
     configHooks
     fetchExternalPackages
-    createSourceArchive
     createChangeLogForRelease
+    createSourceArchive
     ;;
   "buildImage")
     buildImage
