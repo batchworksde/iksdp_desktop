@@ -30,7 +30,7 @@ function logerror {
 function importEnvVars {
   loginfo "${FUNCNAME[0]}" "Loading 'build.env' environment variables"
   set -a # automatically export all variables
-  source "${WORK_DIR}"/debian-live/build.env
+  source "${WORK_DIR}"/debian-live/build.env && IMAGE_TIMESTAMP=$(date +%Y%m%d%H%M%S)
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Environment variables import failed"
     exit 1
@@ -194,42 +194,46 @@ function buildImage {
 }
 
 function prepareEnvironment {
-  loginfo "${FUNCNAME[0]}" "Set Github env vars"
+  if [ -z ${GITHUB_ACTIONS+x} ]; then
+    loginfo "${FUNCNAME[0]}" "No Github action, so skip prepareEnvironment"
+  else
+    loginfo "${FUNCNAME[0]}" "Set Github env vars"
 
-  echo "IMAGE_TIMESTAMP=$(date +%Y%m%d%H%M%S)" >>"${GITHUB_ENV}"
-  if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "IMAGE_TIMESTAMP env var setup failed"
-    exit 1
-  fi
+    echo "IMAGE_TIMESTAMP=${IMAGE_TIMESTAMP}" >>"${GITHUB_ENV}"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "IMAGE_TIMESTAMP env var setup failed"
+      exit 1
+    fi
 
-  echo "RELEASE_VERSION=${RELEASE_VERSION}" >>"${GITHUB_ENV}"
-  if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "RELEASE_VERSION env var setup failed"
-    exit 1
-  fi
+    echo "RELEASE_VERSION=${RELEASE_VERSION}" >>"${GITHUB_ENV}"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "RELEASE_VERSION env var setup failed"
+      exit 1
+    fi
 
-  echo "DEBIAN_VERSION=${DEBIAN_VERSION}" >>"${GITHUB_ENV}"
-  if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "DEBIAN_VERSION env var setup failed"
-    exit 1
-  fi
+    echo "DEBIAN_VERSION=${DEBIAN_VERSION}" >>"${GITHUB_ENV}"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "DEBIAN_VERSION env var setup failed"
+      exit 1
+    fi
 
-  echo "DEBIAN_ARCH=${DEBIAN_ARCH}" >>"${GITHUB_ENV}"
-  if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "DEBIAN_VERSION env var setup failed"
-    exit 1
-  fi
+    echo "DEBIAN_ARCH=${DEBIAN_ARCH}" >>"${GITHUB_ENV}"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "DEBIAN_VERSION env var setup failed"
+      exit 1
+    fi
 
-  echo "BUILD_DIR=${BUILD_DIR}" >>"${GITHUB_ENV}"
-  if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "BUILD_DIR env var setup failed"
-    exit 1
-  fi
+    echo "BUILD_DIR=${BUILD_DIR}" >>"${GITHUB_ENV}"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "BUILD_DIR env var setup failed"
+      exit 1
+    fi
 
-  echo "WORK_DIR=${WORK_DIR}" >>"${GITHUB_ENV}"
-  if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "WORK_DIR env var setup failed"
-    exit 1
+    echo "WORK_DIR=${WORK_DIR}" >>"${GITHUB_ENV}"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "WORK_DIR env var setup failed"
+      exit 1
+    fi
   fi
 }
 
