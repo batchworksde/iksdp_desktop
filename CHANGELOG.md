@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.1.0 - 2024/11/04
+## v0.1.0 - 2024/11/09
 
 * Debian 12 (Bookworm)
 * GNOME Desktop plus Boxes, Builder and Connections
@@ -15,3 +15,4 @@
 * podman
 * vim, mc, screen, tmux, htop
 * Flatpak support with [Flathub](https://flathub.org/) repo added
+* Binary firmware for various drivers in the Linux kernel
