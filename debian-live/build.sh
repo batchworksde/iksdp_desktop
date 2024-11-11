@@ -81,7 +81,7 @@ function configImage {
     --chroot-squashfs-compression-type "${DEBIAN_SQUASHFS_COMPRESSION_TYPE}" \
     --compression xz \
     --archive-areas "main non-free-firmware" \
-    --bootappend-live "boot=live config locales=${DEBIAN_LOCALES} keyboard-layouts=${DEBIAN_KEYBOARD_LAYOUTS} timezone=${DEBIAN_TIMEZONE} ${liveConfigOptions}" \
+    --bootappend-live "boot=live config hostname=iksdp-${RELEASE_VERSION} locales=${DEBIAN_LOCALES} keyboard-layouts=${DEBIAN_KEYBOARD_LAYOUTS} timezone=${DEBIAN_TIMEZONE} ${liveConfigOptions}" \
     --image-name debian-live-"${DEBIAN_VERSION}"-"${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Debian image configuration failed"
@@ -284,6 +284,12 @@ function createChangeLogForRelease {
     logerror "${FUNCNAME[0]}" "changeLogForRelease.md does not contain valid content"
     exit 1
   fi
+
+  echo "* ISO image: [iksdp-desktop-${RELEASE_VERSION}](http://${RELEASE_HOST}/debian-live-${DEBIAN_VERSION}-${RELEASE_VERSION}-${IMAGE_TIMESTAMP}-amd64.hybrid.iso)" >>"${BUILD_DIR}"/changeLogForRelease.md
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "adding ISO image link to release notes failed"
+    exit 1
+  fi
 }
 
 function createSourceArchive {
@@ -292,6 +298,39 @@ function createSourceArchive {
   tar --create --gzip --file="${BUILD_DIR}"/iksdp-desktop-source-"${RELEASE_VERSION}".tar.gz --directory="${WORK_DIR}" CHANGELOG.md README.md debian-live
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "tar.gz creation failed"
+    exit 1
+  fi
+}
+
+function uploadIso {
+  loginfo "${FUNCNAME[0]}" "Upload the ISO to ${RELEASE_HOST}"
+
+  local SSH_PORT=10022
+  local SSH_TIMEOUT=60
+
+  mkdir -p ~/.ssh/
+
+  eval $(ssh-agent -s)
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "ssh-agent startup failed"
+    exit 1
+  fi
+
+  ssh-keyscan -p "${SSH_PORT}" -T "${SSH_TIMEOUT}" "${RELEASE_HOST}" >~/.ssh/known_hosts
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "known_hosts configuration failed"
+    exit 1
+  fi
+
+  echo "${SSH_UPLOAD_KEY}" | tr -d '\r' | ssh-add -
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "ssh-agent config failed"
+    exit 1
+  fi
+
+  scp -P "${SSH_PORT}" "${BUILD_DIR}"/debian-live-"${DEBIAN_VERSION}"-"${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"-"${DEBIAN_ARCH}".hybrid.iso "${RELEASE_USER}"@"${RELEASE_HOST}":"${RELEASE_FOLDER}"
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "ISO upload failed"
     exit 1
   fi
 }
@@ -321,5 +360,8 @@ case "${USE_CASE}" in
     ;;
   "buildImage")
     buildImage
+    ;;
+  "uploadIso")
+    uploadIso
     ;;
 esac
