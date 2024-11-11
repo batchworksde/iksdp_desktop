@@ -110,6 +110,7 @@ function configHooks {
 function fetchExternalPackages {
   loginfo "${FUNCNAME[0]}" "Fetch external Debian packages"
   curl --silent --location https://zoom.us/client/"${DEBIAN_ZOOM_VERSION}"/zoom_amd64.deb --output "${BUILD_DIR}"/config/packages.chroot/zoom_amd64.deb
+  curl --silent --location http://iksdp.pfadfinderzentrum.org/icaclient_24.8.0.98_amd64.deb --output "${BUILD_DIR}"/config/packages.chroot/icaclient_24.8.0.98_amd64.deb
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Zoom client download failed"
     exit 1
