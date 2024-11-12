@@ -1,5 +1,7 @@
 # Changelog
 
+## v0.2.0 - 2024/11/10
+
 ## v0.1.0 - 2024/11/09
 
 * Debian 12 (Bookworm)
