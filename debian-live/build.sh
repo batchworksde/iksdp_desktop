@@ -5,7 +5,7 @@ set -o pipefail
 
 declare USE_CASE WORK_DIR BUILD_DIR
 
-USE_CASE=${1}
+USE_CASE=${1-localBuild}
 WORK_DIR="$(pwd)"
 BUILD_DIR="${HOME}/build"
 
@@ -35,17 +35,6 @@ function importEnvVars {
     logerror "${FUNCNAME[0]}" "Environment variables import failed"
     exit 1
   fi
-  if [ -z ${GITHUB_ACTIONS+x} ]; then
-    if [ -f "/tmp/IMAGE_TIMESTAMP" ]; then
-      loginfo "${FUNCNAME[0]}" "No Github action, get IMAGE_TIMESTAMP from temp file"
-      source "/tmp/IMAGE_TIMESTAMP"
-    else
-      loginfo "${FUNCNAME[0]}" "No Github action, set IMAGE_TIMESTAMP and write to temp file"
-      IMAGE_TIMESTAMP=$(date +%Y%m%d%H%M%S)
-      echo "IMAGE_TIMESTAMP=${IMAGE_TIMESTAMP}" > /tmp/IMAGE_TIMESTAMP
-    fi
-  fi
-  set +a
 }
 
 function createBuildDir {
@@ -55,6 +44,17 @@ function createBuildDir {
     logerror "${FUNCNAME[0]}" "build directory creation failed"
     exit 1
   fi
+}
+
+function cleanupConfig {
+  loginfo "${FUNCNAME[0]}" "Clean up build directory"
+  cd "${BUILD_DIR}"
+  sudo lb clean
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "live-build cleanup failed"
+    exit 1
+  fi
+  cd "${WORK_DIR}"
 }
 
 function configImage {
@@ -97,6 +97,7 @@ function configImage {
     logerror "${FUNCNAME[0]}" "Debian image configuration failed"
     exit 1
   fi
+  cd "${WORK_DIR}"
 }
 
 function configPackages {
@@ -201,11 +202,13 @@ function buildImage {
     logerror "${FUNCNAME[0]}" "Debian image build failed"
     exit 1
   fi
+  cd "${WORK_DIR}"
 }
 
 function prepareEnvironment {
   if [ -z ${GITHUB_ACTIONS+x} ]; then
     loginfo "${FUNCNAME[0]}" "No Github action, so skip prepareEnvironment"
+    export IMAGE_TIMESTAMP="$(date +%Y%m%d%H%M%S)"
   else
     loginfo "${FUNCNAME[0]}" "Set Github env vars"
 
@@ -344,11 +347,24 @@ function installPrerequisites {
   fi
 
   loginfo "${FUNCNAME[0]}" "Install packages"
-  sudo apt install --no-install-recommends --yes /tmp/live-build_"${DEBIAN_LIVE_BUILD_VERSION}"_all.deb debian-archive-keyring "${RUNNER_PACKAGES}"
+  sudo apt install --no-install-recommends --yes /tmp/live-build_"${DEBIAN_LIVE_BUILD_VERSION}"_all.deb debian-archive-keyring
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "apt install failed"
     exit 1
   fi
+
+  for package in "${RUNNER_PACKAGES[@]}"; do
+    if dpkg-query --status "${package}" >/dev/null 2>&1; then
+      loginfo "${FUNCNAME[0]}" "${package} already installed"
+    else
+      loginfo "${FUNCNAME[0]}" "${package} not yet installed"
+      sudo apt install --no-install-recommends --yes "${package}"
+      if [ "$?" -ne 0 ]; then
+        logerror "${FUNCNAME[0]}" "${package} install failed"
+        exit 1
+      fi
+    fi
+  done
 }
 
 function createChangeLogForRelease {
@@ -444,5 +460,12 @@ case "${USE_CASE}" in
     ;;
   "uploadIso")
     uploadIso
+    ;;
+  "localBuild")
+    prepareEnvironment
+    installPrerequisites
+    cleanupConfig
+    configImage
+    buildImage
     ;;
 esac
