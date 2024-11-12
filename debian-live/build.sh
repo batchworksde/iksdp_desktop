@@ -30,10 +30,20 @@ function logerror {
 function importEnvVars {
   loginfo "${FUNCNAME[0]}" "Loading 'build.env' environment variables"
   set -a # automatically export all variables
-  source "${WORK_DIR}"/debian-live/build.env && IMAGE_TIMESTAMP=$(date +%Y%m%d%H%M%S)
+  source "${WORK_DIR}"/debian-live/build.env
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Environment variables import failed"
     exit 1
+  fi
+  if [ -z ${GITHUB_ACTIONS+x} ]; then
+    if [ -f "/tmp/IMAGE_TIMESTAMP" ]; then
+      loginfo "${FUNCNAME[0]}" "No Github action, get IMAGE_TIMESTAMP from temp file"
+      source "/tmp/IMAGE_TIMESTAMP"
+    else
+      loginfo "${FUNCNAME[0]}" "No Github action, set IMAGE_TIMESTAMP and write to temp file"
+      IMAGE_TIMESTAMP=$(date +%Y%m%d%H%M%S)
+      echo "IMAGE_TIMESTAMP=${IMAGE_TIMESTAMP}" > /tmp/IMAGE_TIMESTAMP
+    fi
   fi
   set +a
 }
@@ -199,7 +209,7 @@ function prepareEnvironment {
   else
     loginfo "${FUNCNAME[0]}" "Set Github env vars"
 
-    echo "IMAGE_TIMESTAMP=${IMAGE_TIMESTAMP}" >>"${GITHUB_ENV}"
+    echo "IMAGE_TIMESTAMP=$(date +%Y%m%d%H%M%S)" >>"${GITHUB_ENV}"
     if [ "$?" -ne 0 ]; then
       logerror "${FUNCNAME[0]}" "IMAGE_TIMESTAMP env var setup failed"
       exit 1
