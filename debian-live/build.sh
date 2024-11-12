@@ -69,17 +69,18 @@ function configImage {
     --mirror-binary "${DEBIAN_MIRROR}" \
     --mirror-chroot-security "${DEBIAN_SEC_MIRROR}" \
     --mirror-binary-security "${DEBIAN_SEC_MIRROR}" \
-    --backports true \
+    --backports false \
     --updates true \
     --security true \
     --architectures "${DEBIAN_ARCH}" \
     --apt-recommends true \
     --apt-indices false \
-    --cache false \
+    --cache true \
     --checksums "sha256" \
     --chroot-squashfs-compression-level "${DEBIAN_SQUASHFS_COMPRESSION_LEVEL}" \
     --chroot-squashfs-compression-type "${DEBIAN_SQUASHFS_COMPRESSION_TYPE}" \
     --compression xz \
+    --zsync false \
     --archive-areas "main non-free-firmware" \
     --bootappend-live "boot=live config locales=${DEBIAN_LOCALES} keyboard-layouts=${DEBIAN_KEYBOARD_LAYOUTS} timezone=${DEBIAN_TIMEZONE} ${liveConfigOptions}" \
     --image-name debian-live-"${DEBIAN_VERSION}"-"${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"
@@ -111,6 +112,7 @@ function fetchExternalPackages {
   loginfo "${FUNCNAME[0]}" "Fetch external Debian packages"
   curl --silent --location https://zoom.us/client/"${DEBIAN_ZOOM_VERSION}"/zoom_amd64.deb --output "${BUILD_DIR}"/config/packages.chroot/zoom_amd64.deb
   curl --silent --location http://iksdp.pfadfinderzentrum.org/icaclient_24.8.0.98_amd64.deb --output "${BUILD_DIR}"/config/packages.chroot/icaclient_24.8.0.98_amd64.deb
+  curl --silent --location https://github.com/IsmaelMartinez/teams-for-linux/releases/download/v1.11.3/teams-for-linux_1.11.3_amd64.deb --output "${BUILD_DIR}"/config/packages.chroot/teams-for-linux_1.11.3_amd64.deb
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Zoom client download failed"
     exit 1

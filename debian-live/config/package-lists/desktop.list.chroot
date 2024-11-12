@@ -4,11 +4,11 @@ chromium
 webext-ublock-origin-chromium
 firefox-esr
 webext-ublock-origin-firefox
-libreoffice
+#libreoffice
 mplayer
 vlc
-supertux
-torcs
+#supertux
+#torcs
 gnome-boxes
 gnome-builder
 gnome-bluetooth-sendto
