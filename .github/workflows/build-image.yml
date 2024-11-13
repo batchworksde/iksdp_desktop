@@ -23,8 +23,8 @@ jobs:
         run: debian-live/build.sh fetchRunnerInfos
       - name: install prerequisites
         run: debian-live/build.sh installPrerequisites
-      # - name: config Debian Live image
-      #   run: debian-live/build.sh configImage
+      - name: config Debian Live image
+        run: debian-live/build.sh configImage
       # - name: build Debian Live image
       #   run: debian-live/build.sh buildImage
       # - name: upload iso
