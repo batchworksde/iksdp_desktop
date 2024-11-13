@@ -93,7 +93,7 @@ function configBootSplash {
   loginfo "${FUNCNAME[0]}" "Configure boot splash"
   mkdir -p "${BUILD_DIR}"/config/bootloaders/grub-pc
   # debug output package list  
-  dplg -l 
+  dpkg -l 
   # imagemagick is needed
   convert "${WORK_DIR}"/debian-live/config/bootloaders/grub-pc/splash.png -gravity North -pointsize 14 -fill white -annotate +100+100 "Image version: ${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"  "${BUILD_DIR}"/config/bootloaders/grub-pc/splash.png
 
