@@ -28,18 +28,18 @@ jobs:
       # - name: build Debian Live image
       #   run: debian-live/build.sh buildImage
       # - name: upload iso
-        env:
-          SSH_UPLOAD_KEY: ${{ secrets.SSH_UPLOAD_KEY }}
-        run: debian-live/build.sh uploadIso
-      - name: create release
-        uses: ncipollo/release-action@v1
-        with:
-          name: iksdp-desktop-${{ env.RELEASE_VERSION }}
-          artifacts: "${{ env.BUILD_DIR }}/iksdp-desktop-source-${{ env.RELEASE_VERSION }}.tar.gz" 
-          bodyFile: "${{ env.BUILD_DIR }}/changeLogForRelease.md"
-          tag: "v${{ env.RELEASE_VERSION }}"
-          draft: true
-          makeLatest: "legacy"
-          skipIfReleaseExists: true
-          allowUpdates: true
-          updateOnlyUnreleased: true
+      #   env:
+      #     SSH_UPLOAD_KEY: ${{ secrets.SSH_UPLOAD_KEY }}
+      #   run: debian-live/build.sh uploadIso
+      # - name: create release
+      #   uses: ncipollo/release-action@v1
+      #   with:
+      #     name: iksdp-desktop-${{ env.RELEASE_VERSION }}
+      #     artifacts: "${{ env.BUILD_DIR }}/iksdp-desktop-source-${{ env.RELEASE_VERSION }}.tar.gz" 
+      #     bodyFile: "${{ env.BUILD_DIR }}/changeLogForRelease.md"
+      #     tag: "v${{ env.RELEASE_VERSION }}"
+      #     draft: true
+      #     makeLatest: "legacy"
+      #     skipIfReleaseExists: true
+      #     allowUpdates: true
+      #     updateOnlyUnreleased: true
