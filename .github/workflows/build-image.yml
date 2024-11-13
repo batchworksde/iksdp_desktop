@@ -23,11 +23,11 @@ jobs:
         run: debian-live/build.sh fetchRunnerInfos
       - name: install prerequisites
         run: debian-live/build.sh installPrerequisites
-      - name: config Debian Live image
-        run: debian-live/build.sh configImage
-      - name: build Debian Live image
-        run: debian-live/build.sh buildImage
-      - name: upload iso
+      # - name: config Debian Live image
+      #   run: debian-live/build.sh configImage
+      # - name: build Debian Live image
+      #   run: debian-live/build.sh buildImage
+      # - name: upload iso
         env:
           SSH_UPLOAD_KEY: ${{ secrets.SSH_UPLOAD_KEY }}
         run: debian-live/build.sh uploadIso
