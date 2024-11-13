@@ -109,9 +109,76 @@ function configHooks {
 
 function fetchExternalPackages {
   loginfo "${FUNCNAME[0]}" "Fetch external Debian packages"
+
   curl --silent --location https://zoom.us/client/"${DEBIAN_ZOOM_VERSION}"/zoom_amd64.deb --output "${BUILD_DIR}"/config/packages.chroot/zoom_amd64.deb
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Zoom client download failed"
+    exit 1
+  fi
+  loginfo "${FUNCNAME[0]}" "Zoom package download done"
+
+  downloadGithubRelease rustdesk rustdesk latest "x86_64"
+}
+
+function downloadGithubRelease {
+  if [ -n "${1}" ] && [ -n "${2}" ] && [ -n "${3}" ] && [ -n "${4}" ]; then
+    local repo org version apiversion apimimetype targetfolder dlversion dlname dlarch
+    repo="${1}"
+    org="${2}"
+    version="${3}"
+    suffix="${4}"
+    apiversion="X-GitHub-Api-Version: 2022-11-28"
+    apimimetype="Accept: application/vnd.github+json"
+    targetfolder="${BUILD_DIR}/config/packages.chroot"
+
+    if [ "${version}" == "latest" ]; then
+      version="$(curl --silent --header "${apimimetype}" --header "${apiversion}" https://api.github.com/repos/"${org}"/"${repo}"/releases/latest | jq -r .name)"
+      if [ "$?" -ne 0 ]; then
+        logerror "${FUNCNAME[0]}" "${repo} release version check failed"
+        exit 1
+      fi
+    fi
+
+    curl --silent --location https://github.com/"${org}"/"${repo}"/releases/download/"${version}"/"${repo}"-"${version}"-"${suffix}".deb --output "${targetfolder}/${repo}-${suffix}.deb"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "${repo} download failed"
+      exit 1
+    fi
+
+    dlname="$(dpkg-deb --field ${targetfolder}/${repo}-${suffix}.deb name)"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "${repo} package check failed"
+      exit 1
+    fi
+
+    dlarch="$(dpkg-deb --field ${targetfolder}/${repo}-${suffix}.deb architecture)"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "${repo} package check failed"
+      exit 1
+    fi
+
+    dlversion="$(dpkg-deb --field ${targetfolder}/${repo}-${suffix}.deb version)"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "${repo} package check failed"
+      exit 1
+    fi
+
+    if [ "${version}" != "${dlversion}" ]; then
+      logerror "${FUNCNAME[0]}" "${repo} package version invalid (${version}!${dlversion})"
+      exit 1
+    fi
+
+    if [ "${targetfolder}/${repo}-${suffix}.deb" != "${targetfolder}/${dlname}_${dlversion}_${dlarch}.deb" ]; then
+      mv "${targetfolder}/${repo}-${suffix}.deb" "${targetfolder}/${dlname}_${dlversion}_${dlarch}.deb"
+      if [ "${version}" != "${dlversion}" ]; then
+        logerror "${FUNCNAME[0]}" "${repo} package rename failed"
+        exit 1
+      fi
+    fi
+    
+    loginfo "${FUNCNAME[0]}" "${repo} package download done"
+  else
+    logerror "${FUNCNAME[0]}" "at least one parameter is missing"
     exit 1
   fi
 }
