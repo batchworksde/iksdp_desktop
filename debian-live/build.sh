@@ -92,6 +92,8 @@ function configImage {
 function configBootSplash {
   loginfo "${FUNCNAME[0]}" "Configure boot splash"
   mkdir -p "${BUILD_DIR}"/config/bootloaders/grub-pc
+  # list fonts
+  convert -list font
   # debug output package list  
   dpkg -l 
   # imagemagick is needed
