@@ -39,10 +39,13 @@ function importEnvVars {
 
 function createBuildDir {
   loginfo "${FUNCNAME[0]}" "Creating build directory"
-  mkdir -p "${BUILD_DIR}"
-  if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "build directory creation failed"
-    exit 1
+
+  if [ ! -d "${BUILD_DIR}" ]; then
+    mkdir "${BUILD_DIR}"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "build directory creation failed"
+      exit 1
+    fi
   fi
 }
 
@@ -54,6 +57,15 @@ function cleanupConfig {
     logerror "${FUNCNAME[0]}" "live-build cleanup failed"
     exit 1
   fi
+
+  if [ -d "${BUILD_DIR}"/config/ ]; then
+    rm -r "${BUILD_DIR}"/config/
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "config dir removal failed"
+      exit 1
+    fi
+  fi
+
   cd "${WORK_DIR}"
 }
 
@@ -464,8 +476,12 @@ case "${USE_CASE}" in
   "localBuild")
     prepareEnvironment
     installPrerequisites
+    createBuildDir
     cleanupConfig
     configImage
+    configPackages
+    configHooks
+    fetchExternalPackages
     buildImage
     ;;
 esac
