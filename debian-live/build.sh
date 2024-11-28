@@ -91,13 +91,14 @@ function configImage {
     --mirror-binary "${DEBIAN_MIRROR}" \
     --mirror-chroot-security "${DEBIAN_SEC_MIRROR}" \
     --mirror-binary-security "${DEBIAN_SEC_MIRROR}" \
-    --backports true \
+    --backports false \
     --updates true \
     --security true \
     --architectures "${DEBIAN_ARCH}" \
     --apt-recommends true \
     --apt-indices false \
-    --cache false \
+    --cache true \
+    --cache-packages true\
     --checksums "sha256" \
     --chroot-squashfs-compression-level "${DEBIAN_SQUASHFS_COMPRESSION_LEVEL}" \
     --chroot-squashfs-compression-type "${DEBIAN_SQUASHFS_COMPRESSION_TYPE}" \
@@ -220,7 +221,7 @@ function buildImage {
 function prepareEnvironment {
   if [ -z ${GITHUB_ACTIONS+x} ]; then
     loginfo "${FUNCNAME[0]}" "No Github action, so skip prepareEnvironment"
-    export IMAGE_TIMESTAMP="$(date +%Y%m%d%H%M%S)"
+    #export IMAGE_TIMESTAMP="$(date +%Y%m%d%H%M%S)"
   else
     loginfo "${FUNCNAME[0]}" "Set Github env vars"
 
