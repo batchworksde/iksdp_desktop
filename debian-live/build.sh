@@ -5,11 +5,12 @@ set -o pipefail
 
 declare USE_CASE WORK_DIR BUILD_DIR
 
-USE_CASE=${1}
+USE_CASE=${1-localBuild}
 WORK_DIR="$(pwd)"
 BUILD_DIR="${HOME}/build"
+DEBIAN_ARCH=$(dpkg --print-architecture)
 
-export USE_CASE WORK_DIR BUILD_DIR
+export USE_CASE WORK_DIR BUILD_DIR DEBIAN_ARCH
 
 function logjson {
   printf "{\"@timestamp\":\"%s\",\"ecs.version\":\"1.6.0\",\"log.logger\":\"%s\",\"log.origin.function\":\"%s\",\"log.level\":\"%s\",\"message\":\"%s\"}\n" "$(date +%Y-%m-%dT%H:%M:%S+%Z)" "$3" "$4" "$2" "$5" >>/dev/"$1"
@@ -35,16 +36,38 @@ function importEnvVars {
     logerror "${FUNCNAME[0]}" "Environment variables import failed"
     exit 1
   fi
-  set +a
 }
 
 function createBuildDir {
   loginfo "${FUNCNAME[0]}" "Creating build directory"
-  mkdir -p "${BUILD_DIR}"
+
+  if [ ! -d "${BUILD_DIR}" ]; then
+    mkdir "${BUILD_DIR}"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "build directory creation failed"
+      exit 1
+    fi
+  fi
+}
+
+function cleanupConfig {
+  loginfo "${FUNCNAME[0]}" "Clean up build directory"
+  cd "${BUILD_DIR}"
+  sudo lb clean
   if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "build directory creation failed"
+    logerror "${FUNCNAME[0]}" "live-build cleanup failed"
     exit 1
   fi
+
+  if [ -d "${BUILD_DIR}"/config/ ]; then
+    rm -r "${BUILD_DIR}"/config/
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "config dir removal failed"
+      exit 1
+    fi
+  fi
+
+  cd "${WORK_DIR}"
 }
 
 function configImage {
@@ -76,6 +99,7 @@ function configImage {
     --apt-recommends true \
     --apt-indices false \
     --cache true \
+    --cache-packages true\
     --checksums "sha256" \
     --chroot-squashfs-compression-level "${DEBIAN_SQUASHFS_COMPRESSION_LEVEL}" \
     --chroot-squashfs-compression-type "${DEBIAN_SQUASHFS_COMPRESSION_TYPE}" \
@@ -88,6 +112,7 @@ function configImage {
     logerror "${FUNCNAME[0]}" "Debian image configuration failed"
     exit 1
   fi
+  cd "${WORK_DIR}"
 }
 
 function configPackages {
@@ -110,11 +135,85 @@ function configHooks {
 
 function fetchExternalPackages {
   loginfo "${FUNCNAME[0]}" "Fetch external Debian packages"
-  curl --silent --location https://zoom.us/client/"${DEBIAN_ZOOM_VERSION}"/zoom_amd64.deb --output "${BUILD_DIR}"/config/packages.chroot/zoom_amd64.deb
-  curl --silent --location http://iksdp.pfadfinderzentrum.org/icaclient_24.8.0.98_amd64.deb --output "${BUILD_DIR}"/config/packages.chroot/icaclient_24.8.0.98_amd64.deb
-  curl --silent --location https://github.com/IsmaelMartinez/teams-for-linux/releases/download/v1.11.3/teams-for-linux_1.11.3_amd64.deb --output "${BUILD_DIR}"/config/packages.chroot/teams-for-linux_1.11.3_amd64.deb
-  if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "Zoom client download failed"
+
+
+
+  if [ "$DEBIAN_ARCH" == "amd64" ]; then    
+    curl --silent --location https://zoom.us/client/"${DEBIAN_ZOOM_VERSION}"/zoom_amd64.deb --output "${BUILD_DIR}"/config/packages.chroot/zoom_amd64.deb
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "Zoom client download failed"
+      exit 1
+    fi
+    loginfo "${FUNCNAME[0]}" "Zoom package download done"
+  fi
+
+  curl --silent --location http://iksdp.pfadfinderzentrum.org/icaclient_24.8.0.98_"${DEBIAN_ARCH}".deb --output "${BUILD_DIR}"/config/packages.chroot/icaclient_24.8.0.98_"${DEBIAN_ARCH}".deb
+  loginfo "${FUNCNAME[0]}" "icaclient package download done"
+  #curl --silent --location https://github.com/IsmaelMartinez/teams-for-linux/releases/download/v1.11.3/teams-for-linux_1.11.3_"${DEBIAN_ARCH}".deb --output "${BUILD_DIR}"/config/packages.chroot/teams-for-linux_1.11.3_"${DEBIAN_ARCH}".deb
+  #loginfo "${FUNCNAME[0]}" "teams package download done"
+
+  #downloadGithubRelease rustdesk rustdesk latest "x86_64"
+}
+
+function downloadGithubRelease {
+  if [ -n "${1}" ] && [ -n "${2}" ] && [ -n "${3}" ] && [ -n "${4}" ]; then
+    local repo org version apiversion apimimetype targetfolder dlversion dlname dlarch
+    repo="${1}"
+    org="${2}"
+    version="${3}"
+    suffix="${4}"
+    apiversion="X-GitHub-Api-Version: 2022-11-28"
+    apimimetype="Accept: application/vnd.github+json"
+    targetfolder="${BUILD_DIR}/config/packages.chroot"
+
+    if [ "${version}" == "latest" ]; then
+      version="$(curl --silent --header "${apimimetype}" --header "${apiversion}" https://api.github.com/repos/"${org}"/"${repo}"/releases/latest | jq -r .name)"
+      if [ "$?" -ne 0 ]; then
+        logerror "${FUNCNAME[0]}" "${repo} release version check failed"
+        exit 1
+      fi
+    fi
+
+    curl --silent --location https://github.com/"${org}"/"${repo}"/releases/download/"${version}"/"${repo}"-"${version}"-"${suffix}".deb --output "${targetfolder}/${repo}-${suffix}.deb"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "${repo} download failed"
+      exit 1
+    fi
+
+    dlname="$(dpkg-deb --field ${targetfolder}/${repo}-${suffix}.deb name)"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "${repo} package check failed"
+      exit 1
+    fi
+
+    dlarch="$(dpkg-deb --field ${targetfolder}/${repo}-${suffix}.deb architecture)"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "${repo} package check failed"
+      exit 1
+    fi
+
+    dlversion="$(dpkg-deb --field ${targetfolder}/${repo}-${suffix}.deb version)"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "${repo} package check failed"
+      exit 1
+    fi
+
+    if [ "${version}" != "${dlversion}" ]; then
+      logerror "${FUNCNAME[0]}" "${repo} package version invalid (${version}!${dlversion})"
+      exit 1
+    fi
+
+    if [ "${targetfolder}/${repo}-${suffix}.deb" != "${targetfolder}/${dlname}_${dlversion}_${dlarch}.deb" ]; then
+      mv "${targetfolder}/${repo}-${suffix}.deb" "${targetfolder}/${dlname}_${dlversion}_${dlarch}.deb"
+      if [ "${version}" != "${dlversion}" ]; then
+        logerror "${FUNCNAME[0]}" "${repo} package rename failed"
+        exit 1
+      fi
+    fi
+    
+    loginfo "${FUNCNAME[0]}" "${repo} package download done"
+  else
+    logerror "${FUNCNAME[0]}" "at least one parameter is missing"
     exit 1
   fi
 }
@@ -127,6 +226,7 @@ function buildImage {
     logerror "${FUNCNAME[0]}" "Debian image build failed"
     exit 1
   fi
+  cd "${WORK_DIR}"
 }
 
 function prepareEnvironment {
@@ -270,11 +370,24 @@ function installPrerequisites {
   fi
 
   loginfo "${FUNCNAME[0]}" "Install packages"
-  sudo apt install --no-install-recommends --yes /tmp/live-build_"${DEBIAN_LIVE_BUILD_VERSION}"_all.deb debian-archive-keyring "${RUNNER_PACKAGES}"
+  sudo apt install --no-install-recommends --yes /tmp/live-build_"${DEBIAN_LIVE_BUILD_VERSION}"_all.deb debian-archive-keyring
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "apt install failed"
     exit 1
   fi
+
+  for package in "${RUNNER_PACKAGES[@]}"; do
+    if dpkg-query --status "${package}" >/dev/null 2>&1; then
+      loginfo "${FUNCNAME[0]}" "${package} already installed"
+    else
+      loginfo "${FUNCNAME[0]}" "${package} not yet installed"
+      sudo apt install --no-install-recommends --yes "${package}"
+      if [ "$?" -ne 0 ]; then
+        logerror "${FUNCNAME[0]}" "${package} install failed"
+        exit 1
+      fi
+    fi
+  done
 }
 
 function createChangeLogForRelease {
@@ -327,6 +440,20 @@ case "${USE_CASE}" in
     createChangeLogForRelease
     ;;
   "buildImage")
+    buildImage
+    ;;
+  "uploadIso")
+    uploadIso
+    ;;
+  "localBuild")
+    prepareEnvironment
+    installPrerequisites
+    createBuildDir
+    cleanupConfig
+    configImage
+    configPackages
+    configHooks
+    fetchExternalPackages
     buildImage
     ;;
 esac

@@ -22,7 +22,6 @@ We create versioned [releases](https://github.com/batchworksde/iksdp_desktop/rel
 | Parameter   | Value       | Description     |
 | :---        | :----:      | :---            |
 | `DEBIAN_VERSION` | bookworm | The [Debian release](https://www.debian.org/releases/index.en.html) that should be used for the live image |
-| `DEBIAN_ARCH` | amd64 | The [CPU architecture](https://wiki.debian.org/SupportedArchitectures) that should be used for the live image |
 | `DEBIAN_MIRROR` | http://deb.debian.org/debian | Debian mirror [Url](http://deb.debian.org/) selected from the [mirror list](https://www.debian.org/mirror/list) |
 | `DEBIAN_SEC_MIRROR` | http://deb.debian.org/debian-security | Debian mirror [Url](http://deb.debian.org/) for the security packages |
 | `DEBIAN_SQUASHFS_COMPRESSION_TYPE` | zstd | [compression algorithm](https://manpages.debian.org/bookworm/live-build/lb_config.1.en.html#chroot~3) that should be used for the root filesystem image |
@@ -41,13 +40,13 @@ We create versioned [releases](https://github.com/batchworksde/iksdp_desktop/rel
 | `DEBIAN_LIVE_BUILD_VERSION` | 20230502 | version of the [live-build](https://packages.debian.org/bookworm/live-build) package that should be installed on the Github runner to build the live image |
 | `RUNNER_CLEANUP` | false | remove [not required folders](https://github.com/actions/runner-images/issues/10386) from the runner to free up some space for the image build process |
 | `RUNNER_SYSINFO` | false | collect some system information from the runner |
-| `RUNNER_PACKAGES` | "" | additional [Ubuntu 24.04 packages](https://packages.ubuntu.com/) that should be installed on the runner |
+| `RUNNER_PACKAGES` | () | additional [Ubuntu 24.04 packages](https://packages.ubuntu.com/) that should be installed on the runner |
 
 ### Live image configuration
 
 | Parameter   | Value       | Description     |
 | :---        | :----:      | :---            |
-| `RELEASE_VERSION` | 0.0.1 | version number for the generated live image |
+| `RELEASE_VERSION` | 0.2.0 | version number for the generated live image |
 
 ## Changelog
 

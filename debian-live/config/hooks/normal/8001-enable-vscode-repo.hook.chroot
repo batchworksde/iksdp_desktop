@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+mkdir -p /etc/apt/keyrings
+wget -qO /etc/apt/keyrings/microsoft.asc https://packages.microsoft.com/keys/microsoft.asc
+
+echo "deb [signed-by=/etc/apt/keyrings/microsoft.asc arch=$(dpkg --print-architecture)] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
+
+apt update
+apt install code -y
