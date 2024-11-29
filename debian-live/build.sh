@@ -97,7 +97,8 @@ function configImage {
     --architectures "${DEBIAN_ARCH}" \
     --apt-recommends true \
     --apt-indices false \
-    --cache false \
+    --cache true \
+    --cache-packages true \
     --checksums "sha256" \
     --chroot-squashfs-compression-level "${DEBIAN_SQUASHFS_COMPRESSION_LEVEL}" \
     --chroot-squashfs-compression-type "${DEBIAN_SQUASHFS_COMPRESSION_TYPE}" \
@@ -198,7 +199,7 @@ function downloadGithubRelease {
         exit 1
       fi
     fi
-    
+
     loginfo "${FUNCNAME[0]}" "${repo} package download done"
   else
     logerror "${FUNCNAME[0]}" "at least one parameter is missing"
@@ -209,7 +210,7 @@ function downloadGithubRelease {
 function buildImage {
   loginfo "${FUNCNAME[0]}" "Build the Debian image"
   cd "${BUILD_DIR}"
-  sudo lb build 2>&1 | tee debian-live-"${DEBIAN_VERSION}"-"${DEBIAN_ARCH}"-"${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}".log
+  sudo lb build 2>&1 | tee debian-live-"${DEBIAN_VERSION}"-"${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"-"${DEBIAN_ARCH}".log
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Debian image build failed"
     exit 1
