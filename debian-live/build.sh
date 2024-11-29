@@ -5,7 +5,7 @@ set -o pipefail
 
 declare USE_CASE WORK_DIR BUILD_DIR
 
-USE_CASE=${1}
+USE_CASE=${1-localBuild}
 WORK_DIR="$(pwd)"
 BUILD_DIR="${HOME}/build"
 
@@ -35,16 +35,38 @@ function importEnvVars {
     logerror "${FUNCNAME[0]}" "Environment variables import failed"
     exit 1
   fi
-  set +a
 }
 
 function createBuildDir {
   loginfo "${FUNCNAME[0]}" "Creating build directory"
-  mkdir -p "${BUILD_DIR}"
+
+  if [ ! -d "${BUILD_DIR}" ]; then
+    mkdir "${BUILD_DIR}"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "build directory creation failed"
+      exit 1
+    fi
+  fi
+}
+
+function cleanupConfig {
+  loginfo "${FUNCNAME[0]}" "Clean up build directory"
+  cd "${BUILD_DIR}"
+  sudo lb clean
   if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "build directory creation failed"
+    logerror "${FUNCNAME[0]}" "live-build cleanup failed"
     exit 1
   fi
+
+  if [ -d "${BUILD_DIR}"/config/ ]; then
+    rm -r "${BUILD_DIR}"/config/
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "config dir removal failed"
+      exit 1
+    fi
+  fi
+
+  cd "${WORK_DIR}"
 }
 
 function configImage {
@@ -75,7 +97,8 @@ function configImage {
     --architectures "${DEBIAN_ARCH}" \
     --apt-recommends true \
     --apt-indices false \
-    --cache false \
+    --cache true \
+    --cache-packages true \
     --checksums "sha256" \
     --chroot-squashfs-compression-level "${DEBIAN_SQUASHFS_COMPRESSION_LEVEL}" \
     --chroot-squashfs-compression-type "${DEBIAN_SQUASHFS_COMPRESSION_TYPE}" \
@@ -87,6 +110,7 @@ function configImage {
     logerror "${FUNCNAME[0]}" "Debian image configuration failed"
     exit 1
   fi
+  cd "${WORK_DIR}"
 }
 
 function configPackages {
@@ -175,7 +199,7 @@ function downloadGithubRelease {
         exit 1
       fi
     fi
-    
+
     loginfo "${FUNCNAME[0]}" "${repo} package download done"
   else
     logerror "${FUNCNAME[0]}" "at least one parameter is missing"
@@ -186,50 +210,56 @@ function downloadGithubRelease {
 function buildImage {
   loginfo "${FUNCNAME[0]}" "Build the Debian image"
   cd "${BUILD_DIR}"
-  sudo lb build 2>&1 | tee debian-live-"${DEBIAN_VERSION}"-"${DEBIAN_ARCH}"-"${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}".log
+  sudo lb build 2>&1 | tee debian-live-"${DEBIAN_VERSION}"-"${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"-"${DEBIAN_ARCH}".log
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Debian image build failed"
     exit 1
   fi
+  cd "${WORK_DIR}"
 }
 
 function prepareEnvironment {
-  loginfo "${FUNCNAME[0]}" "Set Github env vars"
+  if [ -z ${GITHUB_ACTIONS+x} ]; then
+    loginfo "${FUNCNAME[0]}" "No Github action, so skip prepareEnvironment"
+    export IMAGE_TIMESTAMP="$(date +%Y%m%d%H%M%S)"
+  else
+    loginfo "${FUNCNAME[0]}" "Set Github env vars"
 
-  echo "IMAGE_TIMESTAMP=$(date +%Y%m%d%H%M%S)" >>"${GITHUB_ENV}"
-  if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "IMAGE_TIMESTAMP env var setup failed"
-    exit 1
-  fi
+    echo "IMAGE_TIMESTAMP=$(date +%Y%m%d%H%M%S)" >>"${GITHUB_ENV}"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "IMAGE_TIMESTAMP env var setup failed"
+      exit 1
+    fi
 
-  echo "RELEASE_VERSION=${RELEASE_VERSION}" >>"${GITHUB_ENV}"
-  if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "RELEASE_VERSION env var setup failed"
-    exit 1
-  fi
+    echo "RELEASE_VERSION=${RELEASE_VERSION}" >>"${GITHUB_ENV}"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "RELEASE_VERSION env var setup failed"
+      exit 1
+    fi
 
-  echo "DEBIAN_VERSION=${DEBIAN_VERSION}" >>"${GITHUB_ENV}"
-  if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "DEBIAN_VERSION env var setup failed"
-    exit 1
-  fi
+    echo "DEBIAN_VERSION=${DEBIAN_VERSION}" >>"${GITHUB_ENV}"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "DEBIAN_VERSION env var setup failed"
+      exit 1
+    fi
 
-  echo "DEBIAN_ARCH=${DEBIAN_ARCH}" >>"${GITHUB_ENV}"
-  if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "DEBIAN_VERSION env var setup failed"
-    exit 1
-  fi
+    echo "DEBIAN_ARCH=${DEBIAN_ARCH}" >>"${GITHUB_ENV}"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "DEBIAN_VERSION env var setup failed"
+      exit 1
+    fi
 
-  echo "BUILD_DIR=${BUILD_DIR}" >>"${GITHUB_ENV}"
-  if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "BUILD_DIR env var setup failed"
-    exit 1
-  fi
+    echo "BUILD_DIR=${BUILD_DIR}" >>"${GITHUB_ENV}"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "BUILD_DIR env var setup failed"
+      exit 1
+    fi
 
-  echo "WORK_DIR=${WORK_DIR}" >>"${GITHUB_ENV}"
-  if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "WORK_DIR env var setup failed"
-    exit 1
+    echo "WORK_DIR=${WORK_DIR}" >>"${GITHUB_ENV}"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "WORK_DIR env var setup failed"
+      exit 1
+    fi
   fi
 }
 
@@ -330,11 +360,24 @@ function installPrerequisites {
   fi
 
   loginfo "${FUNCNAME[0]}" "Install packages"
-  sudo apt install --no-install-recommends --yes /tmp/live-build_"${DEBIAN_LIVE_BUILD_VERSION}"_all.deb debian-archive-keyring "${RUNNER_PACKAGES}"
+  sudo apt install --no-install-recommends --yes /tmp/live-build_"${DEBIAN_LIVE_BUILD_VERSION}"_all.deb debian-archive-keyring
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "apt install failed"
     exit 1
   fi
+
+  for package in "${RUNNER_PACKAGES[@]}"; do
+    if dpkg-query --status "${package}" >/dev/null 2>&1; then
+      loginfo "${FUNCNAME[0]}" "${package} already installed"
+    else
+      loginfo "${FUNCNAME[0]}" "${package} not yet installed"
+      sudo apt install --no-install-recommends --yes "${package}"
+      if [ "$?" -ne 0 ]; then
+        logerror "${FUNCNAME[0]}" "${package} install failed"
+        exit 1
+      fi
+    fi
+  done
 }
 
 function createChangeLogForRelease {
@@ -430,5 +473,16 @@ case "${USE_CASE}" in
     ;;
   "uploadIso")
     uploadIso
+    ;;
+  "localBuild")
+    prepareEnvironment
+    installPrerequisites
+    createBuildDir
+    cleanupConfig
+    configImage
+    configPackages
+    configHooks
+    fetchExternalPackages
+    buildImage
     ;;
 esac
