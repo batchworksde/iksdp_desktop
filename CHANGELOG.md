@@ -3,6 +3,7 @@
 ## v0.2.0 - 2024/11/10
 
 * [Rustdesk Client](https://rustdesk.com/docs/en/client/)
+* always download the latest Zoom client version
 
 ## v0.1.0 - 2024/11/09
 
