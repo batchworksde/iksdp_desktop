@@ -140,6 +140,58 @@ function configIncludes {
   fi
 }
 
+function configGnomeShellExtensions {
+  loginfo "${FUNCNAME[0]}" "Configure Debian Live GNOME Shell Extensions"
+  targetfolder="${BUILD_DIR}"/config/includes.chroot/etc/skel/.local/share/gnome-shell/extensions
+  # find the URL for the latest zip matching your gnome shell version (gnome-shell --version) at https://extensions.gnome.org
+  extension_urls=(
+    https://extensions.gnome.org/extension-data/no-overviewfthx.v13.shell-extension.zip
+    https://extensions.gnome.org/extension-data/dash-to-paneljderose9.github.com.v56.shell-extension.zip
+    https://extensions.gnome.org/extension-data/dash2dock-liteicedman.github.com.v68.shell-extension.zip
+    https://extensions.gnome.org/extension-data/arcmenuarcmenu.com.v48.shell-extension.zip
+    https://extensions.gnome.org/extension-data/gtk4-dingsmedius.gitlab.com.v60.shell-extension.zip
+  )
+
+  for extension in "${extension_urls[@]}"; do
+
+    mkdir -p ${targetfolder}/$(basename "${extension}" ".zip")
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "Creating temporary directory for extension $(basename "${extension}" ".zip") failed"
+      exit 1
+    fi
+
+    curl --silent --location ${extension} --output ${targetfolder}/$(basename "${extension}")
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "Download of extension $(basename "${extension}" ".zip") failed"
+      exit 1
+    fi
+
+    unzip -qq ${targetfolder}/$(basename "${extension}") -d ${targetfolder}/$(basename "${extension}" ".zip")
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "Extracting of extension $(basename "${extension}" ".zip") failed"
+      exit 1
+    fi
+
+    extensionuuid=$(jq -r '.uuid' ${targetfolder}/$(basename "${extension}" ".zip")/metadata.json)
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "Getting UUID of extension $(basename "${extension}" ".zip") failed"
+      exit 1
+    fi
+
+    mv ${targetfolder}/$(basename "${extension}" ".zip") ${targetfolder}/${extensionuuid}
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "Renaming folder of extension to uuid $(basename "${extension}" ".zip") failed"
+      exit 1
+    fi
+
+    rm ${targetfolder}/$(basename "${extension}")
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "Deleting zip file $(basename "${extension}") of extension $(basename "${extension}" ".zip") failed"
+      exit 1
+    fi
+  done
+}
+
 function fetchExternalPackages {
   loginfo "${FUNCNAME[0]}" "Fetch external Debian packages"
 
@@ -474,6 +526,7 @@ case "${USE_CASE}" in
     configPackages
     configHooks
     configIncludes
+    configGnomeShellExtensions
     fetchExternalPackages
     createChangeLogForRelease
     createSourceArchive
@@ -493,6 +546,7 @@ case "${USE_CASE}" in
     configPackages
     configHooks
     configIncludes
+    configGnomeShellExtensions
     fetchExternalPackages
     buildImage
     ;;

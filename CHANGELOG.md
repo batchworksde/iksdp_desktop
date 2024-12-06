@@ -3,6 +3,12 @@
 ## v0.3.0 - 2024/12/06
 
 * skip GNOME initial setup (issue [29](https://github.com/batchworksde/iksdp_desktop/issues/29))
+* install GNOME shell extensions (issue [4](https://github.com/batchworksde/iksdp_desktop/issues/4))
+    * [No overview at start-up](https://extensions.gnome.org/extension/4099/no-overview/)
+    * [ArcMenu](https://extensions.gnome.org/extension/3628/arcmenu/)
+    * [Dash to Panel](https://extensions.gnome.org/extension/1160/dash-to-panel/)
+    * [Dash2Dock Animated](https://extensions.gnome.org/extension/4994/dash2dock-lite/)
+    * [Gtk4 Desktop Icons NG (DING)](https://extensions.gnome.org/extension/5263/gtk4-desktop-icons-ng-ding/)
 
 ## v0.2.0 - 2024/11/10
 
