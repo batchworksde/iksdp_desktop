@@ -1,0 +1,8 @@
+[org/gnome/desktop/wm/preferences]
+button-layout=":minimize,maximize,close"
+
+[org/gnome/desktop/interface]
+enable-hot-corners=false
+
+# [org/gnome/desktop/interface]
+# cursor-size=32

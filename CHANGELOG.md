@@ -9,6 +9,7 @@
     * [Dash to Panel](https://extensions.gnome.org/extension/1160/dash-to-panel/)
     * [Dash2Dock Animated](https://extensions.gnome.org/extension/4994/dash2dock-lite/)
     * [Gtk4 Desktop Icons NG (DING)](https://extensions.gnome.org/extension/5263/gtk4-desktop-icons-ng-ding/)
+* configure GNOME (incl. shell extensions) with dconf (fixes issue [27](https://github.com/batchworksde/iksdp_desktop/issues/27) and [28](https://github.com/batchworksde/iksdp_desktop/issues/28))
 
 ## v0.2.0 - 2024/11/10
 
