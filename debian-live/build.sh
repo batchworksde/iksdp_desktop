@@ -131,6 +131,15 @@ function configHooks {
   fi
 }
 
+function configIncludes {
+  loginfo "${FUNCNAME[0]}" "Configure Debian Live includes.chroot"
+  rsync --archive --checksum -ihq "${WORK_DIR}"/debian-live/config/includes.chroot "${BUILD_DIR}"/config/
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "Debian Live includes.chroot failed"
+    exit 1
+  fi
+}
+
 function fetchExternalPackages {
   loginfo "${FUNCNAME[0]}" "Fetch external Debian packages"
 
@@ -464,6 +473,7 @@ case "${USE_CASE}" in
     configImage
     configPackages
     configHooks
+    configIncludes
     fetchExternalPackages
     createChangeLogForRelease
     createSourceArchive
@@ -482,6 +492,7 @@ case "${USE_CASE}" in
     configImage
     configPackages
     configHooks
+    configIncludes
     fetchExternalPackages
     buildImage
     ;;

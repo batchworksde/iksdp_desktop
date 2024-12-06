@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.0 - 2024/12/06
+
+* skip GNOME initial setup (issue [29](https://github.com/batchworksde/iksdp_desktop/issues/29))
+
 ## v0.2.0 - 2024/11/10
 
 * [Rustdesk Client](https://rustdesk.com/docs/en/client/)
