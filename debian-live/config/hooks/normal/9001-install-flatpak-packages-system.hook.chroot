@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -e
+set -u
+set -o pipefail
+
+for app in "${DEBIAN_FLATPAK_PACKAGES[@]}"; do
+  flatpak --system --assumeyes --noninteractive --or-update install flathub ${app}
+done

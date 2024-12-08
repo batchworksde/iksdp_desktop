@@ -360,7 +360,7 @@ function installPrerequisites {
   fi
 
   loginfo "${FUNCNAME[0]}" "Install packages"
-  sudo apt install --no-install-recommends --yes /tmp/live-build_"${DEBIAN_LIVE_BUILD_VERSION}"_all.deb debian-archive-keyring
+  sudo apt install --no-install-recommends --yes /tmp/live-build_"${DEBIAN_LIVE_BUILD_VERSION}"_all.deb debian-archive-keyring perl
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "apt install failed"
     exit 1
