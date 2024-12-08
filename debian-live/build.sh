@@ -129,6 +129,12 @@ function configHooks {
     logerror "${FUNCNAME[0]}" "Debian Live hook config failed"
     exit 1
   fi
+
+  envsubst '${DEBIAN_FLATPAK_PACKAGES}' < "${WORK_DIR}"/debian-live/config/hooks/normal/9000-install-flathub-flatpak-packages-system.hook.chroot.template > "${BUILD_DIR}"/config/hooks/normal/9000-install-flathub-flatpak-packages-system.hook.chroot
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "Debian Live envsubst for flatpak failed"
+    exit 1
+  fi
 }
 
 function fetchExternalPackages {
