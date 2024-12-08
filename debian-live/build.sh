@@ -130,7 +130,7 @@ function configHooks {
     exit 1
   fi
 
-  envsubst < "${BUILD_DIR}"/config/hooks/normal/9001-install-flatpak-packages-system.hook.chroot.template > "${BUILD_DIR}"/config/hooks/normal/9001-install-flatpak-packages-system.hook.chroot
+  envsubst < "${WORK_DIR}"/debian-live/config/hooks/normal/9001-install-flatpak-packages-system.hook.chroot.template > "${BUILD_DIR}"/config/hooks/normal/9001-install-flatpak-packages-system.hook.chroot
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Debian Live envsubst for flatpak failed"
     exit 1
