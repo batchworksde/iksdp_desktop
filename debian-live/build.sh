@@ -129,12 +129,12 @@ function configHooks {
     logerror "${FUNCNAME[0]}" "Debian Live hook config failed"
     exit 1
   fi
-  cp "${WORK_DIR}"/debian-live/build.env "${BUILD_DIR}"/config/hooks/normal/
+
+  envsubst < "${BUILD_DIR}"/config/hooks/normal/9001-install-flatpak-packages-system.hook.chroot.template > "${BUILD_DIR}"/config/hooks/normal/9001-install-flatpak-packages-system.hook.chroot
   if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "Debian Live hook build.env copy failed"
+    logerror "${FUNCNAME[0]}" "Debian Live envsubst for flatpak failed"
     exit 1
   fi
-  ls -lHa "${BUILD_DIR}"/config/hooks/normal/
 }
 
 function fetchExternalPackages {
