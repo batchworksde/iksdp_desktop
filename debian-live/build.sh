@@ -134,6 +134,7 @@ function configHooks {
     logerror "${FUNCNAME[0]}" "Debian Live hook build.env copy failed"
     exit 1
   fi
+  ls -lHa "${BUILD_DIR}"/config/hooks/normal/
 }
 
 function fetchExternalPackages {
