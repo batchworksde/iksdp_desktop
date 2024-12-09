@@ -64,7 +64,7 @@ When the build is successful, the `*.iso` file will be accessible in the directo
 ```sh
 grep BUILD_DIR debian-live/build.env
 BUILD_DIR="build"
-s -1 build/*.mso
+ls -1 build/*.mso
 build/debian-live-bookworm-0.2.0-20241209171119-arm64.hybrid.iso
 ```
 
