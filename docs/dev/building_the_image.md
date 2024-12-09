@@ -20,7 +20,7 @@ run the local build:
 ```bash
 git clone https://github.com/batchworksde/iksdp_desktop.git
 cd iksdp_desktop
-./debian-live/build.sh localBuild
+./debian-live/build.sh
 ```
 
 ***optional: using local apt proxy***
