@@ -22,3 +22,5 @@
 * vim, mc, screen, tmux, htop
 * Flatpak support with [Flathub](https://flathub.org/) repo added
 * Binary firmware for various drivers in the Linux kernel
+
+* Added arduino to Desktop Package Lists
