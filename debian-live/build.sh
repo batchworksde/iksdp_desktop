@@ -455,8 +455,10 @@ function checkChangedFiles {
   loginfo "${FUNCNAME[0]}" "Check for changes in debian-live folder"
   if git diff --name-only HEAD^ HEAD | grep --quiet '^debian-live/*'; then
     echo "run_buildImageRelease=true" >> "${GITHUB_OUTPUT}"
+    loginfo "${FUNCNAME[0]}" "run_buildImageRelease=true"
   else
     echo "run_buildImageRelease=false" >> "${GITHUB_OUTPUT}"
+    loginfo "${FUNCNAME[0]}" "run_buildImageRelease=false"
   fi
 }
 
