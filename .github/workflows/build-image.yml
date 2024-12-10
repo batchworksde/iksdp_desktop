@@ -23,7 +23,7 @@ jobs:
   buildImageRelease:
     runs-on: ubuntu-24.04
     needs: checkFileChanges
-    if: needs.checkFileChanges.outputs.run_buildImageRelease == 'true'
+    if: ${{ needs.checkFileChanges.outputs.run_buildImageRelease == 'true' }}
     permissions:
       contents: write
     steps:
