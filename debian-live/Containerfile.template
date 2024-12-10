@@ -1,0 +1,11 @@
+ARG debian_version
+FROM debian:$debian_version-slim
+
+{{ IMAGE_OPTIONS }}
+RUN apt-get update; \
+  apt-get install -y --no-install-recommends curl sudo ca-certificates jq; \
+  apt-get clean all; \
+  rm -rf /var/lib/apt/lists/*
+
+WORKDIR "/iksdp_desktop"
+CMD ["debian-live/build.sh"]
