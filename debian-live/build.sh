@@ -7,7 +7,8 @@ declare USE_CASE WORK_DIR BUILD_DIR
 
 USE_CASE=${1-localBuild}
 WORK_DIR="$(pwd)"
-BUILD_DIR="${HOME}/build"
+#BUILD_DIR="${HOME}/build"
+DEBIAN_ARCH=$(dpkg --print-architecture)
 
 export USE_CASE WORK_DIR BUILD_DIR
 
@@ -46,6 +47,21 @@ function createBuildDir {
       logerror "${FUNCNAME[0]}" "build directory creation failed"
       exit 1
     fi
+  fi
+}
+
+function configBootSplash {
+  loginfo "${FUNCNAME[0]}" "Configure boot splash"
+  mkdir -p "${BUILD_DIR}"/config/bootloaders/grub-pc
+  mkdir -p "${BUILD_DIR}"/config/bootloaders/grub-efi
+
+  # imagemagick is needed
+  convert "${WORK_DIR}"/debian-live/config/bootloaders/grub-pc/splash.png -gravity North -pointsize 14 -fill white -annotate +100+100 "Image version: ${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"  "${BUILD_DIR}"/config/bootloaders/grub-pc/splash.png
+  convert "${WORK_DIR}"/debian-live/config/bootloaders/grub-pc/splash.png -gravity North -pointsize 14 -fill white -annotate +100+100 "Image version: ${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"  "${BUILD_DIR}"/config/bootloaders/grub-efi/splash.png
+
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "create spash screen failed"
+    exit 1
   fi
 }
 
@@ -482,6 +498,7 @@ case "${USE_CASE}" in
     configImage
     configPackages
     configHooks
+    configBootSplash
     fetchExternalPackages
     buildImage
     ;;
