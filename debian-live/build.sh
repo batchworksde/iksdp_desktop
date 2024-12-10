@@ -451,6 +451,15 @@ function uploadIso {
   fi
 }
 
+function checkChangedFiles {
+  loginfo "${FUNCNAME[0]}" "Check for changes in debian-live folder"
+  if git diff --name-only HEAD^ HEAD | grep --quiet '^debian-live/*'; then
+    echo "run_buildImageRelease=true" >> "${GITHUB_OUTPUT}"
+  else
+    echo "run_buildImageRelease=false" >> "${GITHUB_OUTPUT}"
+  fi
+}
+
 importEnvVars
 case "${USE_CASE}" in
   "prepareEnvironment")
