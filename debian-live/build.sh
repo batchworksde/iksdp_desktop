@@ -464,6 +464,9 @@ function checkChangedFiles {
 
 importEnvVars
 case "${USE_CASE}" in
+  "checkChangedFiles")
+    checkChangedFiles
+    ;;
   "prepareEnvironment")
     prepareEnvironment
     ;;
