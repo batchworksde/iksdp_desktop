@@ -130,7 +130,7 @@ function configHooks {
     exit 1
   fi
 
-  envsubst '${DEBIAN_FLATPAK_PACKAGES}' < "${WORK_DIR}"/debian-live/config/hooks/normal/9000-install-flathub-flatpak-packages-system.hook.chroot.template > "${BUILD_DIR}"/config/hooks/normal/9000-install-flathub-flatpak-packages-system.hook.chroot
+  envsubst '${DEBIAN_FLATPAK_PACKAGES}' <"${WORK_DIR}"/debian-live/config/hooks/normal/9000-install-flathub-flatpak-packages-system.hook.chroot.template >"${BUILD_DIR}"/config/hooks/normal/9000-install-flathub-flatpak-packages-system.hook.chroot
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Debian Live envsubst for flatpak failed"
     exit 1
@@ -453,12 +453,25 @@ function uploadIso {
 
 function checkChangedFiles {
   loginfo "${FUNCNAME[0]}" "Check for changes in debian-live folder"
-  if git diff --name-only HEAD^ HEAD | grep --quiet '^debian-live/*'; then
-    echo "run_buildImageRelease=true" >> "${GITHUB_OUTPUT}"
-    loginfo "${FUNCNAME[0]}" "run_buildImageRelease=true"
-  else
-    echo "run_buildImageRelease=false" >> "${GITHUB_OUTPUT}"
-    loginfo "${FUNCNAME[0]}" "run_buildImageRelease=false"
+  local folderList
+
+  folderList=($(git diff --name-only origin/main..."$(git rev-parse HEAD)"))
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "git diff failed"
+    exit 1
+  fi
+
+  if [ "${#folderList[*]}" -gt 0 ]; then
+    for folder in "${folderList[@]}"; do
+      if echo "${folder}" | grep --quiet '^debian-live/*'; then
+        echo "run_buildImageRelease=true" >>"${GITHUB_OUTPUT}"
+        loginfo "${FUNCNAME[0]}" "run_buildImageRelease=true"
+        break
+      else
+        echo "run_buildImageRelease=false" >>"${GITHUB_OUTPUT}"
+        loginfo "${FUNCNAME[0]}" "run_buildImageRelease=false"
+      fi
+    done
   fi
 }
 

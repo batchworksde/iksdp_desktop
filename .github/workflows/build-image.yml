@@ -17,13 +17,15 @@ jobs:
     steps:
       - name: checkout code
         uses: "actions/checkout@v4"
+        with:
+          fetch-depth: 0
       - name: check changed files
         id: checkFiles
         run: debian-live/build.sh checkChangedFiles
   buildImageRelease:
     runs-on: ubuntu-24.04
     needs: checkFileChanges
-    if: ${{ needs.checkFileChanges.outputs.run_buildImageRelease == 'true' }}
+    if: ${{ needs.checkFileChanges.outputs.run_buildImageRelease }}
     permissions:
       contents: write
     steps:
