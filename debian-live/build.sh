@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2181,SC2016,SC2164
 set +e
 set -u
 set -o pipefail
@@ -51,7 +52,13 @@ function createBuildDir {
 
 function cleanupConfig {
   loginfo "${FUNCNAME[0]}" "Clean up build directory"
+
   cd "${BUILD_DIR}"
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "cd ${BUILD_DIR} failed"
+    exit 1
+  fi
+
   sudo lb clean
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "live-build cleanup failed"
@@ -67,6 +74,10 @@ function cleanupConfig {
   fi
 
   cd "${WORK_DIR}"
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "cd ${WORK_DIR} failed"
+    exit 1
+  fi
 }
 
 function configImage {
@@ -84,6 +95,11 @@ function configImage {
   fi
 
   cd "${BUILD_DIR}"
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "cd ${BUILD_DIR} failed"
+    exit 1
+  fi
+
   lb config \
     --distribution "${DEBIAN_VERSION}" \
     --mirror-bootstrap "${DEBIAN_MIRROR}" \
@@ -110,12 +126,17 @@ function configImage {
     logerror "${FUNCNAME[0]}" "Debian image configuration failed"
     exit 1
   fi
+
   cd "${WORK_DIR}"
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "cd ${WORK_DIR} failed"
+    exit 1
+  fi
 }
 
 function configPackages {
   loginfo "${FUNCNAME[0]}" "Configure Debian package list"
-  cp "${WORK_DIR}"/debian-live/config/package-lists/*.chroot "${BUILD_DIR}"/config/package-lists/
+  yq '.packages.debian | select(.enable) | .app[] | select(.enable) | .name' package.yaml >"${BUILD_DIR}"/config/package-lists/debian.chroot
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Debian package list config failed"
     exit 1
@@ -124,13 +145,21 @@ function configPackages {
 
 function configHooks {
   loginfo "${FUNCNAME[0]}" "Configure Debian Live build hooks"
+  local DEBIAN_FLATPAK_PACKAGES
+
   cp "${WORK_DIR}"/debian-live/config/hooks/normal/*.hook.chroot "${BUILD_DIR}"/config/hooks/normal/
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Debian Live hook config failed"
     exit 1
   fi
 
-  envsubst '${DEBIAN_FLATPAK_PACKAGES}' < "${WORK_DIR}"/debian-live/config/hooks/normal/9000-install-flathub-flatpak-packages-system.hook.chroot.template > "${BUILD_DIR}"/config/hooks/normal/9000-install-flathub-flatpak-packages-system.hook.chroot
+  DEBIAN_FLATPAK_PACKAGES=$(yq '.packages.flatpak | select(.enable) | .flathub | select(.enable) | .app | filter(.enable) | map (.name) | join (" ")' package.yaml)
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" ".packages.flatpak parsing failed"
+    exit 1
+  fi
+
+  envsubst '${DEBIAN_FLATPAK_PACKAGES}' <"${WORK_DIR}"/debian-live/config/hooks/normal/9000-install-flathub-flatpak-packages-system.hook.chroot.template >"${BUILD_DIR}"/config/hooks/normal/9000-install-flathub-flatpak-packages-system.hook.chroot
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Debian Live envsubst for flatpak failed"
     exit 1
@@ -139,57 +168,112 @@ function configHooks {
 
 function fetchExternalPackages {
   loginfo "${FUNCNAME[0]}" "Fetch external Debian packages"
+  local vendorpackagelist githubpackagelist
 
+  vendorpackagelist="$(yq '.packages.vendor | select(.enable) | .app[] | select(.enable) | .name' package.yaml)"
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" ".packages.vendor parsing failed"
+    exit 1
+  fi
+
+  for package in "${vendorpackagelist[@]}"; do
+    case "${package}" in
+      "zoom")
+        downloadZoomClient
+        ;;
+      "*")
+        logerror "${FUNCNAME[0]}" "No ${package} external package definition found"
+        exit 1
+        ;;
+    esac
+  done
+
+  readarray githubpackagelist < <(yq --output-format json --indent 0 '.packages.github | select(.enable) | .app | filter(.enable) | .[]' package.yaml)
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" ".packages.github parsing failed"
+    exit 1
+  fi
+
+  for package in "${githubpackagelist[@]}"; do
+    downloadGithubRelease "${package}"
+  done
+}
+
+function downloadZoomClient {
+  loginfo "${FUNCNAME[0]}" "Zoom package download started"
   curl --silent --location https://zoom.us/client/latest/zoom_amd64.deb --output "${BUILD_DIR}"/config/packages.chroot/zoom_amd64.deb
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Zoom client download failed"
     exit 1
   fi
   loginfo "${FUNCNAME[0]}" "Zoom package download done"
-
-  downloadGithubRelease rustdesk rustdesk latest "x86_64"
 }
 
 function downloadGithubRelease {
-  if [ -n "${1}" ] && [ -n "${2}" ] && [ -n "${3}" ] && [ -n "${4}" ]; then
-    local repo org version apiversion apimimetype targetfolder dlversion dlname dlarch
-    repo="${1}"
-    org="${2}"
-    version="${3}"
-    suffix="${4}"
+  if [ -n "${1}" ]; then
+    local repo org suffix releases url version apiversion apimimetype targetfolder dlversion dlname dlarch
+
     apiversion="X-GitHub-Api-Version: 2022-11-28"
     apimimetype="Accept: application/vnd.github+json"
     targetfolder="${BUILD_DIR}/config/packages.chroot"
 
-    if [ "${version}" == "latest" ]; then
-      version="$(curl --silent --header "${apimimetype}" --header "${apiversion}" https://api.github.com/repos/"${org}"/"${repo}"/releases/latest | jq -r .name)"
-      if [ "$?" -ne 0 ]; then
-        logerror "${FUNCNAME[0]}" "${repo} release version check failed"
-        exit 1
-      fi
+    repo="$(echo "${1}" | yq --input-format json '.repo')"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "Unable to parse .packages.github.app[].repo"
+      exit 1
     fi
 
-    curl --silent --location https://github.com/"${org}"/"${repo}"/releases/download/"${version}"/"${repo}"-"${version}"-"${suffix}".deb --output "${targetfolder}/${repo}-${suffix}.deb"
+    org="$(echo "${1}" | yq --input-format json '.org')"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "Unable to parse .packages.github.app[].org"
+      exit 1
+    fi
+
+    suffix="$(echo "${1}" | yq --input-format json '.artifactsuffix')"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "Unable to parse .packages.github.app[].artifactsuffix"
+      exit 1
+    fi
+
+    releases="$(curl --silent --header "${apimimetype}" --header "${apiversion}" https://api.github.com/repos/"${org}"/"${repo}"/releases/latest)"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "Github release list download failed"
+      exit 1
+    fi
+
+    url="$(echo "${releases}" | yq --input-format json ".assets[] | select(.name == \"*-${suffix}.deb\") | .browser_download_url")"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "${repo} release url check failed"
+      exit 1
+    fi
+
+    version="$(echo "${releases}" | yq --input-format json '.name')"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "${repo} release version check failed"
+      exit 1
+    fi
+
+    curl --silent --location "${url}" --output "${targetfolder}/${repo}-${suffix}.deb"
     if [ "$?" -ne 0 ]; then
       logerror "${FUNCNAME[0]}" "${repo} download failed"
       exit 1
     fi
 
-    dlname="$(dpkg-deb --field ${targetfolder}/${repo}-${suffix}.deb name)"
+    dlname="$(dpkg-deb --field "${targetfolder}"/"${repo}"-"${suffix}".deb name)"
     if [ "$?" -ne 0 ]; then
-      logerror "${FUNCNAME[0]}" "${repo} package check failed"
+      logerror "${FUNCNAME[0]}" "${repo} package name check failed"
       exit 1
     fi
 
-    dlarch="$(dpkg-deb --field ${targetfolder}/${repo}-${suffix}.deb architecture)"
+    dlarch="$(dpkg-deb --field "${targetfolder}"/"${repo}"-"${suffix}".deb architecture)"
     if [ "$?" -ne 0 ]; then
-      logerror "${FUNCNAME[0]}" "${repo} package check failed"
+      logerror "${FUNCNAME[0]}" "${repo} package architecture check failed"
       exit 1
     fi
 
-    dlversion="$(dpkg-deb --field ${targetfolder}/${repo}-${suffix}.deb version)"
+    dlversion="$(dpkg-deb --field "${targetfolder}"/"${repo}"-"${suffix}".deb version)"
     if [ "$?" -ne 0 ]; then
-      logerror "${FUNCNAME[0]}" "${repo} package check failed"
+      logerror "${FUNCNAME[0]}" "${repo} package version check failed"
       exit 1
     fi
 
@@ -200,7 +284,7 @@ function downloadGithubRelease {
 
     if [ "${targetfolder}/${repo}-${suffix}.deb" != "${targetfolder}/${dlname}_${dlversion}_${dlarch}.deb" ]; then
       mv "${targetfolder}/${repo}-${suffix}.deb" "${targetfolder}/${dlname}_${dlversion}_${dlarch}.deb"
-      if [ "${version}" != "${dlversion}" ]; then
+      if [ "$?" -ne 0 ]; then
         logerror "${FUNCNAME[0]}" "${repo} package rename failed"
         exit 1
       fi
@@ -208,30 +292,50 @@ function downloadGithubRelease {
 
     loginfo "${FUNCNAME[0]}" "${repo} package download done"
   else
-    logerror "${FUNCNAME[0]}" "at least one parameter is missing"
+    logerror "${FUNCNAME[0]}" "package json parameter is missing"
     exit 1
   fi
 }
 
 function buildImage {
   loginfo "${FUNCNAME[0]}" "Build the Debian image"
+
   cd "${BUILD_DIR}"
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "cd ${BUILD_DIR} failed"
+    exit 1
+  fi
+
   sudo lb build 2>&1 | tee debian-live-"${DEBIAN_VERSION}"-"${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"-"${DEBIAN_ARCH}".log
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Debian image build failed"
     exit 1
   fi
+
   cd "${WORK_DIR}"
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "cd ${WORK_DIR} failed"
+    exit 1
+  fi
 }
 
 function prepareEnvironment {
+  declare IMAGE_TIMESTAMP
+
+  IMAGE_TIMESTAMP="$(date +%Y%m%d%H%M%S)"
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "IMAGE_TIMESTAMP env var setup failed"
+    exit 1
+  fi
+
+  export IMAGE_TIMESTAMP
+
   if [ -z ${GITHUB_ACTIONS+x} ]; then
     loginfo "${FUNCNAME[0]}" "No Github action, so skip prepareEnvironment"
-    export IMAGE_TIMESTAMP="$(date +%Y%m%d%H%M%S)"
   else
     loginfo "${FUNCNAME[0]}" "Set Github env vars"
 
-    echo "IMAGE_TIMESTAMP=$(date +%Y%m%d%H%M%S)" >>"${GITHUB_ENV}"
+    echo "IMAGE_TIMESTAMP=${IMAGE_TIMESTAMP}" >>"${GITHUB_ENV}"
     if [ "$?" -ne 0 ]; then
       logerror "${FUNCNAME[0]}" "IMAGE_TIMESTAMP env var setup failed"
       exit 1
@@ -454,10 +558,10 @@ function uploadIso {
 function checkChangedFiles {
   loginfo "${FUNCNAME[0]}" "Check for changes in debian-live folder"
   if git diff --name-only HEAD^ HEAD | grep --quiet '^debian-live/*'; then
-    echo "run_buildImageRelease=true" >> "${GITHUB_OUTPUT}"
+    echo "run_buildImageRelease=true" >>"${GITHUB_OUTPUT}"
     loginfo "${FUNCNAME[0]}" "run_buildImageRelease=true"
   else
-    echo "run_buildImageRelease=false" >> "${GITHUB_OUTPUT}"
+    echo "run_buildImageRelease=false" >>"${GITHUB_OUTPUT}"
     loginfo "${FUNCNAME[0]}" "run_buildImageRelease=false"
   fi
 }
