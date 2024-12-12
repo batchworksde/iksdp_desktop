@@ -2,14 +2,30 @@ name: build Debian Live image
 on:
   push:
     branches-ignore:
-      - 'main'
+      - "main"
     paths:
       - "debian-live/build.env"
       - "debian-live/build.sh"
       - "debian-live/config/**"
 jobs:
+  checkFileChanges:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    outputs:
+      run_buildImageRelease: ${{ steps.checkFiles.outputs.run_buildImageRelease }}
+    steps:
+      - name: checkout code
+        uses: "actions/checkout@v4"
+        with:
+          fetch-depth: 0
+      - name: check changed files
+        id: checkFiles
+        run: debian-live/build.sh checkChangedFiles
   buildImageRelease:
     runs-on: ubuntu-24.04
+    needs: checkFileChanges
+    if: ${{ needs.checkFileChanges.outputs.run_buildImageRelease }}
     permissions:
       contents: write
     steps:
@@ -35,7 +51,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           name: iksdp-desktop-${{ env.RELEASE_VERSION }}
-          artifacts: "${{ env.BUILD_DIR }}/iksdp-desktop-source-${{ env.RELEASE_VERSION }}.tar.gz" 
+          artifacts: "${{ env.BUILD_DIR }}/iksdp-desktop-source-${{ env.RELEASE_VERSION }}.tar.gz"
           bodyFile: "${{ env.BUILD_DIR }}/changeLogForRelease.md"
           tag: "v${{ env.RELEASE_VERSION }}"
           draft: true

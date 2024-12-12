@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -e
+set -u
+set -o pipefail
+
+declare -a APPS
+APPS=(${DEBIAN_FLATPAK_PACKAGES})
+
+if [ "${#APPS[*]}" -gt 0 ]; then
+  flatpak --system remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+  for app in "${APPS[@]}"; do
+    flatpak install --system --assumeyes --noninteractive --or-update flathub ${app}
+  done
+
+  flatpak --system --force remote-delete flathub
+fi
