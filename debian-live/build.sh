@@ -83,6 +83,10 @@ function configImage {
     liveConfigOptions+=" nopersistence"
   fi
 
+  if [ "${DEBIAN_MEDIUM_NOEJECT}" == "true" ]; then
+    liveConfigOptions+=" noeject"
+  fi
+
   cd "${BUILD_DIR}"
   lb config \
     --distribution "${DEBIAN_VERSION}" \
