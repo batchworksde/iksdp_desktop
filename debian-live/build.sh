@@ -83,6 +83,10 @@ function configImage {
     liveConfigOptions+=" nopersistence"
   fi
 
+  if [ "${DEBIAN_MEDIUM_NOEJECT}" == "true" ]; then
+    liveConfigOptions+=" noeject"
+  fi
+
   cd "${BUILD_DIR}"
   lb config \
     --distribution "${DEBIAN_VERSION}" \
@@ -91,7 +95,7 @@ function configImage {
     --mirror-binary "${DEBIAN_MIRROR}" \
     --mirror-chroot-security "${DEBIAN_SEC_MIRROR}" \
     --mirror-binary-security "${DEBIAN_SEC_MIRROR}" \
-    --backports true \
+    --backports ${DEBIAN_BACKPORTS} \
     --updates true \
     --security true \
     --architectures "${DEBIAN_ARCH}" \
@@ -104,7 +108,7 @@ function configImage {
     --chroot-squashfs-compression-type "${DEBIAN_SQUASHFS_COMPRESSION_TYPE}" \
     --compression xz \
     --archive-areas "main non-free-firmware" \
-    --bootappend-live "boot=live config hostname=iksdp-${RELEASE_VERSION} locales=${DEBIAN_LOCALES} keyboard-layouts=${DEBIAN_KEYBOARD_LAYOUTS} timezone=${DEBIAN_TIMEZONE} ${liveConfigOptions}" \
+    --bootappend-live "boot=live config hostname=iksdp-${RELEASE_VERSION} locales=${DEBIAN_LOCALES} keyboard-layouts=${DEBIAN_KEYBOARD_LAYOUTS} timezone=${DEBIAN_TIMEZONE} username=${DEBIAN_USERNAME} ${liveConfigOptions}" \
     --image-name debian-live-"${DEBIAN_VERSION}"-"${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Debian image configuration failed"
