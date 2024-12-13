@@ -95,7 +95,7 @@ function configImage {
     --mirror-binary "${DEBIAN_MIRROR}" \
     --mirror-chroot-security "${DEBIAN_SEC_MIRROR}" \
     --mirror-binary-security "${DEBIAN_SEC_MIRROR}" \
-    --backports true \
+    --backports ${DEBIAN_BACKPORTS} \
     --updates true \
     --security true \
     --architectures "${DEBIAN_ARCH}" \
