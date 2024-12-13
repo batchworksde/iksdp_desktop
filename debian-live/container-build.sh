@@ -34,18 +34,27 @@ function checkContainerCommand {
 }
 
 function buildBootstrapImage {
-  local useAptCacheAnswer useAptCache aptCacheUrlAnswer aptCacheUrl containerfileTemplatePath containerfilePath imageOptions
+  local useAptCacheAnswer useAptCache aptCacheUrlAnswer aptCacheUrl containerfileTemplatePath containerfilePath imageOptions WORK_DIR BUILD_DIR
   useAptCacheAnswer=""
   useAptCache=true
   aptCacheUrlAnswer=""
   aptCacheUrl="http://localhost:3142"
+  WORK_DIR="$(pwd)"
+  BUILD_DIR="${WORK_DIR}/build"
   containerfileTemplatePath="$(pwd)/debian-live/Containerfile.template"
-  containerfilePath="$(pwd)/debian-live/Containerfile"
+  containerfilePath="${BUILD_DIR}/Containerfile"
   imageOptions=""
 
   if [ ! -f "${containerfileTemplatePath}" ]; then
     echo "Containerfile.template not found at ${containerfileTemplatePath}."
     exit 1
+  fi
+
+  if [ ! -d "${BUILD_DIR}" ]; then
+    mkdir "${BUILD_DIR}"
+    if [ "$?" -ne 0 ]; then
+      exit 1
+    fi
   fi
 
   read -r -n 1 -p "Use apt caching proxy (highly recommended)? [Y|n]: " useAptCacheAnswer

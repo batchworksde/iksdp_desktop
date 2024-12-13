@@ -7,7 +7,7 @@ declare USE_CASE WORK_DIR BUILD_DIR
 
 USE_CASE=${1-localBuild}
 WORK_DIR="$(pwd)"
-BUILD_DIR="${HOME}/build"
+BUILD_DIR="${WORK_DIR}/build"
 
 export USE_CASE WORK_DIR BUILD_DIR
 
