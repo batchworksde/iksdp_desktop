@@ -1,0 +1,201 @@
+packages:
+  debian:
+    enable: true
+    app:
+      gnomedesktop:
+        enable: true
+        name: task-gnome-desktop
+      germandesktop:
+        enable: true
+        name: task-german-desktop
+      chromium:
+        enable: true
+        name: chromium
+      ublockchromium:
+        enable: true
+        name: webext-ublock-origin-chromium  
+      firefoxesr:
+        enable: true
+        name: firefox-esr
+      ublockfirefox:
+        enable: true
+        name: webext-ublock-origin-firefox  
+      libreoffice:
+        enable: true
+        name: libreoffice
+      mplayer:
+        enable: true
+        name: mplayer
+      vlc:
+        enable: true
+        name: vlc
+      supertux:
+        enable: true
+        name: supertux
+      torcs:
+        enable: true
+        name: torcs
+      gnomeboxes:
+        enable: true
+        name: gnome-boxes
+      gnomebuilder:
+        enable: true
+        name: gnome-builder
+      gnomebluetoothsendto:
+        enable: true
+        name: gnome-bluetooth-sendto
+      gnomeconnections:
+        enable: true
+        name: gnome-connections
+      handbrake:
+        enable: true
+        name: handbrake
+      inkscape:
+        enable: true
+        name: inkscape
+      darktable:
+        enable: true
+        name: darktable
+      scribus:
+        enable: true
+        name: scribus
+      apostrophe:  
+        enable: true
+        name: apostrophe  
+      gnomesoftwarepluginflatpak:
+        enable: true
+        name: gnome-software-plugin-flatpak
+      keepassxc:
+        enable: true
+        name: keepassxc
+      webextkeepassxcbrowser:
+        enable: true
+        name: webext-keepassxc-browser
+      obs-studio:
+        enable: true
+        name: obs-studio
+      golang:
+        enable: true
+        name: golang
+      python3:
+        enable: true
+        name: python3
+      python3venv:
+        enable: true
+        name: python3-venv
+      python3pip:
+        enable: true
+        name: python3-pip
+      rustall:
+        enable: true
+        name: rust-all
+      scratch:
+        enable: true
+        name: scratch
+      alsautils:
+        enable: true
+        name: alsa-utils
+      curl:
+        enable: true
+        name: curl
+      dosfstools:
+        enable: true
+        name: dosfstools
+      ethtool:
+        enable: true
+        name: ethtool
+      htop:
+        enable: true
+        name: htop
+      iw:
+        enable: true
+        name: iw
+      less:
+        enable: true
+        name: less
+      links2:
+        enable: true
+        name: links2
+      jq:
+        enable: true
+        name: jq
+      mc:
+        enable: true
+        name: mc
+      ntfs3g:
+        enable: true
+        name: ntfs-3g
+      screen:
+        enable: true
+        name: screen
+      sm:
+        enable: true
+        name: sm
+      ssh:
+        enable: true
+        name: ssh
+      strace:
+        enable: true
+        name: strace
+      tcpdump:
+        enable: true
+        name: tcpdump
+      tmux:
+        enable: true
+        name: tmux
+      vim:
+        enable: true
+        name: vim
+      wget:
+        enable: true
+        name: wget
+      podman:
+        enable: true
+        name: podman
+      cups:
+        enable: true
+        name: cups
+      firmwareiwlwifi:
+        enable: true
+        name: firmware-iwlwifi
+      firmwaremiscnonfree:
+        enable: true
+        name: firmware-misc-nonfree
+      liveconfig:
+        enable: true
+        name: live-config
+      wpasupplicant:
+        enable: true
+        name: wpasupplicant
+      taskenglish:
+        enable: true
+        name: task-english
+      taskgerman:
+        enable: true
+        name: task-german
+      flatpak:
+        enable: true
+        name: flatpak
+  github:
+    enable: true
+    app:
+      rustdesk:
+        enable: true
+        repo: rustdesk
+        org: rustdesk
+        artifactsuffix: "-x86_64"
+  vendor:
+    enable: true
+    app:
+      zoom:
+        name: zoom
+        enable: true
+  flatpak:
+    enable: true
+    flathub:
+      enable: true
+      app:
+        chrome:
+          enable: false
+          name: com.google.Chrome
+          
