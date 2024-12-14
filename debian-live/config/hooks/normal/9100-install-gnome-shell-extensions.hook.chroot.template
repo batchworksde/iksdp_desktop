@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -e
+set -u
+set -o pipefail
+
+declare -a EXTENSIONS
+EXTENSIONS=(${GNOME_SHELL_EXTENSIONS})
+EXTENSIONS_TARGET_DIR="/usr/share/gnome-shell/extensions"
+
+# get gnome shell version
+gnome_shell_version="$(gnome-shell --version 2> /dev/null | sed -n "s/^.* \([0-9]\+\.[0-9]\+\).*$/\1/p")"
+
+for extension in "${EXTENSIONS[@]}"; do
+  # get latest version of shell extensions
+  extension_info=$(curl --silent "https://extensions.gnome.org/extension-info/?pk=${extension}&shell_version=${gnome_shell_version}")
+  extension_uuid=$(echo ${extension_info} | jq -r ".uuid")
+  extension_download="https://extensions.gnome.org"$(echo ${extension_info} | jq -r ".download_url")
+
+  # download shell extension
+  curl --silent --location ${extension_download} --output ${EXTENSIONS_TARGET_DIR}/${extension}.zip
+
+  # unzip shell extension
+  unzip -qq ${EXTENSIONS_TARGET_DIR}/${extension}.zip -d ${EXTENSIONS_TARGET_DIR}/${extension_uuid}
+  chmod +r ${EXTENSIONS_TARGET_DIR}/${extension_uuid}/*
+
+  # delete zip file
+  rm ${EXTENSIONS_TARGET_DIR}/${extension}.zip
+done

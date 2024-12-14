@@ -140,6 +140,12 @@ function configImage {
 
 function configPackages {
   loginfo "${FUNCNAME[0]}" "Configure Debian package list"
+  cp "${WORK_DIR}"/debian-live/config/package-lists/hooks.chroot "${BUILD_DIR}"/config/package-lists/
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "Debian package list config for hooks failed"
+    exit 1
+  fi
+
   yq '.packages.debian | select(.enable) | .app[] | select(.enable) | .name' "${WORK_DIR}"/debian-live/package.yaml >"${BUILD_DIR}"/config/package-lists/debian.list.chroot
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Debian package list config failed"
@@ -166,6 +172,18 @@ function configHooks {
   envsubst '${DEBIAN_FLATPAK_PACKAGES}' <"${WORK_DIR}"/debian-live/config/hooks/normal/9000-install-flathub-flatpak-packages-system.hook.chroot.template >"${BUILD_DIR}"/config/hooks/normal/9000-install-flathub-flatpak-packages-system.hook.chroot
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Debian Live envsubst for flatpak failed"
+    exit 1
+  fi
+
+  GNOME_SHELL_EXTENSIONS="$(yq '.packages.gnome-shell | select(.enable) | .extension | filter(.enable) | map (.id) | join (" ")' "${WORK_DIR}"/debian-live/package.yaml)"
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" ".packages.gnome-shell parsing failed"
+    exit 1
+  fi
+
+  envsubst '${GNOME_SHELL_EXTENSIONS}' <"${WORK_DIR}"/debian-live/config/hooks/normal/9100-install-gnome-shell-extensions.hook.chroot.template >"${BUILD_DIR}"/config/hooks/normal/9100-install-gnome-shell-extensions.hook.chroot
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "Debian Live envsubst for gnome shell extensions failed"
     exit 1
   fi
 }

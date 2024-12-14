@@ -198,4 +198,21 @@ packages:
         chrome:
           enable: false
           name: com.google.Chrome
-          
+  gnome-shell:
+    enable: true
+    extension:
+      no-overview:
+        enable: true
+        id: 4099
+      das-to-panel:
+        enable: true
+        id: 1160
+      dash2dock-animated:
+        enable: true
+        id: 4994
+      arcmenu:
+        enable: true
+        id: 3628
+      gtk4-desktop-icons-ng:
+        enable: true
+        id: 5263
