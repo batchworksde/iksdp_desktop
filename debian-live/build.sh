@@ -140,7 +140,7 @@ function configImage {
 
 function configPackages {
   loginfo "${FUNCNAME[0]}" "Configure Debian package list"
-  cp "${WORK_DIR}"/debian-live/config/package-lists/hooks.chroot "${BUILD_DIR}"/config/package-lists/
+  cp "${WORK_DIR}"/debian-live/config/package-lists/hooks.list.chroot "${BUILD_DIR}"/config/package-lists/
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Debian package list config for hooks failed"
     exit 1
