@@ -155,7 +155,7 @@ function configPackages {
 
 function configHooks {
   loginfo "${FUNCNAME[0]}" "Configure Debian Live build hooks"
-  local DEBIAN_FLATPAK_PACKAGES
+  local DEBIAN_FLATPAK_PACKAGES GNOME_SHELL_EXTENSIONS
 
   cp "${WORK_DIR}"/debian-live/config/hooks/normal/*.hook.chroot "${BUILD_DIR}"/config/hooks/normal/
   if [ "$?" -ne 0 ]; then
