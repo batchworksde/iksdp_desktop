@@ -4,13 +4,15 @@ set +e
 set -u
 set -o pipefail
 
-declare USE_CASE WORK_DIR BUILD_DIR IMAGE_TIMESTAMP
+declare USE_CASE WORK_DIR BUILD_DIR IMAGE_TIMESTAMP GITHUB_API_VERSION GITHUB_API_MIMETYPE
 
 USE_CASE=${1-localBuild}
 WORK_DIR="$(pwd)"
 BUILD_DIR="${WORK_DIR}/build"
+GITHUB_API_VERSION="X-GitHub-Api-Version: 2022-11-28"
+GITHUB_API_MIMETYPE="Accept: application/vnd.github+json"
 
-export USE_CASE WORK_DIR BUILD_DIR
+export USE_CASE WORK_DIR BUILD_DIR GITHUB_API_VERSION GITHUB_API_MIMETYPE
 
 function logjson {
   printf "{\"@timestamp\":\"%s\",\"ecs.version\":\"1.6.0\",\"log.logger\":\"%s\",\"log.origin.function\":\"%s\",\"log.level\":\"%s\",\"message\":\"%s\"}\n" "$(date +%Y-%m-%dT%H:%M:%S+%Z)" "$3" "$4" "$2" "$5" >>/dev/"$1"
@@ -242,10 +244,8 @@ function downloadZoomClient {
 
 function downloadGithubRelease {
   if [ -n "${1}" ]; then
-    local repo org suffix releases url version apiversion apimimetype targetfolder dlversion dlname dlarch
+    local repo org suffix releases url version targetfolder dlversion dlname dlarch
 
-    apiversion="X-GitHub-Api-Version: 2022-11-28"
-    apimimetype="Accept: application/vnd.github+json"
     targetfolder="${BUILD_DIR}/config/packages.chroot"
 
     repo="$(echo "${1}" | yq --input-format json '.repo')"
@@ -268,7 +268,7 @@ function downloadGithubRelease {
 
     loginfo "${FUNCNAME[0]}" "${repo} package download started"
 
-    releases="$(curl --silent --header "${apimimetype}" --header "${apiversion}" https://api.github.com/repos/"${org}"/"${repo}"/releases/latest)"
+    releases="$(curl --silent --header "${GITHUB_API_MIMETYPE}" --header "${GITHUB_API_VERSION}" https://api.github.com/repos/"${org}"/"${repo}"/releases/latest)"
     if [ "$?" -ne 0 ]; then
       logerror "${FUNCNAME[0]}" "Github release list download failed"
       exit 1
@@ -360,9 +360,7 @@ function prepareEnvironment {
   fi
   export IMAGE_TIMESTAMP
 
-  if [ -z ${GITHUB_ACTIONS+x} ]; then
-    loginfo "${FUNCNAME[0]}" "No Github action, so skip prepareEnvironment"
-  else
+  if isGithubRunner; then
     loginfo "${FUNCNAME[0]}" "Set Github env vars"
 
     echo "IMAGE_TIMESTAMP=${IMAGE_TIMESTAMP}" >>"${GITHUB_ENV}"
@@ -371,6 +369,8 @@ function prepareEnvironment {
     echo "DEBIAN_ARCH=${DEBIAN_ARCH}" >>"${GITHUB_ENV}"
     echo "BUILD_DIR=${BUILD_DIR}" >>"${GITHUB_ENV}"
     echo "WORK_DIR=${WORK_DIR}" >>"${GITHUB_ENV}"
+  else
+    loginfo "${FUNCNAME[0]}" "No Github action, so skip prepareEnvironment"
   fi
 }
 
@@ -490,16 +490,80 @@ function installPrerequisites {
     fi
   done
 
+  downloadYq
+  downloadTrivy
+}
+
+function downloadYq {
   loginfo "${FUNCNAME[0]}" "Install yq"
+
   sudo curl --silent --location https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 --output /usr/local/bin/yq
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "yq download failed"
     exit 1
   fi
+
   sudo chmod 755 /usr/local/bin/yq
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "yq permission update failed"
     exit 1
+  fi
+
+  loginfo "${FUNCNAME[0]}" "yq installation done"
+}
+
+function downloadTrivy {
+  if isGithubRunner; then
+    loginfo "${FUNCNAME[0]}" "Install trivy"
+    local trivyurl
+
+    trivyurl="$(curl --silent --header "${GITHUB_API_MIMETYPE}" --header "${GITHUB_API_VERSION}" https://api.github.com/repos/aquasecurity/trivy/releases/latest | yq --input-format json '.assets[] | select(.name == "*_Linux-64bit.tar.gz") | .browser_download_url')"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "trivy version check failed"
+      exit 1
+    fi
+
+    if [ ! -d "${BUILD_DIR}/trivy" ]; then
+      mkdir "${BUILD_DIR}/trivy"
+      if [ "$?" -ne 0 ]; then
+        logerror "${FUNCNAME[0]}" "trivy directory creation failed"
+        exit 1
+      fi
+    fi
+
+    curl --silent --location "${trivyurl}" --output "${BUILD_DIR}"/trivy/trivy.tar.gz
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "trivy download failed"
+      exit 1
+    fi
+
+    tar --extract --gzip --no-same-owner --no-same-permissions --file="${BUILD_DIR}"/trivy/trivy.tar.gz --directory "${BUILD_DIR}"/trivy/
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "trivy archive extraction failed"
+      exit 1
+    fi
+
+    mv "${BUILD_DIR}"/trivy/trivy /usr/local/bin/trivy
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "trivy installation failed"
+      exit 1
+    fi
+
+    chmod 755 /usr/local/bin/trivy
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "trivy permission update failed"
+      exit 1
+    fi
+
+    loginfo "${FUNCNAME[0]}" "trivy installation done"
+  fi
+}
+
+function isGithubRunner {
+  if [ -z ${GITHUB_ACTIONS+x} ]; then
+    return 1
+  else
+    return 0
   fi
 }
 
@@ -588,6 +652,122 @@ function checkChangedFiles {
   fi
 }
 
+function generateBom {
+  loginfo "${FUNCNAME[0]}" "generate bill of materials infos"
+
+  local bomdir
+
+  if [ ! -d "${BUILD_DIR}/mnt" ]; then
+    mkdir "${BUILD_DIR}/mnt"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "mnt directory creation failed"
+      exit 1
+    fi
+  fi
+
+  if [ ! -d "${BUILD_DIR}/mnt/iso" ]; then
+    mkdir "${BUILD_DIR}/mnt/iso"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "mnt/iso directory creation failed"
+      exit 1
+    fi
+  fi
+
+  if [ ! -d "${BUILD_DIR}/mnt/squashfs" ]; then
+    mkdir "${BUILD_DIR}/mnt/squashfs"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "mnt/squashfs directory creation failed"
+      exit 1
+    fi
+  fi
+
+  if [ ! -d "${BUILD_DIR}/bom" ]; then
+    mkdir "${BUILD_DIR}/bom"
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "bom directory creation failed"
+      exit 1
+    fi
+  fi
+  bomdir="${BUILD_DIR}/bom"
+
+  sudo mount --options="loop" "${BUILD_DIR}"/debian-live-"${DEBIAN_VERSION}"-"${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"-"${DEBIAN_ARCH}".hybrid.iso "${BUILD_DIR}"/mnt/iso
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "ISO image mount failed"
+    exit 1
+  fi
+
+  sudo mount --type="squashfs" --options="loop" --source="${BUILD_DIR}/mnt/iso/live/filesystem.squashfs" --target="${BUILD_DIR}/mnt/squashfs"
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "squashfs mount failed"
+    exit 1
+  fi
+
+  loginfo "${FUNCNAME[0]}" "trivy cyclonedx BOV generation"
+  trivy filesystem --quiet --format cyclonedx --scanners vuln --output "${bomdir}"/bov.cyclone.json "${BUILD_DIR}"/mnt/squashfs
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "trivy cyclonedx BOV generation failed"
+    exit 1
+  fi
+
+  loginfo "${FUNCNAME[0]}" "trivy cyclonedx BOM generation"
+  trivy filesystem --quiet --format cyclonedx --output "${bomdir}"/bom.cyclone.json "${BUILD_DIR}"/mnt/squashfs
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "trivy cyclonedx BOM generation failed"
+    exit 1
+  fi
+
+  loginfo "${FUNCNAME[0]}" "trivy spdx BOV generation"
+  trivy filesystem --quiet --format spdx --scanners vuln --output "${bomdir}"/bov.spdx "${BUILD_DIR}"/mnt/squashfs
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "trivy spdx BOV generation failed"
+    exit 1
+  fi
+
+  loginfo "${FUNCNAME[0]}" "trivy spdx BOM generation"
+  trivy filesystem --quiet --format spdx --output "${bomdir}"/bom.spdx "${BUILD_DIR}"/mnt/squashfs
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "trivy spdx BOM generation failed"
+    exit 1
+  fi
+
+  loginfo "${FUNCNAME[0]}" "trivy spdx-json BOM generation"
+  trivy filesystem --quiet --format spdx-json --output "${bomdir}"/bom.spdx.json "${BUILD_DIR}"/mnt/squashfs
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "trivy spdx-json BOM generation failed"
+    exit 1
+  fi
+
+  loginfo "${FUNCNAME[0]}" "trivy spdx-json BOV generation"
+  trivy filesystem --quiet --format spdx-json --scanners vuln --output "${bomdir}"/bov.spdx.json "${BUILD_DIR}"/mnt/squashfs
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "trivy spdx-json BOV generation failed"
+    exit 1
+  fi
+
+  loginfo "${FUNCNAME[0]}" "trivy json BOM generation"
+  trivy filesystem --quiet --format json --output "${bomdir}"/bom.json "${BUILD_DIR}"/mnt/squashfs
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "trivy json BOM generation failed"
+    exit 1
+  fi
+
+  loginfo "${FUNCNAME[0]}" "trivy html BOM generation"
+  trivy filesystem --quiet --format template --template "@${BUILD_DIR}/trivy/contrib/html.tpl" --output "${bomdir}"/bom.html "${BUILD_DIR}"/mnt/squashfs
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "trivy html BOM generation failed"
+    exit 1
+  fi
+
+  loginfo "${FUNCNAME[0]}" "Debian live package list copy"
+  cp "${BUILD_DIR}"/mnt/iso/live/filesystem.packages "${bomdir}"/debian.packages.txt
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "Debian live package list copy failed"
+    exit 1
+  fi
+
+  loginfo "${FUNCNAME[0]}" "bill of materials generation done"
+}
+
 importEnvVars
 case "${USE_CASE}" in
   "checkChangedFiles")
@@ -603,10 +783,10 @@ case "${USE_CASE}" in
     cleanupRunner
     ;;
   "installPrerequisites")
+    createBuildDir
     installPrerequisites
     ;;
   "configImage")
-    createBuildDir
     configImage
     configPackages
     configHooks
@@ -621,10 +801,13 @@ case "${USE_CASE}" in
   "uploadIso")
     uploadIso
     ;;
+  "generateBom")
+    generateBom
+    ;;
   "localBuild")
     prepareEnvironment
-    installPrerequisites
     createBuildDir
+    installPrerequisites
     cleanupConfig
     configImage
     configPackages
