@@ -1,0 +1,18 @@
+[org/gnome/shell]
+enabled-extensions=['no-overview@fthx', 'arcmenu@arcmenu.com', 'dash-to-panel@jderose9.github.com', 'gtk4-ding@smedius.gitlab.com']
+
+[org/gnome/shell/extensions/dash-to-panel]
+panel-positions='{"0":"TOP"}'
+panel-sizes='{"0":32}'
+show-favorites=false
+overview-click-to-exit=true
+
+[org/gnome/shell/extensions/arcmenu]
+menu-button-appearance='Text'
+pinned-app-list=['', '', 'firefox-esr.desktop', '', '', 'org.gnome.Nautilus.desktop', '', '', 'org.gnome.Terminal.desktop', 'ArcMenu Settings', 'ArcMenu_ArcMenuIcon', 'gnome-extensions prefs arcmenu@arcmenu.com']
+disable-user-avatar=true
+searchbar-default-bottom-location='Top'
+highlight-search-result-terms=true
+
+[org/gnome/shell/extensions/gtk4-ding]
+icon-size='small'

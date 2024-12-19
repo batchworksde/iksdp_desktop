@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.0
+
+* default configuration for Gnome and Gnome shell extensions for easier accessibility
+
 ## v0.2.0
 
 * [Rustdesk Client](https://rustdesk.com/docs/en/client/)
