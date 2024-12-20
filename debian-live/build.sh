@@ -6,6 +6,7 @@ set -o pipefail
 
 declare USE_CASE WORK_DIR BUILD_DIR IMAGE_TIMESTAMP GITHUB_API_VERSION GITHUB_API_MIMETYPE
 
+DEBIAN_ARCH=$(dpkg --print-architecture)
 USE_CASE=${1-localBuild}
 WORK_DIR="$(pwd)"
 BUILD_DIR="${WORK_DIR}/build"
@@ -233,13 +234,17 @@ function fetchExternalPackages {
 }
 
 function downloadZoomClient {
-  loginfo "${FUNCNAME[0]}" "Zoom package download started"
-  curl --silent --location https://zoom.us/client/latest/zoom_amd64.deb --output "${BUILD_DIR}"/config/packages.chroot/zoom_amd64.deb
-  if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "Zoom client download failed"
-    exit 1
+  if [ "${DEBIAN_ARCH}" = "amd64" ]; then
+    loginfo "${FUNCNAME[0]}" "Zoom package download started"
+    curl --silent --location https://zoom.us/client/latest/zoom_amd64.deb --output "${BUILD_DIR}"/config/packages.chroot/zoom_amd64.deb
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "Zoom client download failed"
+      exit 1
+    fi
+    loginfo "${FUNCNAME[0]}" "Zoom package download done"
+  else
+    logerror "${FUNCNAME[0]}" "DEBIAN_ARCH is not amd64. Skipping the action."
   fi
-  loginfo "${FUNCNAME[0]}" "Zoom package download done"
 }
 
 function downloadGithubRelease {
@@ -497,7 +502,9 @@ function installPrerequisites {
 function downloadYq {
   loginfo "${FUNCNAME[0]}" "Install yq"
 
-  sudo curl --silent --location https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 --output /usr/local/bin/yq
+
+  sudo curl --silent --location https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${DEBIAN_ARCH} --output /usr/local/bin/yq
+  
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "yq download failed"
     exit 1
@@ -768,6 +775,21 @@ function generateBom {
   loginfo "${FUNCNAME[0]}" "bill of materials generation done"
 }
 
+function configBootSplash {
+  loginfo "${FUNCNAME[0]}" "Configure boot splash"
+  mkdir -p "${BUILD_DIR}"/config/bootloaders/grub-pc
+  mkdir -p "${BUILD_DIR}"/config/bootloaders/grub-efi
+
+  # imagemagick is needed
+  convert "${WORK_DIR}"/debian-live/config/bootloaders/grub-pc/splash.png -gravity North -pointsize 14 -fill white -annotate +100+100 "Image version: ${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"  "${BUILD_DIR}"/config/bootloaders/grub-pc/splash.png
+  convert "${WORK_DIR}"/debian-live/config/bootloaders/grub-pc/splash.png -gravity North -pointsize 14 -fill white -annotate +100+100 "Image version: ${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"  "${BUILD_DIR}"/config/bootloaders/grub-efi/splash.png
+
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "create spash screen failed"
+    exit 1
+  fi
+}
+
 importEnvVars
 case "${USE_CASE}" in
   "checkChangedFiles")
@@ -808,6 +830,7 @@ case "${USE_CASE}" in
     prepareEnvironment
     createBuildDir
     installPrerequisites
+    configBootSplash
     cleanupConfig
     configImage
     configPackages
