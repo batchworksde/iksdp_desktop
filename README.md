@@ -22,7 +22,6 @@ We create versioned [releases](https://github.com/batchworksde/iksdp_desktop/rel
 | Parameter   | Value       | Description     |
 | :---        | :----:      | :---            |
 | `DEBIAN_VERSION` | bookworm | The [Debian release](https://www.debian.org/releases/index.en.html) that should be used for the live image |
-| `DEBIAN_ARCH` | amd64 | The [CPU architecture](https://wiki.debian.org/SupportedArchitectures) that should be used for the live image |
 | `DEBIAN_MIRROR` | http://deb.debian.org/debian | Debian mirror [Url](http://deb.debian.org/) selected from the [mirror list](https://www.debian.org/mirror/list) |
 | `DEBIAN_SEC_MIRROR` | http://deb.debian.org/debian-security | Debian mirror [Url](http://deb.debian.org/) for the security packages |
 | `DEBIAN_SQUASHFS_COMPRESSION_TYPE` | zstd | [compression algorithm](https://manpages.debian.org/bookworm/live-build/lb_config.1.en.html#chroot~3) that should be used for the root filesystem image |
