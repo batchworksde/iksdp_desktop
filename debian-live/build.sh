@@ -830,9 +830,9 @@ case "${USE_CASE}" in
     prepareEnvironment
     createBuildDir
     installPrerequisites
-    configBootSplash
     cleanupConfig
     configImage
+    configBootSplash
     configPackages
     configHooks
     configIncludes
