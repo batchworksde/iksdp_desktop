@@ -6,8 +6,8 @@ set -o pipefail
 
 declare USE_CASE WORK_DIR BUILD_DIR IMAGE_TIMESTAMP GITHUB_API_VERSION GITHUB_API_MIMETYPE
 
-DEBIAN_ARCH=$(dpkg --print-architecture)
-USE_CASE=${1-localBuild}
+DEBIAN_ARCH="$(dpkg --print-architecture)"
+USE_CASE="${1-localBuild}"
 WORK_DIR="$(pwd)"
 BUILD_DIR="${WORK_DIR}/build"
 GITHUB_API_VERSION="X-GitHub-Api-Version: 2022-11-28"
@@ -44,13 +44,7 @@ function importEnvVars {
 function createBuildDir {
   loginfo "${FUNCNAME[0]}" "Creating build directory"
 
-  if [ ! -d "${BUILD_DIR}" ]; then
-    mkdir "${BUILD_DIR}"
-    if [ "$?" -ne 0 ]; then
-      logerror "${FUNCNAME[0]}" "build directory creation failed"
-      exit 1
-    fi
-  fi
+  createFolder "${BUILD_DIR}"
 }
 
 function cleanupConfig {
@@ -530,13 +524,7 @@ function downloadTrivy {
       exit 1
     fi
 
-    if [ ! -d "${BUILD_DIR}/trivy" ]; then
-      mkdir "${BUILD_DIR}/trivy"
-      if [ "$?" -ne 0 ]; then
-        logerror "${FUNCNAME[0]}" "trivy directory creation failed"
-        exit 1
-      fi
-    fi
+    createFolder "${BUILD_DIR}/trivy"
 
     curl --silent --location "${trivyurl}" --output "${BUILD_DIR}"/trivy/trivy.tar.gz
     if [ "$?" -ne 0 ]; then
@@ -608,7 +596,7 @@ function uploadIso {
   local SSH_PORT=10022
   local SSH_TIMEOUT=60
 
-  mkdir -p ~/.ssh/
+  createFolder "${HOME}/.ssh"
 
   eval $(ssh-agent -s)
   if [ "$?" -ne 0 ]; then
@@ -664,37 +652,11 @@ function generateBom {
 
   local bomdir
 
-  if [ ! -d "${BUILD_DIR}/mnt" ]; then
-    mkdir "${BUILD_DIR}/mnt"
-    if [ "$?" -ne 0 ]; then
-      logerror "${FUNCNAME[0]}" "mnt directory creation failed"
-      exit 1
-    fi
-  fi
+  createFolder "${BUILD_DIR}/mnt"
+  createFolder "${BUILD_DIR}/mnt/iso"
+  createFolder "${BUILD_DIR}/mnt/squashfs"
+  createFolder "${BUILD_DIR}/bom"
 
-  if [ ! -d "${BUILD_DIR}/mnt/iso" ]; then
-    mkdir "${BUILD_DIR}/mnt/iso"
-    if [ "$?" -ne 0 ]; then
-      logerror "${FUNCNAME[0]}" "mnt/iso directory creation failed"
-      exit 1
-    fi
-  fi
-
-  if [ ! -d "${BUILD_DIR}/mnt/squashfs" ]; then
-    mkdir "${BUILD_DIR}/mnt/squashfs"
-    if [ "$?" -ne 0 ]; then
-      logerror "${FUNCNAME[0]}" "mnt/squashfs directory creation failed"
-      exit 1
-    fi
-  fi
-
-  if [ ! -d "${BUILD_DIR}/bom" ]; then
-    mkdir "${BUILD_DIR}/bom"
-    if [ "$?" -ne 0 ]; then
-      logerror "${FUNCNAME[0]}" "bom directory creation failed"
-      exit 1
-    fi
-  fi
   bomdir="${BUILD_DIR}/bom"
 
   sudo mount --options="loop" "${BUILD_DIR}"/debian-live-"${DEBIAN_VERSION}"-"${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"-"${DEBIAN_ARCH}".hybrid.iso "${BUILD_DIR}"/mnt/iso
@@ -775,19 +737,47 @@ function generateBom {
   loginfo "${FUNCNAME[0]}" "bill of materials generation done"
 }
 
-function configBootSplash {
-  loginfo "${FUNCNAME[0]}" "Configure boot splash"
-  mkdir -p "${BUILD_DIR}"/config/bootloaders/grub-pc
-  mkdir -p "${BUILD_DIR}"/config/bootloaders/grub-efi
+function createFolder {
+  if [ -n "${1}" ]; then
+  local folder
+  folder="${1}"
 
-  # imagemagick is needed
-  convert "${WORK_DIR}"/debian-live/config/bootloaders/grub-pc/splash.png -gravity North -pointsize 14 -fill white -annotate +100+100 "Image version: ${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"  "${BUILD_DIR}"/config/bootloaders/grub-pc/splash.png
-  convert "${WORK_DIR}"/debian-live/config/bootloaders/grub-pc/splash.png -gravity North -pointsize 14 -fill white -annotate +100+100 "Image version: ${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"  "${BUILD_DIR}"/config/bootloaders/grub-efi/splash.png
-
-  if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "create spash screen failed"
+    if [ ! -d "${folder}" ]; then
+      mkdir "${folder}"
+      if [ "$?" -ne 0 ]; then
+        logerror "${FUNCNAME[0]}" "${folder} creation failed"
+        exit 1
+      fi
+      loginfo "${FUNCNAME[0]}" "${folder} successfully created"
+    fi
+  else
+    logerror "${FUNCNAME[0]}" "folder name parameter is missing"
     exit 1
   fi
+}
+
+function configBootSplash {
+  loginfo "${FUNCNAME[0]}" "Configure boot splash"
+  local folderlist
+  folderlist=("grub-pc" "grub-efi")
+
+  for folder in "${folderlist[@]}"; do
+    createFolder "${BUILD_DIR}/config/bootloaders/${folder}"
+  done
+
+  convert "${WORK_DIR}"/debian-live/config/bootloaders/grub-pc/splash.png -gravity North -pointsize 14 -fill white -annotate +100+100 "Image version: ${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}" "${BUILD_DIR}"/config/bootloaders/grub-pc/splash.png
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "splash screen image generation failed"
+    exit 1
+  fi
+
+  cp "${BUILD_DIR}"/config/bootloaders/grub-pc/splash.png "${BUILD_DIR}"/config/bootloaders/grub-efi/splash.png
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "EFI splash screen image copy failed"
+    exit 1
+  fi
+  
+  loginfo "${FUNCNAME[0]}" "boot splash configuration done"
 }
 
 importEnvVars
@@ -809,6 +799,7 @@ case "${USE_CASE}" in
     installPrerequisites
     ;;
   "configImage")
+    configBootSplash
     configImage
     configPackages
     configHooks
