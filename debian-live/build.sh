@@ -743,7 +743,7 @@ function createFolder {
   folder="${1}"
 
     if [ ! -d "${folder}" ]; then
-      mkdir "${folder}"
+      mkdir -p "${folder}"
       if [ "$?" -ne 0 ]; then
         logerror "${FUNCNAME[0]}" "${folder} creation failed"
         exit 1
