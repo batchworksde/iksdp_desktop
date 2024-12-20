@@ -759,24 +759,17 @@ function createFolder {
 function configBootSplash {
   loginfo "${FUNCNAME[0]}" "Configure boot splash"
   local folderlist
-  folderlist=("grub-pc" "grub-efi")
+  folderlist=("grub-pc" "grub-efi" "isolinux")
 
   for folder in "${folderlist[@]}"; do
     createFolder "${BUILD_DIR}/config/bootloaders/${folder}"
+    convert "${WORK_DIR}"/debian-live/config/bootloaders/grub-pc/splash.png -gravity North -pointsize 14 -fill white -annotate +100+100 "Image ${folder} version: ${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}" "${BUILD_DIR}"/config/bootloaders/"${folder}"/splash.png
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "${folder} splash screen image generation failed"
+      exit 1
+    fi
   done
 
-  convert "${WORK_DIR}"/debian-live/config/bootloaders/grub-pc/splash.png -gravity North -pointsize 14 -fill white -annotate +100+100 "Image version: ${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}" "${BUILD_DIR}"/config/bootloaders/grub-pc/splash.png
-  if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "splash screen image generation failed"
-    exit 1
-  fi
-
-  cp "${BUILD_DIR}"/config/bootloaders/grub-pc/splash.png "${BUILD_DIR}"/config/bootloaders/grub-efi/splash.png
-  if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "EFI splash screen image copy failed"
-    exit 1
-  fi
-  
   loginfo "${FUNCNAME[0]}" "boot splash configuration done"
 }
 
