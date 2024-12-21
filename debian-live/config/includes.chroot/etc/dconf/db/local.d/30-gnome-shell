@@ -1,5 +1,9 @@
 [org/gnome/shell]
+<<<<<<< HEAD
+enabled-extensions=['no-overview@fthx', 'dash2dock-lite@icedman.github.com', 'apps-menu@gnome-shell-extensions.gcampax.github.com', 'places-menu@gnome-shell-extensions.gcampax.github.com', 'drive-menu@gnome-shell-extensions.gcampax.github.com']
+=======
 enabled-extensions=['no-overview@fthx', 'arcmenu@arcmenu.com', 'dash-to-panel@jderose9.github.com', 'gtk4-ding@smedius.gitlab.com']
+>>>>>>> main
 
 [org/gnome/shell/extensions/dash-to-panel]
 panel-positions='{"0":"TOP"}'
@@ -13,6 +17,15 @@ pinned-app-list=['', '', 'firefox-esr.desktop', '', '', 'org.gnome.Nautilus.desk
 disable-user-avatar=true
 searchbar-default-bottom-location='Top'
 highlight-search-result-terms=true
+<<<<<<< HEAD
+arcmenu-custom-hotkey=['Super_R']
+
+[org/gnome/shell/extensions/dash2dock-lite]
+dock-location=1
+running-indicator-style=2
+animate-icons-unmute=false
+=======
+>>>>>>> main
 
 [org/gnome/shell/extensions/gtk4-ding]
 icon-size='small'
