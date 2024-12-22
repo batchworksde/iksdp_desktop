@@ -173,6 +173,9 @@ packages:
       taskgerman:
         enable: true
         name: task-german
+      sysstat:
+          enable: true
+          name: sysstat
       flatpak:
         enable: true
         name: flatpak
@@ -190,15 +193,18 @@ packages:
       zoom:
         name: zoom
         enable: true
-      # icaclient:
-      #   name: icaclient
-      #   enable: true
-      # teams:
-      #   name: teams
-      #   enable: true
-      # vscode:
-      #   name: vscode
-      #   enable: true
+      icaclient:
+        name: icaclient
+        enable: true
+      teams:
+        name: teams
+        enable: true
+      vscode:
+        name: vscode
+        enable: true
+      signal:
+        name: signal
+        enable: true
   flatpak:
     enable: true
     flathub:
