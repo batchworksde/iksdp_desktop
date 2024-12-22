@@ -190,14 +190,29 @@ packages:
       zoom:
         name: zoom
         enable: true
+      # icaclient:
+      #   name: icaclient
+      #   enable: true
+      # teams:
+      #   name: teams
+      #   enable: true
+      # vscode:
+      #   name: vscode
+      #   enable: true
   flatpak:
     enable: true
     flathub:
       enable: true
       app:
-        chrome:
+        vscode:
           enable: false
-          name: com.google.Chrome
+          name: com.visualstudio.code
+        teams:
+          enable: false
+          name: com.github.IsmaelMartinez.teams_for_linux
+        nextcloud:
+          enable: false
+          name: com.nextcloud.desktopclient.nextcloud
   gnome-shell:
     enable: true
     extension:
