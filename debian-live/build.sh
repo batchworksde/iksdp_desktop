@@ -206,13 +206,7 @@ function fetchExternalPackages {
 
   for package in "${vendorpackagelist[@]}"; do
         SCRIPT_PATH="${WORK_DIR}"/debian-live/vendor/"${package}/install.sh"
-        # check if SCRIPT_PATH exists and is executable
-        echo "Checking ${SCRIPT_PATH}"
         if [ -f "${SCRIPT_PATH}" ]; then
-          # import SCRIPT_PATH and execute
-          export BUILD_DIR="${BUILD_DIR}"
-          export DEBIAN_ARCH="${DEBIAN_ARCH}"
-          
           source "${SCRIPT_PATH}"
           if [ "$?" -ne 0 ]; then
             logerror "${FUNCNAME[0]}" "Vendor package script ${SCRIPT_PATH} failed"
