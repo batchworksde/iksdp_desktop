@@ -63,7 +63,7 @@ function cleanupConfig {
   fi
 
   if [ -d "${BUILD_DIR}"/config/ ]; then
-    rm -r "${BUILD_DIR}"/config/
+    rm -r $(ls -d config/* | grep -v '^config/packages.chroot$')
     if [ "$?" -ne 0 ]; then
       logerror "${FUNCNAME[0]}" "config dir removal failed"
       exit 1
@@ -273,7 +273,7 @@ function downloadGithubRelease {
       exit 1
     fi
 
-    curl --silent --location "${url}" --output "${targetfolder}"/"${repo}"-"${suffix}".deb
+    curl -C - --silent --location "${url}" --output "${targetfolder}"/"${repo}"-"${suffix}".deb
     if [ "$?" -ne 0 ]; then
       logerror "${FUNCNAME[0]}" "${repo} download failed"
       exit 1
