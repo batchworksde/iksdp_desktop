@@ -1,4 +1,4 @@
-[org.gnome.settings-daemon.plugins.power]
+[org/gnome/settings-daemon/plugins/power]
 # power button behaviour - interfa
 #   interactive = power down
 #   suspend = suspend
@@ -9,6 +9,6 @@ power-button-action = 'interactive'
 sleep-inactive-ac-type = 'nothing'
 # sleep-inactive-ac-timeout = 600
 
-[org.gnome.desktop.session]
+[org/gnome/desktop/session]
 # disable blank screen 
 idle-delay = 0
