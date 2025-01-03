@@ -1,0 +1,7 @@
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.edge.microsoft.gpg
+sudo install -D -o root -g root -m 644 packages.edge.microsoft.gpg /etc/apt/keyrings/packages.edge.microsoft.gpg
+echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/packages.edge.microsoft.gpg] https://packages.microsoft.com/repos/edge stable main" |sudo tee /etc/apt/sources.list.d/edge.list > /dev/null
+
+sudo apt install apt-transport-https
+sudo apt update
+sudo apt install microsoft-edge-stable -y
