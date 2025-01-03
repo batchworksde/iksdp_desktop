@@ -743,17 +743,27 @@ function generateBom {
 
 function createFolder {
   if [ -n "${1}" ]; then
-  local folder
-  folder="${1}"
+    local foldernames rootfolder folderindex foldercount
+    IFS=/ read -ra foldernames <<< "${1}"
+    rootfolder=""
+    folderindex=1
+    foldercount=${#foldernames[@]}
 
-    if [ ! -d "${folder}" ]; then
-      mkdir -p "${folder}"
-      if [ "$?" -ne 0 ]; then
-        logerror "${FUNCNAME[0]}" "${folder} creation failed"
-        exit 1
+    for name in ${foldernames[@]}; do
+      (( folderindex++ ))
+      rootfolder="${rootfolder}/${name}"
+
+      if [ ! -d "${rootfolder}" ]; then
+        mkdir "${rootfolder}"
+        if [ "$?" -ne 0 ]; then
+          logerror "${FUNCNAME[0]}" "${rootfolder} creation failed"
+          exit 1
+        fi
+        if [ "${folderindex}" -eq "${foldercount}" ]; then
+          loginfo "${FUNCNAME[0]}" "${rootfolder} successfully created"
+        fi
       fi
-      loginfo "${FUNCNAME[0]}" "${folder} successfully created"
-    fi
+    done
   else
     logerror "${FUNCNAME[0]}" "folder name parameter is missing"
     exit 1
