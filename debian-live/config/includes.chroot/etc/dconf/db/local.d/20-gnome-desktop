@@ -3,3 +3,7 @@ button-layout=":minimize,maximize,close"
 
 [org/gnome/desktop/interface]
 enable-hot-corners=false
+
+[org/gnome/desktop/session]
+# disable blank screen 
+idle-delay=0

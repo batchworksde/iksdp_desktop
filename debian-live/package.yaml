@@ -179,6 +179,27 @@ packages:
       flatpak:
         enable: true
         name: flatpak
+      # for apppackage
+      libfuse2:
+        enable: true
+        name: libfuse2
+      # host dig.. 
+      dnsutils:
+        enable: true
+        name: dnsutils
+      # parallel compression
+      pigz:
+        enable: true
+        name: pigz
+      # troubleshooting
+      whois:
+        enable: true
+        name: whois
+      # backup & recovery
+      restic:
+        enable: true
+        name: restic
+
   github:
     enable: true
     app:
@@ -204,6 +225,9 @@ packages:
         enable: true
       signal:
         name: signal
+        enable: true
+      edge:
+        name: edge
         enable: true
   flatpak:
     enable: true
