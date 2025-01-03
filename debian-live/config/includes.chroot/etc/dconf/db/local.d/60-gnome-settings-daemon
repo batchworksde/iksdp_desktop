@@ -8,7 +8,3 @@ power-button-action = 'interactive'
 # Automatic suspend nothing = off suspend=on sets sleep-inactive-ac-timeout
 sleep-inactive-ac-type = 'nothing'
 # sleep-inactive-ac-timeout = 600
-
-[org/gnome/desktop/session]
-# disable blank screen 
-idle-delay = 0
