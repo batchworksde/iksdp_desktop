@@ -95,6 +95,10 @@ function configImage {
     liveConfigOptions+=" noeject"
   fi
 
+  if [ "${DEBIAN_BOOT_SPLASH}" == "true" ]; then
+    liveConfigOptions+=" quiet splash"
+  fi
+
   cd "${BUILD_DIR}"
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "cd ${BUILD_DIR} failed"
