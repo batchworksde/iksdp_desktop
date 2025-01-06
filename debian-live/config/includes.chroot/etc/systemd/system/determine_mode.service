@@ -2,7 +2,7 @@
 Description=determine non-persistent or persistent mode
 
 [Service]
-ExecStart=/opt/iksdp/bin/determinemode.sh
+ExecStart=/opt/iksdp/bin/determine_mode.sh
 
 [Install]
 WantedBy=multi-user.target
