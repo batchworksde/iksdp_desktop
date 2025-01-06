@@ -12,4 +12,5 @@ fi
 export MY_TIMEZONE="$(curl --fail https://ipapi.co/timezone)"
 
 timedatectl set-timezone $MY_TIMEZONE
+timedatectl set-ntp true
 echo $MY_TIMEZONE > /etc/timezone
