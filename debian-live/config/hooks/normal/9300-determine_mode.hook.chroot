@@ -1,5 +1,5 @@
 #!/bin/bash
 
 systemctl daemon-reload
-systemctl enable determinemode
+systemctl enable determine_mode
 
