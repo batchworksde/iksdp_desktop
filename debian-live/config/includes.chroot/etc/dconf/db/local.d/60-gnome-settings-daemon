@@ -1,0 +1,10 @@
+[org/gnome/settings-daemon/plugins/power]
+# power button behaviour - interfa
+#   interactive = power down
+#   suspend = suspend
+#   nothing = nothing
+power-button-action = 'interactive'
+
+# Automatic suspend nothing = off suspend=on sets sleep-inactive-ac-timeout
+sleep-inactive-ac-type = 'nothing'
+# sleep-inactive-ac-timeout = 600
