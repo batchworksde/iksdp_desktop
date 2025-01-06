@@ -1,0 +1,8 @@
+[Unit]
+Description=determine non-persistent or persistent mode
+
+[Service]
+ExecStart=/opt/iksdp/bin/determinemode.sh
+
+[Install]
+WantedBy=multi-user.target
