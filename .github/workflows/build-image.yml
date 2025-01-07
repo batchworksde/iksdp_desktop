@@ -44,6 +44,8 @@ jobs:
         run: debian-live/build.sh installPrerequisites
       - name: config Debian Live image
         run: debian-live/build.sh configImage
+        env:
+          ROOTPW: ${{ secrets.ROOTPW }}
       - name: build Debian Live image
         run: debian-live/build.sh buildImage
       - name: generate Bill of materials
