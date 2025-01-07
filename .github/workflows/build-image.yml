@@ -32,6 +32,8 @@ jobs:
       - name: checkout code
         uses: "actions/checkout@v4"
       - name: prepare environment
+        env:
+          ROOTPW: ${{ secrets.ROOTPW }}
         run: debian-live/build.sh prepareEnvironment
       - name: remove not required folders from the build system
         run: debian-live/build.sh cleanupRunner
