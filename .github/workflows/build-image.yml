@@ -7,6 +7,7 @@ on:
       - "debian-live/build.env"
       - "debian-live/build.sh"
       - "debian-live/config/**"
+      - ".github/workflows/build-image.yml"
 jobs:
   checkFileChanges:
     runs-on: ubuntu-24.04
@@ -32,6 +33,8 @@ jobs:
       - name: checkout code
         uses: "actions/checkout@v4"
       - name: prepare environment
+        env:
+          ROOTPW: ${{ secrets.ROOTPW }}
         run: debian-live/build.sh prepareEnvironment
       - name: remove not required folders from the build system
         run: debian-live/build.sh cleanupRunner
@@ -41,6 +44,8 @@ jobs:
         run: debian-live/build.sh installPrerequisites
       - name: config Debian Live image
         run: debian-live/build.sh configImage
+        env:
+          ROOTPW: ${{ secrets.ROOTPW }}
       - name: build Debian Live image
         run: debian-live/build.sh buildImage
       - name: generate Bill of materials
