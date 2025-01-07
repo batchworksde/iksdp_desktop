@@ -173,9 +173,33 @@ packages:
       taskgerman:
         enable: true
         name: task-german
+      sysstat:
+          enable: true
+          name: sysstat
       flatpak:
         enable: true
         name: flatpak
+      # for apppackage
+      libfuse2:
+        enable: true
+        name: libfuse2
+      # host dig.. 
+      dnsutils:
+        enable: true
+        name: dnsutils
+      # parallel compression
+      pigz:
+        enable: true
+        name: pigz
+      # troubleshooting
+      whois:
+        enable: true
+        name: whois
+      # backup & recovery
+      restic:
+        enable: true
+        name: restic
+
   github:
     enable: true
     app:
@@ -190,14 +214,38 @@ packages:
       zoom:
         name: zoom
         enable: true
+      icaclient:
+        name: icaclient
+        enable: false
+      teams:
+        name: teams
+        enable: false
+      vscode:
+        name: vscode
+        enable: true
+      signal:
+        name: signal
+        enable: true
+      edge:
+        name: edge
+        enable: false
+      yubico:
+        name: yubico
+        enable: false
   flatpak:
     enable: true
     flathub:
       enable: true
       app:
-        chrome:
+        vscode:
           enable: false
-          name: com.google.Chrome
+          name: com.visualstudio.code
+        teams:
+          enable: false
+          name: com.github.IsmaelMartinez.teams_for_linux
+        nextcloud:
+          enable: false
+          name: com.nextcloud.desktopclient.nextcloud
   gnome-shell:
     enable: true
     extension:
