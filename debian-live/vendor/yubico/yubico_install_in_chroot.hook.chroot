@@ -2,5 +2,5 @@
 
 apt install pcscd -y
 
-curl -C - --silent --location https://developers.yubico.com/yubioath-flutter/Releases/yubico-authenticator-latest-linux.tar.gz --output "/tmp/yubico-authenticator-latest-linux.tar.gz"
+curl --silent --location https://developers.yubico.com/yubioath-flutter/Releases/yubico-authenticator-latest-linux.tar.gz --output "/tmp/yubico-authenticator-latest-linux.tar.gz"
 tar zxf /tmp/yubico-authenticator-latest-linux.tar.gz -C /opt/
