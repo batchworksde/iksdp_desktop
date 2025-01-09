@@ -1,10 +1,8 @@
+#!/bin/bash
 
-wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
-cat signal-desktop-keyring.gpg | sudo tee /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
-
-echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
-  sudo tee /etc/apt/sources.list.d/signal-xenial.list
+wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop.gpg
+sudo install -D -o root -g root -m 644 signal-desktop.gpg /etc/apt/keyrings/signal-desktop.gpg && rm signal-desktop.gpg
+echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/signal-desktop.gpg] https://updates.signal.org/desktop/apt xenial main" |sudo tee /etc/apt/sources.list.d/signal-xenial.list > /dev/null
 
 sudo apt update && sudo apt install signal-desktop
-
 sed -i -e 's/^Exec.*/& --password-store=basic/' /usr/share/applications/signal-desktop.desktop
