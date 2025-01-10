@@ -176,6 +176,11 @@ packages:
       flatpak:
         enable: true
         name: flatpak
+      # ntp timesync
+      systemd-timesyncd:
+        enable: true
+        name: systemd-timesyncd
+
   github:
     enable: true
     app:
