@@ -1,0 +1,5 @@
+#!/bin/bash
+# initialize local conf db with keyfiles from /etc/dconf/db/local.d/
+
+systemctl daemon-reload
+systemctl enable determine_timezone

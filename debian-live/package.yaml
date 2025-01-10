@@ -199,6 +199,10 @@ packages:
       restic:
         enable: true
         name: restic
+      # ntp timesync
+      systemd-timesyncd:
+        enable: true
+        name: systemd-timesyncd
 
   github:
     enable: true
