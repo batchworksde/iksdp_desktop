@@ -8,6 +8,7 @@ on:
       - "debian-live/build.sh"
       - "debian-live/config/**"
       - ".github/workflows/build-image.yml"
+      - "debian-live/vendor/**"
 jobs:
   checkFileChanges:
     runs-on: ubuntu-24.04

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+apt install pcscd -y
+
+curl --silent --location https://developers.yubico.com/yubioath-flutter/Releases/yubico-authenticator-latest-linux.tar.gz --output "/tmp/yubico-authenticator-latest-linux.tar.gz"
+tar zxf /tmp/yubico-authenticator-latest-linux.tar.gz -C /opt/
+cat > /usr/share/applications/com.yubico.authenticator.desktop <<EOL
+[Desktop Entry]
+Name=Yubico Authenticator
+GenericName=Yubico Authenticator
+Exec="/opt/yubico-authenticator-7.1.1-linux/authenticator"
+Icon=/opt/yubico-authenticator-7.1.1-linux/linux_support/com.yubico.yubioath.png
+Type=Application
+Categories=Utility;
+Keywords=Yubico;Authenticator; 
+EOL
