@@ -63,7 +63,7 @@ function cleanupConfig {
   fi
 
   if [ -d "${BUILD_DIR}"/config/ ]; then
-    rm -r "${BUILD_DIR}"/config/
+    rm -r $(ls -d config/* | grep -v '^config/packages.chroot$')
     if [ "$?" -ne 0 ]; then
       logerror "${FUNCNAME[0]}" "config dir removal failed"
       exit 1
@@ -202,22 +202,24 @@ function fetchExternalPackages {
   loginfo "${FUNCNAME[0]}" "Fetch external Debian packages"
   local vendorpackagelist githubpackagelist
 
-  vendorpackagelist="$(yq '.packages.vendor | select(.enable) | .app[] | select(.enable) | .name' "${WORK_DIR}"/debian-live/package.yaml)"
+  vendorpackagelist=($(yq -r '.packages.vendor | select(.enable) | .app[] | select(.enable) | .name' "${WORK_DIR}"/debian-live/package.yaml))
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" ".packages.vendor parsing failed"
     exit 1
   fi
 
   for package in "${vendorpackagelist[@]}"; do
-    case "${package}" in
-      "zoom")
-        downloadZoomClient
-        ;;
-      "*")
-        logerror "${FUNCNAME[0]}" "No ${package} external package definition found"
-        exit 1
-        ;;
-    esac
+        SCRIPT_PATH="${WORK_DIR}"/debian-live/vendor/"${package}/install.sh"
+        if [ -f "${SCRIPT_PATH}" ]; then
+          source "${SCRIPT_PATH}"
+          if [ "$?" -ne 0 ]; then
+            logerror "${FUNCNAME[0]}" "Vendor package script ${SCRIPT_PATH} failed"
+            exit 1
+          fi
+        else
+          logerror "${FUNCNAME[0]}" "No ${package} external package definition found"
+          exit 1
+        fi
   done
 
   readarray githubpackagelist < <(yq --output-format json --indent 0 '.packages.github | select(.enable) | .app | filter(.enable) | .[]' "${WORK_DIR}"/debian-live/package.yaml)
@@ -229,20 +231,6 @@ function fetchExternalPackages {
   for package in "${githubpackagelist[@]}"; do
     downloadGithubRelease "${package}"
   done
-}
-
-function downloadZoomClient {
-  if [ "${DEBIAN_ARCH}" = "amd64" ]; then
-    loginfo "${FUNCNAME[0]}" "Zoom package download started"
-    curl --silent --location https://zoom.us/client/latest/zoom_amd64.deb --output "${BUILD_DIR}"/config/packages.chroot/zoom_amd64.deb
-    if [ "$?" -ne 0 ]; then
-      logerror "${FUNCNAME[0]}" "Zoom client download failed"
-      exit 1
-    fi
-    loginfo "${FUNCNAME[0]}" "Zoom package download done"
-  else
-    logerror "${FUNCNAME[0]}" "DEBIAN_ARCH is not amd64. Skipping the action."
-  fi
 }
 
 function downloadGithubRelease {
@@ -289,7 +277,7 @@ function downloadGithubRelease {
       exit 1
     fi
 
-    curl --silent --location "${url}" --output "${targetfolder}"/"${repo}"-"${suffix}".deb
+    curl --continue-at - --silent --location "${url}" --output "${targetfolder}"/"${repo}"-"${suffix}".deb
     if [ "$?" -ne 0 ]; then
       logerror "${FUNCNAME[0]}" "${repo} download failed"
       exit 1
