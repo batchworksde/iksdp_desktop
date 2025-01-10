@@ -3,6 +3,7 @@
 ## v0.3.0
 
 * default configuration for Gnome and Gnome shell extensions for easier accessibility
+* added mode indicator
 
 ## v0.2.0
 
