@@ -277,7 +277,7 @@ function downloadGithubRelease {
       exit 1
     fi
 
-    curl -C - --silent --location "${url}" --output "${targetfolder}"/"${repo}"-"${suffix}".deb
+    curl --continue-at - --silent --location "${url}" --output "${targetfolder}"/"${repo}"-"${suffix}".deb
     if [ "$?" -ne 0 ]; then
       logerror "${FUNCNAME[0]}" "${repo} download failed"
       exit 1
