@@ -1,4 +1,4 @@
 #!/bin/bash
 
-DEBIAN_PASSWORD=$(echo -n "$ROOTPW" | openssl passwd -6 -stdin)
-sed -i "s|^root:[^:]*:|root:$DEBIAN_PASSWORD:|" /etc/shadow
+echo "root:${ROOTPW}" | chpasswd --crypt-method SHA512
+

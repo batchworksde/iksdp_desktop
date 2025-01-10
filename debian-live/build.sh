@@ -200,10 +200,10 @@ function configHooks {
 }
 
 function setRootPw {
-  logerror "${FUNCNAME[0]}" "setting root password"
+  loginfo "${FUNCNAME[0]}" "setting root password"
   envsubst '${ROOTPW}' <"${WORK_DIR}"/debian-live/config/hooks/normal/9300-setrootpw.hook.chroot.template >"${BUILD_DIR}"/config/hooks/normal/9300-setrootpw.hook.chroot
   if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "setting root password"
+    logerror "${FUNCNAME[0]}" "creation of rootpw hook failed"
     exit 1
   fi
 }
