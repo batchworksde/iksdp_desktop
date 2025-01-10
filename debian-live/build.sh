@@ -31,6 +31,16 @@ function logerror {
   logjson "stderr" "error" "$0" "$1" "$2"
 }
 
+function checkRootPw {
+  # check if ROOTPW is set
+  if [ -z "${ROOTPW+x}" ]; then
+    logerror "${FUNCNAME[0]}" "ROOTPW var is not set"
+    exit 1
+  fi
+
+  export ROOTPW
+}
+
 function importEnvVars {
   loginfo "${FUNCNAME[0]}" "Loading 'build.env' environment variables"
   set -a # automatically export all variables
@@ -185,6 +195,15 @@ function configHooks {
   envsubst '${GNOME_SHELL_EXTENSIONS}' <"${WORK_DIR}"/debian-live/config/hooks/normal/9100-install-gnome-shell-extensions.hook.chroot.template >"${BUILD_DIR}"/config/hooks/normal/9100-install-gnome-shell-extensions.hook.chroot
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Debian Live envsubst for gnome shell extensions failed"
+    exit 1
+  fi
+}
+
+function setRootPw {
+  loginfo "${FUNCNAME[0]}" "setting root password"
+  envsubst '${ROOTPW}' <"${WORK_DIR}"/debian-live/config/hooks/normal/9300-setrootpw.hook.chroot.template >"${BUILD_DIR}"/config/hooks/normal/9300-setrootpw.hook.chroot
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "creation of rootpw hook failed"
     exit 1
   fi
 }
@@ -781,6 +800,7 @@ case "${USE_CASE}" in
     checkChangedFiles
     ;;
   "prepareEnvironment")
+    checkRootPw
     prepareEnvironment
     ;;
   "fetchRunnerInfos")
@@ -798,6 +818,7 @@ case "${USE_CASE}" in
     configImage
     configPackages
     configHooks
+    setRootPw
     configIncludes
     fetchExternalPackages
     createChangeLogForRelease
@@ -813,6 +834,7 @@ case "${USE_CASE}" in
     generateBom
     ;;
   "localBuild")
+    checkRootPw
     prepareEnvironment
     createBuildDir
     installPrerequisites
@@ -821,6 +843,7 @@ case "${USE_CASE}" in
     configBootSplash
     configPackages
     configHooks
+    setRootPw
     configIncludes
     fetchExternalPackages
     buildImage

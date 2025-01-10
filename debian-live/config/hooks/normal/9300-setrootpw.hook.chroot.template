@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "root:${ROOTPW}" | chpasswd --crypt-method SHA512
+

@@ -117,6 +117,7 @@ function runBootstrapContainer {
     --rm \
     --network host \
     --privileged \
+    -e ROOTPW=$ROOTPW \
     --volume "$(pwd)":/iksdp_desktop \
     iksdp_desktop-builder:latest
 }
