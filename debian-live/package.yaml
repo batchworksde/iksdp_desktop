@@ -203,6 +203,9 @@ packages:
       systemd-timesyncd:
         enable: true
         name: systemd-timesyncd
+      zramtools:
+        enable: true
+        name: zram-tools
 
   github:
     enable: true
