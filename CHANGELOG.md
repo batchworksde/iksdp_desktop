@@ -5,6 +5,9 @@
 * default configuration for Gnome and Gnome shell extensions for easier accessibility
 * added mode indicator
 * added possibility to boot luks encrypted persistent volumes
+* [ZRAM based](https://wiki.debian.org/ZRam) swap added
+* `/tmp` using tmpfs managed with systemd
+* `50%` for ZRAM swap and /tmp tmpfs
 
 ## v0.2.0
 
