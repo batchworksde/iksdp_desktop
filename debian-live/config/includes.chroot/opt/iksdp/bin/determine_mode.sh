@@ -14,4 +14,22 @@ if [[ -n "$mount_info" ]]; then
     fi
 else
     echo "non-persistent" > /tmp/iksdp_mode
+
+    # get username
+    LIVE_CONFIG_CMDLINE="${LIVE_CONFIG_CMDLINE:-$(cat /proc/cmdline)}"
+    for _PARAMETER in ${LIVE_CONFIG_CMDLINE}
+    do
+        case "${_PARAMETER}" in
+            live-config.username=*|username=*)
+                LIVE_USERNAME="${_PARAMETER#*username=}"
+                ;;
+        esac
+    done
+
+    # install keyring with empty password
+    if [ -n ${LIVE_USERNAME+x} ]; then
+        install -d /home/"${LIVE_USERNAME}"/.local/share/keyrings/
+        install -o "${LIVE_USERNAME}" -g "${LIVE_USERNAME}" -m 644 /opt/iksdp/template/.local/share/keyrings/default /home/"${LIVE_USERNAME}"/.local/share/keyrings
+        install -o "${LIVE_USERNAME}" -g "${LIVE_USERNAME}" -m 600 /opt/iksdp/template/.local/share/keyrings/Default_keyring.keyring /home/"${LIVE_USERNAME}"/.local/share/keyrings
+    fi
 fi
