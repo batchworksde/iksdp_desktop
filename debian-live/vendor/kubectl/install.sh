@@ -1,0 +1,5 @@
+loginfo "fetchExternalPackages" "kubectl package vendor package started"
+
+mkdir -p "${BUILD_DIR}"/includes.chroot/opt/kubectl/bin/
+curl --continue-at - --silent --location https://dl.k8s.io/release/v1.32.0/bin/linux/${DEBIAN_ARCH}/kubectl --output "${BUILD_DIR}"/includes.chroot/opt/kubectl/bin/
+

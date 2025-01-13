@@ -239,6 +239,9 @@ packages:
       drawio:
         name: drawio
         enable: true
+      kubectl:
+        name: kubectl
+        enable: true
   flatpak:
     enable: true
     flathub:
