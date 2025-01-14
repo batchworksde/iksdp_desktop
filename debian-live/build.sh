@@ -96,7 +96,7 @@ function configImage {
   fi
 
   if [ "${DEBIAN_USER_PERSISTENCE}" == "true" ]; then
-    liveConfigOptions+=" persistence"
+    liveConfigOptions+=" persistence persistence-encryption=luks,none"
   else
     liveConfigOptions+=" nopersistence"
   fi
