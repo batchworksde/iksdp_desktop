@@ -4,7 +4,7 @@
 
 * default configuration for Gnome and Gnome shell extensions for easier accessibility
 * added mode indicator
-* added posibility to boot luks encrypted persistent volumes
+* added possibility to boot luks encrypted persistent volumes
 
 ## v0.2.0
 
