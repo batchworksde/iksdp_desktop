@@ -9,6 +9,8 @@ on:
       - "debian-live/config/**"
       - ".github/workflows/build-image.yml"
       - "debian-live/vendor/**"
+      - "debian-live/package.yaml"
+      - "CHANGELOG.md"
 jobs:
   checkFileChanges:
     runs-on: ubuntu-24.04

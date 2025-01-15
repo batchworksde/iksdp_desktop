@@ -203,6 +203,12 @@ packages:
       systemd-timesyncd:
         enable: true
         name: systemd-timesyncd
+      cryptsetup:
+        enable: true
+        name: cryptsetup
+      cryptsetup-initramfs:
+        enable: true
+        name: cryptsetup-initramfs
 
   github:
     enable: true
