@@ -1,0 +1,1 @@
+user ALL=(root) NOPASSWD: /opt/iksdp/bin/create_bridge_br0.sh
