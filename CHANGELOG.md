@@ -8,6 +8,7 @@
 * [ZRAM based](https://wiki.debian.org/ZRam) swap added
 * `/tmp` using tmpfs managed with systemd
 * `50%` for ZRAM swap and /tmp tmpfs
+* default settings for firefox and chromium
 
 ## v0.2.0
 
