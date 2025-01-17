@@ -5,6 +5,7 @@
 * default configuration for Gnome and Gnome shell extensions for easier accessibility
 * added mode indicator
 * added possibility to boot luks encrypted persistent volumes
+* default settings for firefox and chromium
 
 ## v0.2.0
 
