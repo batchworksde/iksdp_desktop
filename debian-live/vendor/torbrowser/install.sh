@@ -14,7 +14,7 @@ if [ "${DEBIAN_ARCH}" = "amd64" ]; then
 
     loginfo "fetchExternalPackages" "torbrowser package download finished"
 
-
+    mkdir -p "${BUILD_DIR}"/config/includes.chroot/usr/share/applications/
     cat > ${BUILD_DIR}"/config/includes.chroot/usr/share/applications/tor-browser.desktop" <<EOL
 [Desktop Entry]
 Type=Application

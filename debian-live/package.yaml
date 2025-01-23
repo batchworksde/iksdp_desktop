@@ -209,10 +209,6 @@ packages:
       cryptsetup-initramfs:
         enable: true
         name: cryptsetup-initramfs
-      # from contrib
-      torbrowser-launcher:
-        enable: true
-        name: torbrowser-launcher
   github:
     enable: true
     app:
@@ -226,31 +222,31 @@ packages:
     app:
       zoom:
         name: zoom
-        enable: false
+        enable: true
       icaclient:
         name: icaclient
-        enable: false
+        enable: true
       teams:
         name: teams
-        enable: false
+        enable: true
       vscode:
         name: vscode
-        enable: false
+        enable: true
       signal:
         name: signal
-        enable: false
+        enable: true
       edge:
         name: edge
-        enable: false
+        enable: true
       yubico:
         name: yubico
-        enable: false
+        enable: true
       drawio:
         name: drawio
-        enable: false
+        enable: true
       kubectl:
         name: kubectl
-        enable: false
+        enable: true
       torbrowser:
         name: torbrowser
         enable: true
