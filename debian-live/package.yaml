@@ -209,6 +209,10 @@ packages:
       cryptsetup-initramfs:
         enable: true
         name: cryptsetup-initramfs
+      zramtools:
+        enable: true
+        name: zram-tools
+
   github:
     enable: true
     app:
