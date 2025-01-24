@@ -245,6 +245,15 @@ packages:
       yubico:
         name: yubico
         enable: false
+      drawio:
+        name: drawio
+        enable: true
+      kubectl:
+        name: kubectl
+        enable: true
+      torbrowser:
+        name: torbrowser
+        enable: true
   flatpak:
     enable: true
     flathub:
