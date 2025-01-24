@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.4.0
+* added vendor torbrowser, drawio, kubectl
+* updated ica client
+
 ## v0.3.0
 
 * default configuration for Gnome and Gnome shell extensions for easier accessibility
