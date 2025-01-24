@@ -232,7 +232,7 @@ packages:
         enable: false
       teams:
         name: teams
-        enable: true
+        enable: false
       vscode:
         name: vscode
         enable: true
