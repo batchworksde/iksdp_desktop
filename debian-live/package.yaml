@@ -229,7 +229,7 @@ packages:
         enable: true
       icaclient:
         name: icaclient
-        enable: true
+        enable: false
       teams:
         name: teams
         enable: true
@@ -241,10 +241,10 @@ packages:
         enable: true
       edge:
         name: edge
-        enable: true
+        enable: false
       yubico:
         name: yubico
-        enable: true
+        enable: false
       drawio:
         name: drawio
         enable: true
