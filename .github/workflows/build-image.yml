@@ -10,10 +10,7 @@ on:
       - ".github/workflows/build-image.yml"
       - "debian-live/vendor/**"
       - "debian-live/package.yaml"
-<<<<<<< HEAD
-=======
       - "CHANGELOG.md"
->>>>>>> main
 jobs:
   checkFileChanges:
     runs-on: ubuntu-24.04
