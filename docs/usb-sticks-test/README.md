@@ -206,7 +206,7 @@ root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=p
 
 ### ORICO U3S-X 64GB
 
-- [Amazon](https://www.amazon.de/gp/product/B0BHZCPBFL)
+- [Amazon](https://www.amazon.de/ORICO-0-Flash-Laufwerk-Schl%C3%BCsselschalter-USB-Speichermedien-Kompatibler-U3-100M-S/dp/B0BHZ5ZM42)
 - [ssd-tester](https://ssd-tester.de/orico_u3s_64gb.html) - unclear of it's really the stick - picture does not match
 - not tested yet
 - dmesg
