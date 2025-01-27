@@ -173,7 +173,6 @@ root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=p
 
 - [Amazon](https://www.amazon.de/SanDisk-Ultra-Flair-USB-Flash-Laufwerk-150-MB/dp/B015CH1NAQ)
 - [ssd-tester](https://ssd-tester.de/sandisk_ultra_flair_64gb_usb_3_0.html)
-- 
 - not (yet) tested in desktop mode
 - dmesg
 
