@@ -242,13 +242,61 @@ root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=p
 10485760000 bytes (10 GB, 9.8 GiB) copied, 191.509 s, 54.8 MB/s
 ```
 
+### current results
+
+|filename                        |random_read|random_write|read_test|write_test|description         |
+|--------------------------------|-----------|------------|---------|----------|--------------------|
+|fio.orico_u3sx_64gb.json        |40         |45          |1081     |876       | not yet tested     | 
+|fio.orico_ufsd_128gb.json       |366        |434         |8946     |7849      | tested - fast      |
+|fio.sandisk_ultraflair_64gb.json|43         |44          |1067     |878       | not yet tested     |
+|fio.smi.json                    |5          |5           |132      |109       | tested - to slow   |
+|fio.ssk_128gb.json              |9268       |5924        |7259     |5056      | tested - superfast |
+
+
 ## generate fio results
 
 you can use
 
 ```bash
-jq '.jobs[] | {jobname: .jobname, iops_read: .read.iops, runtime_read: .read.runtime, iops_write: .write.iops, runtime_write: .write.runtime}' fio.orico_ufsd_128gb.json
+./printresults.sh
+```
+
+```
+./printresults.sh
 {
+  "filename": "fio.orico_u3sx_64gb.json",
+  "jobname": "read_test",
+  "iops_read": 1080.961269,
+  "runtime_read": 120008,
+  "iops_write": 0,
+  "runtime_write": 0
+}
+{
+  "filename": "fio.orico_u3sx_64gb.json",
+  "jobname": "write_test",
+  "iops_read": 0,
+  "runtime_read": 0,
+  "iops_write": 875.561444,
+  "runtime_write": 120003
+}
+{
+  "filename": "fio.orico_u3sx_64gb.json",
+  "jobname": "random_read",
+  "iops_read": 39.522695,
+  "runtime_read": 120007,
+  "iops_write": 0,
+  "runtime_write": 0
+}
+{
+  "filename": "fio.orico_u3sx_64gb.json",
+  "jobname": "random_write",
+  "iops_read": 0,
+  "runtime_read": 0,
+  "iops_write": 44.59777,
+  "runtime_write": 120006
+}
+{
+  "filename": "fio.orico_ufsd_128gb.json",
   "jobname": "read_test",
   "iops_read": 8946.067566,
   "runtime_read": 120002,
@@ -256,6 +304,7 @@ jq '.jobs[] | {jobname: .jobname, iops_read: .read.iops, runtime_read: .read.run
   "runtime_write": 0
 }
 {
+  "filename": "fio.orico_ufsd_128gb.json",
   "jobname": "write_test",
   "iops_read": 0,
   "runtime_read": 0,
@@ -263,6 +312,7 @@ jq '.jobs[] | {jobname: .jobname, iops_read: .read.iops, runtime_read: .read.run
   "runtime_write": 120002
 }
 {
+  "filename": "fio.orico_ufsd_128gb.json",
   "jobname": "random_read",
   "iops_read": 366.260562,
   "runtime_read": 120002,
@@ -270,17 +320,47 @@ jq '.jobs[] | {jobname: .jobname, iops_read: .read.iops, runtime_read: .read.run
   "runtime_write": 0
 }
 {
+  "filename": "fio.orico_ufsd_128gb.json",
   "jobname": "random_write",
   "iops_read": 0,
   "runtime_read": 0,
   "iops_write": 434.247477,
   "runtime_write": 120003
 }
-```
-
-```bash
-user@iksdp-0:~/git/iksdp_desktop/docs/usb-sticks-test$ jq '.jobs[] | {jobname: .jobname, iops_read: .read.iops, runtime_read: .read.runtime, iops_write: .write.iops, runtime_write: .write.runtime}' fio.smi.json 
 {
+  "filename": "fio.sandisk_ultraflair_64gb.json",
+  "jobname": "read_test",
+  "iops_read": 1067.105482,
+  "runtime_read": 120020,
+  "iops_write": 0,
+  "runtime_write": 0
+}
+{
+  "filename": "fio.sandisk_ultraflair_64gb.json",
+  "jobname": "write_test",
+  "iops_read": 0,
+  "runtime_read": 0,
+  "iops_write": 877.804531,
+  "runtime_write": 120029
+}
+{
+  "filename": "fio.sandisk_ultraflair_64gb.json",
+  "jobname": "random_read",
+  "iops_read": 43.159114,
+  "runtime_read": 120021,
+  "iops_write": 0,
+  "runtime_write": 0
+}
+{
+  "filename": "fio.sandisk_ultraflair_64gb.json",
+  "jobname": "random_write",
+  "iops_read": 0,
+  "runtime_read": 0,
+  "iops_write": 43.523541,
+  "runtime_write": 120027
+}
+{
+  "filename": "fio.smi.json",
   "jobname": "read_test",
   "iops_read": 132.0239,
   "runtime_read": 120001,
@@ -288,6 +368,7 @@ user@iksdp-0:~/git/iksdp_desktop/docs/usb-sticks-test$ jq '.jobs[] | {jobname: .
   "runtime_write": 0
 }
 {
+  "filename": "fio.smi.json",
   "jobname": "write_test",
   "iops_read": 0,
   "runtime_read": 0,
@@ -295,6 +376,7 @@ user@iksdp-0:~/git/iksdp_desktop/docs/usb-sticks-test$ jq '.jobs[] | {jobname: .
   "runtime_write": 120003
 }
 {
+  "filename": "fio.smi.json",
   "jobname": "random_read",
   "iops_read": 5.481967,
   "runtime_read": 120942,
@@ -302,10 +384,53 @@ user@iksdp-0:~/git/iksdp_desktop/docs/usb-sticks-test$ jq '.jobs[] | {jobname: .
   "runtime_write": 0
 }
 {
+  "filename": "fio.smi.json",
   "jobname": "random_write",
   "iops_read": 0,
   "runtime_read": 0,
   "iops_write": 5.475775,
   "runtime_write": 121444
 }
+{
+  "filename": "fio.ssk_128gb.json",
+  "jobname": "read_test",
+  "iops_read": 7259.308023,
+  "runtime_read": 120004,
+  "iops_write": 0,
+  "runtime_write": 0
+}
+{
+  "filename": "fio.ssk_128gb.json",
+  "jobname": "write_test",
+  "iops_read": 0,
+  "runtime_read": 0,
+  "iops_write": 5056.490725,
+  "runtime_write": 120002
+}
+{
+  "filename": "fio.ssk_128gb.json",
+  "jobname": "random_read",
+  "iops_read": 9268.193295,
+  "runtime_read": 120003,
+  "iops_write": 0,
+  "runtime_write": 0
+}
+{
+  "filename": "fio.ssk_128gb.json",
+  "jobname": "random_write",
+  "iops_read": 0,
+  "runtime_read": 0,
+  "iops_write": 5924.235859,
+  "runtime_write": 120004
+}
 ```
+
+- reformatting might work without splunk..
+
+```
+index="teststick" sourcetype="_json" 
+| eval iops = round(if(match(jobname,"read"),iops_read,if(match(jobname,"write"),iops_write,"n/a")))
+| stats values(iops) as iops by filename jobname
+| xyseries filename jobname iops
+```
+
