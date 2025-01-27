@@ -4,7 +4,18 @@ Here we are testing some USB Sticks and their performance.
 
 ## test setup
 
-All tests have been done using the bosgame hardware. All were tested on USB3 USB-A port in front of the device. 
+All tests have been done using the bosgame hardware. All were tested on USB3 USB-A port in front of the device and using ext4 filesystem on the device, not using partitions. 
+
+fio tool have to be installed once
+
+```bash
+apt update && apt install fio -y
+```
+
+```bash
+mkfs.ext4 /dev/sda
+````
+
 All tests were just run once because of time issues.
 
 We are using a command to write seq. to the drive using dd
@@ -91,6 +102,9 @@ root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=p
 
 ### ORICO UFSD-X 128GB
 
+
+- [Amazon](https://www.amazon.de/gp/product/B0BHZ55ZCQ)
+- [ssd-tester](https://ssd-tester.de/orico_ufsd-x_256gb.html) - only 256 GB Version listed
 - feels fast
 - dmesg
 
@@ -122,6 +136,8 @@ root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=p
 
 ### SSK 128GB
 
+- [Amazon](https://www.amazon.de/gp/product/B0C36C8WCX)
+- [ssd-tester](https://ssd-tester.de/ssk_sd301_128gb.html)
 - feels super fast
 - dmesg
 
@@ -155,6 +171,9 @@ root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=p
 
 ### sandisk Ultra Flair 64GB
 
+- [Amazon](https://www.amazon.de/SanDisk-Ultra-Flair-USB-Flash-Laufwerk-150-MB/dp/B015CH1NAQ)
+- [ssd-tester](https://ssd-tester.de/sandisk_ultra_flair_64gb_usb_3_0.html)
+- 
 - not (yet) tested in desktop mode
 - dmesg
 
@@ -185,7 +204,44 @@ root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=p
 10485760000 bytes (10 GB, 9.8 GiB) copied, 363.797 s, 28.8 MB/s
 ```
 
+### ORICO U3S-X 64GB
 
+- [Amazon](https://www.amazon.de/gp/product/B0BHZCPBFL)
+- [ssd-tester](https://ssd-tester.de/orico_u3s_64gb.html) - unclear of it's really the stick - picture does not match
+- not tested yet
+- dmesg
+
+```
+[13348.994266] EXT4-fs (sda): unmounting filesystem.
+[13362.903933] usb 4-2: USB disconnect, device number 5
+[13365.735977] usb 4-2: new SuperSpeed USB device number 6 using xhci_hcd
+[13365.757389] usb 4-2: New USB device found, idVendor=090c, idProduct=1000, bcdDevice=11.00
+[13365.757407] usb 4-2: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[13365.757414] usb 4-2: Product: U3S-X
+[13365.757419] usb 4-2: Manufacturer: ORICO
+[13365.757423] usb 4-2: SerialNumber: AA00000000015589
+[13365.822244] usb-storage 4-2:1.0: USB Mass Storage device detected
+[13365.822933] scsi host2: usb-storage 4-2:1.0
+[13368.175684] scsi 2:0:0:0: Direct-Access     ORICO    U3S-X            1100 PQ: 0 ANSI: 6
+[13368.176500] sd 2:0:0:0: Attached scsi generic sg1 type 0
+[13368.177589] sd 2:0:0:0: [sda] 120927318 512-byte logical blocks: (61.9 GB/57.7 GiB)
+[13368.177886] sd 2:0:0:0: [sda] Write Protect is off
+[13368.177894] sd 2:0:0:0: [sda] Mode Sense: 43 00 00 00
+[13368.178044] sd 2:0:0:0: [sda] Write cache: enabled, read cache: enabled, doesn't support DPO or FUA
+[13368.180429]  sda: sda1
+[13368.180647] sd 2:0:0:0: [sda] Attached SCSI removable disk
+[21931.641615] EXT4-fs (sda1): recovery complete
+[21931.642710] EXT4-fs (sda1): mounted filesystem with ordered data mode. Quota mode: none.
+[23138.285068] EXT4-fs (sda1): unmounting filesystem.
+```
+
+```
+root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=progress
+10465837056 bytes (10 GB, 9.7 GiB) copied, 191 s, 54.8 MB/s
+10000+0 records in
+10000+0 records out
+10485760000 bytes (10 GB, 9.8 GiB) copied, 191.509 s, 54.8 MB/s
+```
 
 ## generate fio results
 
