@@ -24,7 +24,7 @@ We are using a command to write seq. to the drive using dd
 dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=progress
 ```
 
-- we are using fio testfile 
+- we are creating fio testfile /tmp/test.fio
 
 ```
 [global]
@@ -105,7 +105,7 @@ root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=p
 
 - [Amazon](https://www.amazon.de/gp/product/B0BHZ55ZCQ)
 - [ssd-tester](https://ssd-tester.de/orico_ufsd-x_256gb.html) - only 256 GB Version listed
-- feels fast
+- feels fast enough
 - dmesg
 
 ```
