@@ -434,3 +434,32 @@ index="teststick" sourcetype="_json"
 | xyseries filename jobname iops
 ```
 
+- direct csv export is possible with [yq](https://mikefarah.gitbook.io/yq/usage/csv-tsv#encode-array-of-objects-to-csv-missing-fields-behaviour)
+
+```bash
+for file in *.json; do file=$file yq -o csv '[["filename", "jobname", "read_iops", "read_runtime", "write_iops", "write_runtime"]] + [.jobs[] | [strenv(file), .jobname, .read.iops, .read.runtime, .write.iops, .write.runtime ]]' $file; done | sort --unique
+```
+
+```csv
+filename,jobname,read_iops,read_runtime,write_iops,write_runtime
+fio.orico_u3sx_64gb.json,random_read,39.522695,120007,0,0
+fio.orico_u3sx_64gb.json,random_write,0,0,44.59777,120006
+fio.orico_u3sx_64gb.json,read_test,1080.961269,120008,0,0
+fio.orico_u3sx_64gb.json,write_test,0,0,875.561444,120003
+fio.orico_ufsd_128gb.json,random_read,366.260562,120002,0,0
+fio.orico_ufsd_128gb.json,random_write,0,0,434.247477,120003
+fio.orico_ufsd_128gb.json,read_test,8946.067566,120002,0,0
+fio.orico_ufsd_128gb.json,write_test,0,0,7848.627523,120002
+fio.sandisk_ultraflair_64gb.json,random_read,43.159114,120021,0,0
+fio.sandisk_ultraflair_64gb.json,random_write,0,0,43.523541,120027
+fio.sandisk_ultraflair_64gb.json,read_test,1067.105482,120020,0,0
+fio.sandisk_ultraflair_64gb.json,write_test,0,0,877.804531,120029
+fio.smi.json,random_read,5.481967,120942,0,0
+fio.smi.json,random_write,0,0,5.475775,121444
+fio.smi.json,read_test,132.0239,120001,0,0
+fio.smi.json,write_test,0,0,109.280601,120003
+fio.ssk_128gb.json,random_read,9268.193295,120003,0,0
+fio.ssk_128gb.json,random_write,0,0,5924.235859,120004
+fio.ssk_128gb.json,read_test,7259.308023,120004,0,0
+fio.ssk_128gb.json,write_test,0,0,5056.490725,120002
+```
