@@ -4,7 +4,18 @@ Here we are testing some USB Sticks and their performance.
 
 ## test setup
 
-All tests have been done using the bosgame hardware. All were tested on USB3 USB-A port in front of the device. 
+All tests have been done using the bosgame hardware. All were tested on USB3 USB-A port in front of the device and using ext4 filesystem on the device, not using partitions. 
+
+fio tool have to be installed once
+
+```bash
+apt update && apt install fio -y
+```
+
+```bash
+mkfs.ext4 /dev/sda
+````
+
 All tests were just run once because of time issues.
 
 We are using a command to write seq. to the drive using dd
@@ -13,7 +24,7 @@ We are using a command to write seq. to the drive using dd
 dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=progress
 ```
 
-- we are using fio testfile 
+- we are creating fio testfile /tmp/test.fio
 
 ```
 [global]
@@ -91,7 +102,10 @@ root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=p
 
 ### ORICO UFSD-X 128GB
 
-- feels fast
+
+- [Amazon](https://www.amazon.de/gp/product/B0BHZ55ZCQ)
+- [ssd-tester](https://ssd-tester.de/orico_ufsd-x_256gb.html) - only 256 GB Version listed
+- feels fast enough
 - dmesg
 
 ```
@@ -122,6 +136,8 @@ root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=p
 
 ### SSK 128GB
 
+- [Amazon](https://www.amazon.de/gp/product/B0C36C8WCX)
+- [ssd-tester](https://ssd-tester.de/ssk_sd301_128gb.html)
 - feels super fast
 - dmesg
 
@@ -155,6 +171,8 @@ root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=p
 
 ### sandisk Ultra Flair 64GB
 
+- [Amazon](https://www.amazon.de/SanDisk-Ultra-Flair-USB-Flash-Laufwerk-150-MB/dp/B015CH1NAQ)
+- [ssd-tester](https://ssd-tester.de/sandisk_ultra_flair_64gb_usb_3_0.html)
 - not (yet) tested in desktop mode
 - dmesg
 
@@ -185,6 +203,54 @@ root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=p
 10485760000 bytes (10 GB, 9.8 GiB) copied, 363.797 s, 28.8 MB/s
 ```
 
+### ORICO U3S-X 64GB
+
+- [Amazon](https://www.amazon.de/ORICO-0-Flash-Laufwerk-Schl%C3%BCsselschalter-USB-Speichermedien-Kompatibler-U3-100M-S/dp/B0BHZ5ZM42)
+- [ssd-tester](https://ssd-tester.de/orico_u3s_64gb.html) - unclear of it's really the stick - picture does not match
+- not tested yet
+- dmesg
+
+```
+[13348.994266] EXT4-fs (sda): unmounting filesystem.
+[13362.903933] usb 4-2: USB disconnect, device number 5
+[13365.735977] usb 4-2: new SuperSpeed USB device number 6 using xhci_hcd
+[13365.757389] usb 4-2: New USB device found, idVendor=090c, idProduct=1000, bcdDevice=11.00
+[13365.757407] usb 4-2: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[13365.757414] usb 4-2: Product: U3S-X
+[13365.757419] usb 4-2: Manufacturer: ORICO
+[13365.757423] usb 4-2: SerialNumber: AA00000000015589
+[13365.822244] usb-storage 4-2:1.0: USB Mass Storage device detected
+[13365.822933] scsi host2: usb-storage 4-2:1.0
+[13368.175684] scsi 2:0:0:0: Direct-Access     ORICO    U3S-X            1100 PQ: 0 ANSI: 6
+[13368.176500] sd 2:0:0:0: Attached scsi generic sg1 type 0
+[13368.177589] sd 2:0:0:0: [sda] 120927318 512-byte logical blocks: (61.9 GB/57.7 GiB)
+[13368.177886] sd 2:0:0:0: [sda] Write Protect is off
+[13368.177894] sd 2:0:0:0: [sda] Mode Sense: 43 00 00 00
+[13368.178044] sd 2:0:0:0: [sda] Write cache: enabled, read cache: enabled, doesn't support DPO or FUA
+[13368.180429]  sda: sda1
+[13368.180647] sd 2:0:0:0: [sda] Attached SCSI removable disk
+[21931.641615] EXT4-fs (sda1): recovery complete
+[21931.642710] EXT4-fs (sda1): mounted filesystem with ordered data mode. Quota mode: none.
+[23138.285068] EXT4-fs (sda1): unmounting filesystem.
+```
+
+```
+root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=progress
+10465837056 bytes (10 GB, 9.7 GiB) copied, 191 s, 54.8 MB/s
+10000+0 records in
+10000+0 records out
+10485760000 bytes (10 GB, 9.8 GiB) copied, 191.509 s, 54.8 MB/s
+```
+
+### current results
+
+|filename                        |random_read|random_write|read_test|write_test|description         |
+|--------------------------------|-----------|------------|---------|----------|--------------------|
+|fio.orico_u3sx_64gb.json        |40         |45          |1081     |876       | not yet tested     | 
+|fio.orico_ufsd_128gb.json       |366        |434         |8946     |7849      | tested - fast      |
+|fio.sandisk_ultraflair_64gb.json|43         |44          |1067     |878       | not yet tested     |
+|fio.smi.json                    |5          |5           |132      |109       | tested - to slow   |
+|fio.ssk_128gb.json              |9268       |5924        |7259     |5056      | tested - superfast |
 
 ### Orico ufsd 64GB
 
@@ -197,8 +263,45 @@ root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=p
 you can use
 
 ```bash
-jq '.jobs[] | {jobname: .jobname, iops_read: .read.iops, runtime_read: .read.runtime, iops_write: .write.iops, runtime_write: .write.runtime}' fio.orico_ufsd_128gb.json
+./printresults.sh
+```
+
+```
+./printresults.sh
 {
+  "filename": "fio.orico_u3sx_64gb.json",
+  "jobname": "read_test",
+  "iops_read": 1080.961269,
+  "runtime_read": 120008,
+  "iops_write": 0,
+  "runtime_write": 0
+}
+{
+  "filename": "fio.orico_u3sx_64gb.json",
+  "jobname": "write_test",
+  "iops_read": 0,
+  "runtime_read": 0,
+  "iops_write": 875.561444,
+  "runtime_write": 120003
+}
+{
+  "filename": "fio.orico_u3sx_64gb.json",
+  "jobname": "random_read",
+  "iops_read": 39.522695,
+  "runtime_read": 120007,
+  "iops_write": 0,
+  "runtime_write": 0
+}
+{
+  "filename": "fio.orico_u3sx_64gb.json",
+  "jobname": "random_write",
+  "iops_read": 0,
+  "runtime_read": 0,
+  "iops_write": 44.59777,
+  "runtime_write": 120006
+}
+{
+  "filename": "fio.orico_ufsd_128gb.json",
   "jobname": "read_test",
   "iops_read": 8946.067566,
   "runtime_read": 120002,
@@ -206,6 +309,7 @@ jq '.jobs[] | {jobname: .jobname, iops_read: .read.iops, runtime_read: .read.run
   "runtime_write": 0
 }
 {
+  "filename": "fio.orico_ufsd_128gb.json",
   "jobname": "write_test",
   "iops_read": 0,
   "runtime_read": 0,
@@ -213,6 +317,7 @@ jq '.jobs[] | {jobname: .jobname, iops_read: .read.iops, runtime_read: .read.run
   "runtime_write": 120002
 }
 {
+  "filename": "fio.orico_ufsd_128gb.json",
   "jobname": "random_read",
   "iops_read": 366.260562,
   "runtime_read": 120002,
@@ -220,17 +325,47 @@ jq '.jobs[] | {jobname: .jobname, iops_read: .read.iops, runtime_read: .read.run
   "runtime_write": 0
 }
 {
+  "filename": "fio.orico_ufsd_128gb.json",
   "jobname": "random_write",
   "iops_read": 0,
   "runtime_read": 0,
   "iops_write": 434.247477,
   "runtime_write": 120003
 }
-```
-
-```bash
-user@iksdp-0:~/git/iksdp_desktop/docs/usb-sticks-test$ jq '.jobs[] | {jobname: .jobname, iops_read: .read.iops, runtime_read: .read.runtime, iops_write: .write.iops, runtime_write: .write.runtime}' fio.smi.json 
 {
+  "filename": "fio.sandisk_ultraflair_64gb.json",
+  "jobname": "read_test",
+  "iops_read": 1067.105482,
+  "runtime_read": 120020,
+  "iops_write": 0,
+  "runtime_write": 0
+}
+{
+  "filename": "fio.sandisk_ultraflair_64gb.json",
+  "jobname": "write_test",
+  "iops_read": 0,
+  "runtime_read": 0,
+  "iops_write": 877.804531,
+  "runtime_write": 120029
+}
+{
+  "filename": "fio.sandisk_ultraflair_64gb.json",
+  "jobname": "random_read",
+  "iops_read": 43.159114,
+  "runtime_read": 120021,
+  "iops_write": 0,
+  "runtime_write": 0
+}
+{
+  "filename": "fio.sandisk_ultraflair_64gb.json",
+  "jobname": "random_write",
+  "iops_read": 0,
+  "runtime_read": 0,
+  "iops_write": 43.523541,
+  "runtime_write": 120027
+}
+{
+  "filename": "fio.smi.json",
   "jobname": "read_test",
   "iops_read": 132.0239,
   "runtime_read": 120001,
@@ -238,6 +373,7 @@ user@iksdp-0:~/git/iksdp_desktop/docs/usb-sticks-test$ jq '.jobs[] | {jobname: .
   "runtime_write": 0
 }
 {
+  "filename": "fio.smi.json",
   "jobname": "write_test",
   "iops_read": 0,
   "runtime_read": 0,
@@ -245,6 +381,7 @@ user@iksdp-0:~/git/iksdp_desktop/docs/usb-sticks-test$ jq '.jobs[] | {jobname: .
   "runtime_write": 120003
 }
 {
+  "filename": "fio.smi.json",
   "jobname": "random_read",
   "iops_read": 5.481967,
   "runtime_read": 120942,
@@ -252,10 +389,82 @@ user@iksdp-0:~/git/iksdp_desktop/docs/usb-sticks-test$ jq '.jobs[] | {jobname: .
   "runtime_write": 0
 }
 {
+  "filename": "fio.smi.json",
   "jobname": "random_write",
   "iops_read": 0,
   "runtime_read": 0,
   "iops_write": 5.475775,
   "runtime_write": 121444
 }
+{
+  "filename": "fio.ssk_128gb.json",
+  "jobname": "read_test",
+  "iops_read": 7259.308023,
+  "runtime_read": 120004,
+  "iops_write": 0,
+  "runtime_write": 0
+}
+{
+  "filename": "fio.ssk_128gb.json",
+  "jobname": "write_test",
+  "iops_read": 0,
+  "runtime_read": 0,
+  "iops_write": 5056.490725,
+  "runtime_write": 120002
+}
+{
+  "filename": "fio.ssk_128gb.json",
+  "jobname": "random_read",
+  "iops_read": 9268.193295,
+  "runtime_read": 120003,
+  "iops_write": 0,
+  "runtime_write": 0
+}
+{
+  "filename": "fio.ssk_128gb.json",
+  "jobname": "random_write",
+  "iops_read": 0,
+  "runtime_read": 0,
+  "iops_write": 5924.235859,
+  "runtime_write": 120004
+}
+```
+
+- reformatting might work without splunk..
+
+```
+index="teststick" sourcetype="_json" 
+| eval iops = round(if(match(jobname,"read"),iops_read,if(match(jobname,"write"),iops_write,"n/a")))
+| stats values(iops) as iops by filename jobname
+| xyseries filename jobname iops
+```
+
+- direct csv export is possible with [yq](https://mikefarah.gitbook.io/yq/usage/csv-tsv#encode-array-of-objects-to-csv-missing-fields-behaviour)
+
+```bash
+for file in *.json; do file=$file yq -o csv '[["filename", "jobname", "read_iops", "read_runtime", "write_iops", "write_runtime"]] + [.jobs[] | [strenv(file), .jobname, .read.iops, .read.runtime, .write.iops, .write.runtime ]]' $file; done | sort --unique
+```
+
+```csv
+filename,jobname,read_iops,read_runtime,write_iops,write_runtime
+fio.orico_u3sx_64gb.json,random_read,39.522695,120007,0,0
+fio.orico_u3sx_64gb.json,random_write,0,0,44.59777,120006
+fio.orico_u3sx_64gb.json,read_test,1080.961269,120008,0,0
+fio.orico_u3sx_64gb.json,write_test,0,0,875.561444,120003
+fio.orico_ufsd_128gb.json,random_read,366.260562,120002,0,0
+fio.orico_ufsd_128gb.json,random_write,0,0,434.247477,120003
+fio.orico_ufsd_128gb.json,read_test,8946.067566,120002,0,0
+fio.orico_ufsd_128gb.json,write_test,0,0,7848.627523,120002
+fio.sandisk_ultraflair_64gb.json,random_read,43.159114,120021,0,0
+fio.sandisk_ultraflair_64gb.json,random_write,0,0,43.523541,120027
+fio.sandisk_ultraflair_64gb.json,read_test,1067.105482,120020,0,0
+fio.sandisk_ultraflair_64gb.json,write_test,0,0,877.804531,120029
+fio.smi.json,random_read,5.481967,120942,0,0
+fio.smi.json,random_write,0,0,5.475775,121444
+fio.smi.json,read_test,132.0239,120001,0,0
+fio.smi.json,write_test,0,0,109.280601,120003
+fio.ssk_128gb.json,random_read,9268.193295,120003,0,0
+fio.ssk_128gb.json,random_write,0,0,5924.235859,120004
+fio.ssk_128gb.json,read_test,7259.308023,120004,0,0
+fio.ssk_128gb.json,write_test,0,0,5056.490725,120002
 ```
