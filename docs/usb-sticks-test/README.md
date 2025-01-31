@@ -242,20 +242,52 @@ root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=p
 10485760000 bytes (10 GB, 9.8 GiB) copied, 191.509 s, 54.8 MB/s
 ```
 
+### ORICO UFSD 64GB
+
+- [Amazon](https://www.amazon.de/gp/product/B0BHZ55H6B)
+- [ssd-tester](https://ssd-tester.de/orico_ufsd-x_256gb.html) - only 256 GB Version listed
+- not tested yet
+- dmesg
+
+```
+[  311.333615] usb 4-2: USB disconnect, device number 2
+[  314.572613] usb 4-2: new SuperSpeed USB device number 3 using xhci_hcd
+[  314.593478] usb 4-2: New USB device found, idVendor=152d, idProduct=0562, bcdDevice= 3.03
+[  314.593496] usb 4-2: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[  314.593503] usb 4-2: Product: UFSD-X
+[  314.593508] usb 4-2: Manufacturer: ORICO
+[  314.593511] usb 4-2: SerialNumber: DD56419884271
+[  314.595760] usb-storage 4-2:1.0: USB Mass Storage device detected
+[  314.598434] scsi host2: usb-storage 4-2:1.0
+[  315.645245] scsi 2:0:0:0: Direct-Access     ORICO    UFSD-X           0303 PQ: 0 ANSI: 6
+[  315.646036] sd 2:0:0:0: Attached scsi generic sg1 type 0
+[  315.646959] sd 2:0:0:0: [sda] 124960761 512-byte logical blocks: (64.0 GB/59.6 GiB)
+[  315.647181] sd 2:0:0:0: [sda] Write Protect is off
+[  315.647188] sd 2:0:0:0: [sda] Mode Sense: 43 00 00 00
+[  315.647352] sd 2:0:0:0: [sda] Write cache: disabled, read cache: enabled, doesn't support DPO or FUA
+[  315.654025] sd 2:0:0:0: [sda] Attached SCSI removable disk
+[  315.874051] EXT4-fs (sda): mounted filesystem with ordered data mode. Quota mode: none.
+```
+
+```
+root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=progress
+10377756672 bytes (10 GB, 9.7 GiB) copied, 43 s, 241 MB/s
+10000+0 records in
+10000+0 records out
+10485760000 bytes (10 GB, 9.8 GiB) copied, 43.5615 s, 241 MB/s
+```
+
+
 ### current results
 
 |filename                        |random_read|random_write|read_test|write_test|description         |
 |--------------------------------|-----------|------------|---------|----------|--------------------|
 |fio.orico_u3sx_64gb.json        |40         |45          |1081     |876       | not yet tested     | 
 |fio.orico_ufsd_128gb.json       |366        |434         |8946     |7849      | tested - fast      |
+|fio.orico_ufsd_64 gb.json       |406        |460         |10629    |9301      | not tested         |
 |fio.sandisk_ultraflair_64gb.json|43         |44          |1067     |878       | not yet tested     |
 |fio.smi.json                    |5          |5           |132      |109       | tested - to slow   |
 |fio.ssk_128gb.json              |9268       |5924        |7259     |5056      | tested - superfast |
-
-### Orico ufsd 64GB
-
-
-
 
 
 ## generate fio results
