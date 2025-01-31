@@ -186,6 +186,11 @@ root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=p
 ```
 
 
+### Orico ufsd 64GB
+
+
+
+
 
 ## generate fio results
 
