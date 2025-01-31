@@ -486,14 +486,20 @@ root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=p
 
 ### current results
 
-|filename                        |random_read|random_write|read_test|write_test|description         |
-|--------------------------------|-----------|------------|---------|----------|--------------------|
-|fio.orico_u3sx_64gb.json        |40         |45          |1081     |876       | not yet tested     | 
-|fio.orico_ufsd_128gb.json       |366        |434         |8946     |7849      | tested - fast      |
-|fio.orico_ufsd_64 gb.json       |406        |460         |10629    |9301      | not tested         |
-|fio.sandisk_ultraflair_64gb.json|43         |44          |1067     |878       | not yet tested     |
-|fio.smi.json                    |5          |5           |132      |109       | tested - to slow   |
-|fio.ssk_128gb.json              |9268       |5924        |7259     |5056      | tested - superfast |
+|filename                            |random_read|random_write|read_test|write_test|description         |
+|------------------------------------|-----------|------------|---------|----------|--------------------|
+|fio.orico_u3sx_64gb.json            |40         |45          |1081     |876       |                    |
+|fio.orico_ufsd_128gb.json           |366        |434         |8946     |7849      | tested - fast      | 
+|fio.orico_ufsd_256gb.json           |523        |592         |11924    |10907     |                    |
+|fio.orico_ufsd_64gb.json            |407        |461         |10630    |9302      |                    |
+|fio.sandisk_ultra_32gb.json         |40         |41          |990      |821       |                    |
+|fio.sandisk_ultra_dual_512gb.json   |34         |34          |860      |703       |                    |
+|fio.sandisk_ultra_fit_64gb.json     |39         |37          |914      |770       |                    |
+|fio.sandisk_ultra_micro_sd_16gb.json|76         |75          |1807     |1521      |                    |
+|fio.sandisk_ultra_slider_256gb.json |333        |323         |5277     |3583      |                    |
+|fio.sandisk_ultraflair_64gb.json    |43         |44          |1067     |878       |                    |
+|fio.smi.json                        |5          |5           |132      |109       | to slow            |
+|fio.ssk_128gb.json                  |9268       |5924        |7259     |5056      | tested - super fast|
 
 
 ## generate fio results
