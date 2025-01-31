@@ -777,21 +777,44 @@ function createFolder {
   fi
 }
 
-function configBootSplash {
-  loginfo "${FUNCNAME[0]}" "Configure boot splash"
+function configBootLoader {
+  loginfo "${FUNCNAME[0]}" "Configure boot loader"
   local folderlist
   folderlist=("grub-pc" "grub-efi" "isolinux")
 
   for folder in "${folderlist[@]}"; do
     createFolder "${BUILD_DIR}/config/bootloaders/${folder}"
-    convert "${WORK_DIR}"/debian-live/config/bootloaders/grub-pc/splash.png -gravity North -pointsize 14 -fill white -annotate +100+100 "Image ${folder} version: ${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}" "${BUILD_DIR}"/config/bootloaders/"${folder}"/splash.png
+    convert "${WORK_DIR}"/debian-live/config/bootloaders/splash.png -gravity North -pointsize 14 -fill white -annotate +100+100 "Image ${folder} version: ${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}" "${BUILD_DIR}"/config/bootloaders/"${folder}"/splash.png
     if [ "$?" -ne 0 ]; then
       logerror "${FUNCNAME[0]}" "${folder} splash screen image generation failed"
       exit 1
     fi
+    if [ -d "${WORK_DIR}/debian-live/config/bootloaders/${folder}" ]; then
+      cp -r "${WORK_DIR}/debian-live/config/bootloaders/${folder}" "${BUILD_DIR}/config/bootloaders/"
+      if [ "$?" -ne 0 ]; then
+        logerror "${FUNCNAME[0]}" "${folder} copy to ${BUILD_DIR} failed"
+        exit 1
+      fi
+    fi
   done
 
-  loginfo "${FUNCNAME[0]}" "boot splash configuration done"
+  loginfo "${FUNCNAME[0]}" "boot loader configuration done"
+}
+
+function setGrubPw {
+  loginfo "${FUNCNAME[0]}" "setting grub password"
+  GRUB_PASSWORD_HASH="$(echo -e "${ROOTPW}\n${ROOTPW}" | LC_ALL=C /usr/bin/grub-mkpasswd-pbkdf2 | awk '/hash of / {print $NF}')"
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "creation of grub password hash failed"
+    exit 1
+  fi
+  if [ -f "${BUILD_DIR}/config/bootloaders/grub-pc/config.cfg" ]; then
+    echo "password_pbkdf2 root $GRUB_PASSWORD_HASH" >>  "${BUILD_DIR}"/config/bootloaders/grub-pc/config.cfg
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "adding grub config for password failed"
+      exit 1
+    fi
+  fi
 }
 
 importEnvVars
@@ -814,7 +837,8 @@ case "${USE_CASE}" in
     installPrerequisites
     ;;
   "configImage")
-    configBootSplash
+    configBootLoader
+    setGrubPw
     configImage
     configPackages
     configHooks
@@ -840,7 +864,8 @@ case "${USE_CASE}" in
     installPrerequisites
     cleanupConfig
     configImage
-    configBootSplash
+    configBootLoader
+    setGrubPw
     configPackages
     configHooks
     setRootPw
