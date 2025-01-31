@@ -277,6 +277,212 @@ root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=p
 10485760000 bytes (10 GB, 9.8 GiB) copied, 43.5615 s, 241 MB/s
 ```
 
+### SanDisk Ultra® Slider USB-Type-CTM-Laufwerk 256 GB
+
+- [Amazon](https://www.amazon.de/gp/product/B0CP62S615/)
+- [ssd-tester](https://ssd-tester.de/sandisk_ultra_slider_256gb.html)
+- not tested yet
+- dmesg
+
+```
+[ 2044.060598] usb 4-4.2: new SuperSpeed USB device number 6 using xhci_hcd
+[ 2044.081716] usb 4-4.2: New USB device found, idVendor=0781, idProduct=55b9, bcdDevice= 1.00
+[ 2044.081733] usb 4-4.2: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[ 2044.081740] usb 4-4.2: Product:  SanDisk 3.2Gen1
+[ 2044.081744] usb 4-4.2: Manufacturer:  USB
+[ 2044.081748] usb 4-4.2: SerialNumber: 03003015042224160251
+[ 2044.088725] scsi host1: uas
+[ 2044.090019] scsi 1:0:0:0: Direct-Access      USB      SanDisk 3.2Gen1 1.00 PQ: 0 ANSI: 7
+[ 2044.092972] sd 1:0:0:0: Attached scsi generic sg0 type 0
+[ 2044.099606] sd 1:0:0:0: [sda] 488570880 512-byte logical blocks: (250 GB/233 GiB)
+[ 2044.100563] sd 1:0:0:0: [sda] Write Protect is off
+[ 2044.100569] sd 1:0:0:0: [sda] Mode Sense: 43 00 00 00
+[ 2044.100871] sd 1:0:0:0: [sda] Write cache: enabled, read cache: enabled, doesn't support DPO or FUA
+[ 2044.160511] sd 1:0:0:0: [sda] Preferred minimum I/O size 4096 bytes
+[ 2044.163045]  sda: sda1
+[ 2044.163242] sd 1:0:0:0: [sda] Attached SCSI removable disk
+[ 2044.365981] EXT4-fs (sda1): mounted filesystem with ordered data mode. Quota mode: none.
+```
+
+```
+root@iksdp-0:/home/user# dd if=/dev/random of=/mnt/testfile.dd  bs=1M count=10000 status=progress
+10462691328 bytes (10 GB, 9.7 GiB) copied, 89 s, 118 MB/s
+10000+0 records in
+10000+0 records out
+10485760000 bytes (10 GB, 9.8 GiB) copied, 89.3583 s, 117 MB/s
+```
+
+### ORICO USB Stick Type C 256 GB, UFSD Flash Drive 405 MB/s
+- [Amazon](https://www.amazon.de/dp/B0BHZ5LTG6)
+- [ssd-tester](https://ssd-tester.de/orico_ufsd-j_256gb.html)
+- not tested yet
+- dmesg
+
+```
+[ 4515.576528] usb 4-4.1: new SuperSpeed USB device number 10 using xhci_hcd
+[ 4515.597986] usb 4-4.1: New USB device found, idVendor=152d, idProduct=0562, bcdDevice= 3.03
+[ 4515.598005] usb 4-4.1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[ 4515.598012] usb 4-4.1: Product: UFSD-J
+[ 4515.598017] usb 4-4.1: Manufacturer: ORICO
+[ 4515.598021] usb 4-4.1: SerialNumber: DD56419884195
+[ 4515.601273] usb-storage 4-4.1:1.0: USB Mass Storage device detected
+[ 4515.601770] scsi host1: usb-storage 4-4.1:1.0
+[ 4516.699289] scsi 1:0:0:0: Direct-Access     ORICO    UFSD-J           0303 PQ: 0 ANSI: 6
+[ 4516.700130] sd 1:0:0:0: Attached scsi generic sg0 type 0
+[ 4516.701252] sd 1:0:0:0: [sda] 499892217 512-byte logical blocks: (256 GB/238 GiB)
+[ 4516.701448] sd 1:0:0:0: [sda] Write Protect is off
+[ 4516.701455] sd 1:0:0:0: [sda] Mode Sense: 43 00 00 00
+[ 4516.701714] sd 1:0:0:0: [sda] Write cache: disabled, read cache: enabled, doesn't support DPO or FUA
+[ 4516.705638]  sda: sda1
+[ 4516.706109] sd 1:0:0:0: [sda] Attached SCSI removable disk
+[ 4516.881758] EXT4-fs (sda1): mounted filesystem with ordered data mode. Quota mode: none.
+```
+
+```
+root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=progress
+10341056512 bytes (10 GB, 9.6 GiB) copied, 34 s, 304 MB/s
+10000+0 records in
+10000+0 records out
+10485760000 bytes (10 GB, 9.8 GiB) copied, 34.6337 s, 303 MB/s
+```
+
+### SanDisk Ultra 32GB USB-Flash-Laufwerk USB 3.0 bis zu 100MB/Sek
+- [Amazon](https://www.amazon.de/dp/B00DQG9OZ2/)
+- [ssd-tester](https://ssd-tester.de/sandisk_ultra_32gb.html)
+- not tested yet
+- dmesg
+
+```
+[ 7366.577736] usb 3-1.6: new high-speed USB device number 21 using xhci_hcd
+[ 7366.692918] usb 3-1.6: New USB device found, idVendor=0bda, idProduct=1101, bcdDevice= 1.01
+[ 7366.692936] usb 3-1.6: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+[ 7366.692942] usb 3-1.6: Product: HID Device
+[ 7366.692947] usb 3-1.6: Manufacturer: Realtek
+[ 7366.699718] hid-generic 0003:0BDA:1101.000C: hiddev0,hidraw0: USB HID v1.11 Device [Realtek HID Device] on usb-0000:00:14.0-1.6/input0
+[ 7366.979621] scsi 1:0:0:0: Direct-Access     SanDisk  Ultra            1.00 PQ: 0 ANSI: 6
+[ 7366.980269] sd 1:0:0:0: Attached scsi generic sg0 type 0
+[ 7366.987790] sd 1:0:0:0: [sda] 60062500 512-byte logical blocks: (30.8 GB/28.6 GiB)
+[ 7366.988693] sd 1:0:0:0: [sda] Write Protect is off
+[ 7366.988698] sd 1:0:0:0: [sda] Mode Sense: 43 00 00 00
+[ 7366.989020] sd 1:0:0:0: [sda] Write cache: disabled, read cache: enabled, doesn't support DPO or FUA
+[ 7367.001808]  sda: sda1
+[ 7367.002066] sd 1:0:0:0: [sda] Attached SCSI removable disk
+[ 7367.205230] EXT4-fs (sda1): mounted filesystem with ordered data mode. Quota mode: none.
+```
+
+```
+root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=progress
+10481565696 bytes (10 GB, 9.8 GiB) copied, 915 s, 11.5 MB/s
+10000+0 records in
+10000+0 records out
+10485760000 bytes (10 GB, 9.8 GiB) copied, 915.603 s, 11.5 MB/s
+```
+
+### SanDisk Ultra Dual Drive Go USB Type-C 512 GB 2-in-1 Smartphone Speicher (150 MB/s
+- [Amazon](https://www.amazon.de/dp/B0859NR7KY/)
+- [ssd-tester](https://ssd-tester.de/sandisk_ultra_dual_drive_go_256gb.html) (256 GB Variante)
+- not tested yet
+- dmesg
+
+```
+[ 8704.684544] usb 4-1: USB disconnect, device number 15
+[ 8709.752434] usb 4-1: new SuperSpeed USB device number 16 using xhci_hcd
+[ 8709.773686] usb 4-1: New USB device found, idVendor=0781, idProduct=55a9, bcdDevice= 1.00
+[ 8709.773704] usb 4-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[ 8709.773710] usb 4-1: Product:  SanDisk 3.2Gen1
+[ 8709.773715] usb 4-1: Manufacturer:  USB
+[ 8709.773719] usb 4-1: SerialNumber: 0101f5513ae2bedccbbbe80ec7991652a0208527c2248e9ef599dc9b7d4727cda5c500000000000000000000188da22e000b7200a9558107672e8437
+[ 8709.776274] usb-storage 4-1:1.0: USB Mass Storage device detected
+[ 8709.776783] scsi host1: usb-storage 4-1:1.0
+[ 8710.782371] scsi 1:0:0:0: Direct-Access      USB      SanDisk 3.2Gen1 1.00 PQ: 0 ANSI: 6
+[ 8710.782952] sd 1:0:0:0: Attached scsi generic sg0 type 0
+[ 8710.790945] sd 1:0:0:0: [sda] 965246976 512-byte logical blocks: (494 GB/460 GiB)
+[ 8710.791286] sd 1:0:0:0: [sda] Write Protect is off
+[ 8710.791290] sd 1:0:0:0: [sda] Mode Sense: 43 00 00 00
+[ 8710.791604] sd 1:0:0:0: [sda] Write cache: disabled, read cache: enabled, doesn't support DPO or FUA
+[ 8710.804628]  sda: sda1
+[ 8710.804867] sd 1:0:0:0: [sda] Attached SCSI removable disk
+[ 8711.260317] EXT4-fs (sda1): mounted filesystem with ordered data mode. Quota mode: none.
+```
+
+```
+root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=progress
+10459545600 bytes (10 GB, 9.7 GiB) copied, 261 s, 40.1 MB/s
+10000+0 records in
+10000+0 records out
+10485760000 bytes (10 GB, 9.8 GiB) copied, 261.502 s, 40.1 MB/s
+```
+
+### SanDisk Ultra Fit 64 GB FlashLaufwerk USB 3.1 bis zu 130MB/Sek. Lesen
+- [Amazon](https://www.amazon.de/dp/B077VYCV37/)
+- [ssd-tester](https://ssd-tester.de/sandisk_ultra_fit_64gb.html)
+- not tested yet
+- dmesg
+
+```
+[10230.894855] usb 4-1: new SuperSpeed USB device number 19 using xhci_hcd
+[10230.915998] usb 4-1: New USB device found, idVendor=0781, idProduct=5583, bcdDevice= 1.00
+[10230.916017] usb 4-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[10230.916023] usb 4-1: Product:  SanDisk 3.2Gen1
+[10230.916028] usb 4-1: Manufacturer:  USB
+[10230.916031] usb 4-1: SerialNumber: 05015ea8c58aa4f975905a1c15d15224db05a7ff8b7425f7d6d02e902b1529282d1600000000000000000000d081b80d001a171083558107952905d6
+[10230.918418] usb-storage 4-1:1.0: USB Mass Storage device detected
+[10230.919124] scsi host1: usb-storage 4-1:1.0
+[10231.952675] scsi 1:0:0:0: Direct-Access      USB      SanDisk 3.2Gen1 1.00 PQ: 0 ANSI: 6
+[10231.953359] sd 1:0:0:0: Attached scsi generic sg0 type 0
+[10231.960256] sd 1:0:0:0: [sda] 120127488 512-byte logical blocks: (61.5 GB/57.3 GiB)
+[10231.961193] sd 1:0:0:0: [sda] Write Protect is off
+[10231.961197] sd 1:0:0:0: [sda] Mode Sense: 43 00 00 00
+[10231.961529] sd 1:0:0:0: [sda] Write cache: disabled, read cache: enabled, doesn't support DPO or FUA
+[10231.975814]  sda: sda1
+[10231.976050] sd 1:0:0:0: [sda] Attached SCSI removable disk
+[10232.420272] EXT4-fs (sda1): mounted filesystem with ordered data mode. Quota mode: none.
+```
+
+```
+root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=progress
+10485760000 bytes (10 GB, 9.8 GiB) copied, 321 s, 32.7 MB/s
+10000+0 records in
+10000+0 records out
+10485760000 bytes (10 GB, 9.8 GiB) copied, 321.033 s, 32.7 MB/s
+```
+
+### SanDisk Ultra 16GB microSDHC Speicherkarte
+- [Amazon](https://www.amazon.de/dp/product/B073K14CVB/)
+- not tested yet
+- dmesg
+
+```
+[12722.592104] usb 4-1: new SuperSpeed USB device number 24 using xhci_hcd
+[12722.618707] usb 4-1: New USB device found, idVendor=05e3, idProduct=0749, bcdDevice=15.39
+[12722.618724] usb 4-1: New USB device strings: Mfr=3, Product=4, SerialNumber=5
+[12722.618731] usb 4-1: Product: USB3.0 Card Reader
+[12722.618736] usb 4-1: Manufacturer: Generic
+[12722.618740] usb 4-1: SerialNumber: 000000001539
+[12722.623881] usb-storage 4-1:1.0: USB Mass Storage device detected
+[12722.624203] scsi host1: usb-storage 4-1:1.0
+[12723.658402] scsi 1:0:0:0: Direct-Access     Generic  MassStorageClass 1539 PQ: 0 ANSI: 6
+[12723.660116] scsi 1:0:0:1: Direct-Access     Generic  MassStorageClass 1539 PQ: 0 ANSI: 6
+[12723.660792] sd 1:0:0:0: Attached scsi generic sg0 type 0
+[12723.661426] sd 1:0:0:1: Attached scsi generic sg1 type 0
+[12723.661971] sd 1:0:0:0: [sda] Media removed, stopped polling
+[12723.662544] sd 1:0:0:0: [sda] Attached SCSI removable disk
+[12723.953677] sd 1:0:0:1: [sdb] 31116288 512-byte logical blocks: (15.9 GB/14.8 GiB)
+[12723.954787] sd 1:0:0:1: [sdb] Write Protect is off
+[12723.954795] sd 1:0:0:1: [sdb] Mode Sense: 21 00 00 00
+[12723.955879] sd 1:0:0:1: [sdb] Write cache: disabled, read cache: enabled, doesn't support DPO or FUA
+[12723.963709]  sdb: sdb1
+[12723.963956] sd 1:0:0:1: [sdb] Attached SCSI removable disk
+[12724.120675] EXT4-fs (sdb1): mounted filesystem with ordered data mode. Quota mode: none.
+```
+
+```
+root@iksdp-0:~# dd if=/dev/random of=/mnt/testfile.dd bs=1M count=10000 status=progress
+10485760000 bytes (10 GB, 9.8 GiB) copied, 589 s, 17.8 MB/s
+10000+0 records in
+10000+0 records out
+10485760000 bytes (10 GB, 9.8 GiB) copied, 589.024 s, 17.8 MB/s
+```
 
 ### current results
 
