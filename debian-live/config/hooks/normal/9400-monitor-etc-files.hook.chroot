@@ -1,0 +1,7 @@
+#!/bin/bash
+
+PERSISTENT_FOLDER="/etc/iksdp_persistent"
+mkdir -p "${PERSISTENT_FOLDER}"
+
+systemctl daemon-reload
+systemctl enable monitor-etc-files

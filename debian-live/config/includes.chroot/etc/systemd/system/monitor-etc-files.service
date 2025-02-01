@@ -1,0 +1,8 @@
+[Unit]
+Description=Monitor some /etc files and copy them to persistent folder
+
+[Service]
+ExecStart=/opt/iksdp/bin/monitor-etc-files.sh
+
+[Install]
+WantedBy=multi-user.target
