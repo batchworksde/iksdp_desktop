@@ -20,7 +20,6 @@ We create versioned [releases](https://github.com/batchworksde/iksdp_desktop/rel
 - boot a [NixOS minimal image](https://channels.nixos.org/nixos-24.11/latest-nixos-minimal-aarch64-linux.iso) on a computer or VM
 - become root
 - start a nix shell with the git package enabled
-- remount the tmpfs for `/` to avoid `out of space` conditions during installation on machines with 8GB RAM or less
 - partition the attached NVMe disk
 - download the Citrix ICA client(because of the EULA download limitation)
 - start the NixOS installation
@@ -30,7 +29,6 @@ We create versioned [releases](https://github.com/batchworksde/iksdp_desktop/rel
 ```shell=bash
 sudo -i
 nix-shell -p git
-mount -o remount,size=80% /
 nix --experimental-features "nix-command flakes" run 'github:nix-community/disko/v1.11.0#disko' -- --mode disko --flake 'git+https://github.com/batchworksde/iksdp_desktop.git?ref=nixos&dir=nixos#hostname'
 nix-prefetch-url http://iksdp.pfadfinderzentrum.org/linuxx64-24.5.0.76.tar.gz
 nixos-install --flake 'git+https://github.com/batchworksde/iksdp_desktop.git?ref=nixos&dir=nixos#hostname'

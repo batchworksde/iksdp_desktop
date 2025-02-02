@@ -32,7 +32,8 @@
     };
   };
 
-  persistence.type = "preservation";
+  # do not use, it is currently not stable enough
+  # persistence.type = "preservation";
   nixpkgs.config.allowUnfree = true;
   system.stateVersion = "24.11";
 }
