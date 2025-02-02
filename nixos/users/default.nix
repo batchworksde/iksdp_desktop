@@ -8,7 +8,7 @@
   ];
 
   users = {
-    mutableUsers = false;
+    mutableUsers = true;
   };
   security.sudo.wheelNeedsPassword = lib.mkDefault false;
 }
