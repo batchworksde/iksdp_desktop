@@ -31,7 +31,6 @@ We create versioned [releases](https://github.com/batchworksde/iksdp_desktop/rel
 | `DEBIAN_TIMEZONE` | Africa/Nairobi | [time zone](https://wiki.debian.org/TimeZoneChanges) that should be configured in the live image |
 | `DEBIAN_SUDO_DISABLE` | false | Disables [sudo and policykit](https://manpages.debian.org/bookworm/open-infrastructure-system-config/live-config.7.en.html#live~23), the user cannot gain root privileges on the live system |
 | `DEBIAN_USER_PERSISTENCE` | true | The user home should be [persisted](https://live-team.pages.debian.net/live-manual/html/live-manual/customizing-run-time-behaviours.en.html#556) on some attached (USB) storage |
-| `DEBIAN_ZOOM_VERSION` | 6.2.6.2503 | Version of the Debian package for the [Zoom client](https://zoom.us/download?os=linux) |
 
 ### Github runner configuration
 
@@ -46,7 +45,7 @@ We create versioned [releases](https://github.com/batchworksde/iksdp_desktop/rel
 
 | Parameter   | Value       | Description     |
 | :---        | :----:      | :---            |
-| `RELEASE_VERSION` | 0.2.0 | version number for the generated live image |
+| `RELEASE_VERSION` | 0.4.0 | version number for the generated live image |
 
 ## Changelog
 
