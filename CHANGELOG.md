@@ -1,8 +1,10 @@
 # Changelog
 
 ## v0.4.0
+
 * added vendor torbrowser, drawio, kubectl
 * updated ica client
+* automatic timezone config using Gnome features instead of custom scripts
 
 ## v0.3.0
 
