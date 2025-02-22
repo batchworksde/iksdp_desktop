@@ -1,5 +1,5 @@
 [org/gnome/shell]
-enabled-extensions=['persistence-indicator@batchworks.de','no-overview@fthx', 'dash2dock-lite@icedman.github.com', 'apps-menu@gnome-shell-extensions.gcampax.github.com', 'places-menu@gnome-shell-extensions.gcampax.github.com', 'drive-menu@gnome-shell-extensions.gcampax.github.com']
+enabled-extensions=['persistence-indicator@batchworks.de','no-overview@fthx', 'dash-to-dock@micxgx.gmail.com', 'apps-menu@gnome-shell-extensions.gcampax.github.com', 'places-menu@gnome-shell-extensions.gcampax.github.com', 'drive-menu@gnome-shell-extensions.gcampax.github.com']
 
 [org/gnome/shell/extensions/dash-to-panel]
 panel-positions='{"0":"TOP"}'
@@ -24,6 +24,7 @@ animate-icons-unmute=false
 background-opacity=0.80000000000000004
 dash-max-icon-size=48
 dock-position='LEFT'
+dock-fixed=true
 extend-height=false
 height-fraction=0.90000000000000002
 intellihide-mode='FOCUS_APPLICATION_WINDOWS'
