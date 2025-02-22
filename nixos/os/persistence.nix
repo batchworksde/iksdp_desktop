@@ -17,8 +17,6 @@
       ];
       files = [
         "/etc/machine-id"
-        "/etc/shadow"
-        "/etc/group"
       ];
     };
   };
