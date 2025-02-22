@@ -278,8 +278,11 @@ packages:
         enable: true
         id: 1160
       dash2dock-animated:
-        enable: true
+        enable: false
         id: 4994
+      dash-to-dock:
+        enable: true
+        id: 307
       arcmenu:
         enable: true
         id: 3628

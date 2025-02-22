@@ -20,5 +20,13 @@ dock-location=1
 running-indicator-style=2
 animate-icons-unmute=false
 
+[org/gnome/shell/extensions/dash-to-dock]
+background-opacity=0.80000000000000004
+dash-max-icon-size=48
+dock-position='LEFT'
+extend-height=false
+height-fraction=0.90000000000000002
+intellihide-mode='FOCUS_APPLICATION_WINDOWS'
+
 [org/gnome/shell/extensions/gtk4-ding]
 icon-size='small'
