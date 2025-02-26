@@ -8,7 +8,12 @@ if [ "${DEBIAN_ARCH}" = "amd64" ]; then
         logerror "fetchExternalPackages" "creation of cache folder failed"
         exit 1
     fi
-    curl --silent --location https://dist.torproject.org/torbrowser/14.0.4/tor-browser-linux-x86_64-14.0.4.tar.xz --output "${BUILD_DIR}"/cache/tor-browser.tar.xz
+    version="$(curl -s https://aus1.torproject.org/torbrowser/update_3/release/downloads.json | jq -r ".version")"
+    if [ "$?" -ne 0 ]; then
+        logerror "fetchExternalPackages" "getting the latest torbrowser version failed"
+        exit 1
+    fi
+    curl --silent --location https://dist.torproject.org/torbrowser/${version}/tor-browser-linux-x86_64-${version}.tar.xz --output "${BUILD_DIR}"/cache/tor-browser.tar.xz
     if [ "$?" -ne 0 ]; then
         logerror "fetchExternalPackages" "torbrowser package download failed"
         exit 1
