@@ -4,7 +4,7 @@ if [ "${DEBIAN_ARCH}" = "amd64" ]; then
     loginfo "fetchExternalPackages" "torbrowser package download started"
 
     mkdir -p "${BUILD_DIR}"/cache/
-    curl --continue-at - --silent --location https://dist.torproject.org/torbrowser/14.0.4/tor-browser-linux-x86_64-14.0.4.tar.xz --output "${BUILD_DIR}"/cache/tor-browser.tar.xz
+    curl --silent --location https://dist.torproject.org/torbrowser/14.0.4/tor-browser-linux-x86_64-14.0.4.tar.xz --output "${BUILD_DIR}"/cache/tor-browser.tar.xz
     if [ "$?" -ne 0 ]; then
         logerror "fetchExternalPackages" "torbrowser package download failed"
         exit 1
