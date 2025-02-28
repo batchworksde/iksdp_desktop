@@ -1,0 +1,7 @@
+[Default Applications]
+x-scheme-handler/mailto=thunderbird.desktop
+text/calendar=thunderbird.desktop
+
+[Added Associations]
+x-scheme-handler/mailto=thunderbird.desktop;
+text/calendar=thunderbird.desktop;

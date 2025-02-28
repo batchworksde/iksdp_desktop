@@ -212,6 +212,12 @@ packages:
       zramtools:
         enable: true
         name: zram-tools
+      thunderbird:
+        enable: true
+        name: thunderbird
+      nextcloud-desktop:
+        enable: true
+        name: nextcloud-desktop
 
   github:
     enable: true
