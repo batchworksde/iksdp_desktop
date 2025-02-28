@@ -274,15 +274,9 @@ packages:
       no-overview:
         enable: true
         id: 4099
-      das-to-panel:
+      dash-to-dock:
         enable: true
-        id: 1160
-      dash2dock-animated:
-        enable: true
-        id: 4994
-      arcmenu:
-        enable: true
-        id: 3628
+        id: 307
       gtk4-desktop-icons-ng:
         enable: true
         id: 5263
