@@ -481,7 +481,7 @@ function installPrerequisites {
   fi
 
   loginfo "${FUNCNAME[0]}" "Install packages"
-  sudo dpkg --instrall /tmp/live-build_"${DEBIAN_LIVE_BUILD_VERSION}"_all.deb
+  sudo dpkg --install /tmp/live-build_"${DEBIAN_LIVE_BUILD_VERSION}"_all.deb
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "apt install failed"
     exit 1
