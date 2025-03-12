@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.0
+* added smbclient and nfs-common
+
 ## v0.4.0
 * added vendor torbrowser, drawio, kubectl
 * updated ica client
