@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.0
+
+* added chromium to gnome favorites
+
 ## v0.4.0
 
 * added vendor torbrowser, drawio, kubectl

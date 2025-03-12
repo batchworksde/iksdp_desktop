@@ -1,6 +1,6 @@
 [org/gnome/shell]
 enabled-extensions=['persistence-indicator@batchworks.de','no-overview@fthx', 'dash-to-dock@micxgx.gmail.com', 'apps-menu@gnome-shell-extensions.gcampax.github.com', 'places-menu@gnome-shell-extensions.gcampax.github.com', 'drive-menu@gnome-shell-extensions.gcampax.github.com']
-favorite-apps=['firefox-esr.desktop', 'thunderbird.desktop', 'libreoffice-writer.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop', 'yelp.desktop']
+favorite-apps=['firefox-esr.desktop', 'chromium.desktop', 'thunderbird.desktop', 'libreoffice-writer.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop', 'yelp.desktop']
 
 [org/gnome/shell/extensions/dash-to-dock]
 dock-position='LEFT'
