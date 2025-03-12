@@ -3,6 +3,7 @@
 ## v0.5.0
 
 * added chromium to gnome favorites
+* updated to new version of package live-build (20250225)
 
 ## v0.4.0
 
