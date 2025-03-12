@@ -474,7 +474,7 @@ function installPrerequisites {
   fi
 
   loginfo "${FUNCNAME[0]}" "Update the apt index"
-  sudo apt update --yes
+  #sudo apt update --yes
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "apt update failed"
     exit 1
