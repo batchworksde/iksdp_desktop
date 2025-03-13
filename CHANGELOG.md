@@ -4,8 +4,11 @@
 * added smbclient and nfs-common
 
 ## v0.4.0
+
 * added vendor torbrowser, drawio, kubectl
 * updated ica client
+* [dash-to-dock](https://extensions.gnome.org/extension/307/dash-to-dock/) instead of [Dash2Dock Animated](https://extensions.gnome.org/extension/4994/dash2dock-lite/) because of [issue #80](https://github.com/batchworksde/iksdp_desktop/issues/80)
+* generic hostname `desktop`
 
 ## v0.3.0
 

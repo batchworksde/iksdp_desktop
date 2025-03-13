@@ -24,6 +24,8 @@ We create versioned [releases](https://github.com/batchworksde/iksdp_desktop/rel
 | `DEBIAN_VERSION` | bookworm | The [Debian release](https://www.debian.org/releases/index.en.html) that should be used for the live image |
 | `DEBIAN_MIRROR` | http://deb.debian.org/debian | Debian mirror [Url](http://deb.debian.org/) selected from the [mirror list](https://www.debian.org/mirror/list) |
 | `DEBIAN_SEC_MIRROR` | http://deb.debian.org/debian-security | Debian mirror [Url](http://deb.debian.org/) for the security packages |
+| `DEBIAN_BACKPORTS` | false | Debian backport packages |
+| `DEBIAN_BOOT_SPLASH` | false | boot splash screen |
 | `DEBIAN_SQUASHFS_COMPRESSION_TYPE` | zstd | [compression algorithm](https://manpages.debian.org/bookworm/live-build/lb_config.1.en.html#chroot~3) that should be used for the root filesystem image |
 | `DEBIAN_SQUASHFS_COMPRESSION_LEVEL` | 15 | [compression level](https://manpages.debian.org/bookworm/live-build/lb_config.1.en.html#chroot~2) that should be used for the root filesystem image |
 | `DEBIAN_LOCALES` | en_US.UTF-8 | comma separated list of [locales](https://wiki.debian.org/Locale) that should be available in the live image |
@@ -31,7 +33,9 @@ We create versioned [releases](https://github.com/batchworksde/iksdp_desktop/rel
 | `DEBIAN_TIMEZONE` | Africa/Nairobi | [time zone](https://wiki.debian.org/TimeZoneChanges) that should be configured in the live image |
 | `DEBIAN_SUDO_DISABLE` | false | Disables [sudo and policykit](https://manpages.debian.org/bookworm/open-infrastructure-system-config/live-config.7.en.html#live~23), the user cannot gain root privileges on the live system |
 | `DEBIAN_USER_PERSISTENCE` | true | The user home should be [persisted](https://live-team.pages.debian.net/live-manual/html/live-manual/customizing-run-time-behaviours.en.html#556) on some attached (USB) storage |
-| `DEBIAN_ZOOM_VERSION` | 6.2.6.2503 | Version of the Debian package for the [Zoom client](https://zoom.us/download?os=linux) |
+| `DEBIAN_USERNAME` | user | username for the live user |
+| `DEBIAN_HOSTNAME` | desktop | hostname for the live linux |
+| `DEBIAN_MEDIUM_NOEJECT` | true | (do not) request to eject the CD on shutdown |
 
 ### Github runner configuration
 
@@ -46,7 +50,7 @@ We create versioned [releases](https://github.com/batchworksde/iksdp_desktop/rel
 
 | Parameter   | Value       | Description     |
 | :---        | :----:      | :---            |
-| `RELEASE_VERSION` | 0.2.0 | version number for the generated live image |
+| `RELEASE_VERSION` | 0.4.0 | version number for the generated live image |
 
 ## Changelog
 

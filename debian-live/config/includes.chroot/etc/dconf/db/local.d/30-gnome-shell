@@ -1,24 +1,17 @@
 [org/gnome/shell]
-enabled-extensions=['persistence-indicator@batchworks.de','no-overview@fthx', 'dash2dock-lite@icedman.github.com', 'apps-menu@gnome-shell-extensions.gcampax.github.com', 'places-menu@gnome-shell-extensions.gcampax.github.com', 'drive-menu@gnome-shell-extensions.gcampax.github.com']
+enabled-extensions=['persistence-indicator@batchworks.de','no-overview@fthx', 'dash-to-dock@micxgx.gmail.com', 'apps-menu@gnome-shell-extensions.gcampax.github.com', 'places-menu@gnome-shell-extensions.gcampax.github.com', 'drive-menu@gnome-shell-extensions.gcampax.github.com']
+favorite-apps=['firefox-esr.desktop', 'thunderbird.desktop', 'libreoffice-writer.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Software.desktop', 'yelp.desktop']
 
-[org/gnome/shell/extensions/dash-to-panel]
-panel-positions='{"0":"TOP"}'
-panel-sizes='{"0":32}'
-show-favorites=false
-overview-click-to-exit=true
-
-[org/gnome/shell/extensions/arcmenu]
-menu-button-appearance='Text'
-pinned-app-list=['', '', 'firefox-esr.desktop', '', '', 'org.gnome.Nautilus.desktop', '', '', 'org.gnome.Terminal.desktop', 'ArcMenu Settings', 'ArcMenu_ArcMenuIcon', 'gnome-extensions prefs arcmenu@arcmenu.com']
-disable-user-avatar=true
-searchbar-default-bottom-location='Top'
-highlight-search-result-terms=true
-arcmenu-custom-hotkey=['Super_R']
-
-[org/gnome/shell/extensions/dash2dock-lite]
-dock-location=1
-running-indicator-style=2
-animate-icons-unmute=false
+[org/gnome/shell/extensions/dash-to-dock]
+dock-position='LEFT'
+custom-theme-shrink=true
+extend-height=true
+transparency-mode='FIXED'
+background-opacity=0.6
+icon-size-fixed=true
+dash-max-icon-size=32
+click-action='minimize-or-previews'
+dock-fixed=true
 
 [org/gnome/shell/extensions/gtk4-ding]
 icon-size='small'
