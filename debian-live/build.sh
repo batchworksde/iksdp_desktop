@@ -135,7 +135,7 @@ function configImage {
     --chroot-squashfs-compression-type "${DEBIAN_SQUASHFS_COMPRESSION_TYPE}" \
     --compression xz \
     --archive-areas "main non-free-firmware" \
-    --bootappend-live "boot=live config hostname=iksdp-${RELEASE_VERSION} locales=${DEBIAN_LOCALES} keyboard-layouts=${DEBIAN_KEYBOARD_LAYOUTS} timezone=${DEBIAN_TIMEZONE} username=${DEBIAN_USERNAME} ${liveConfigOptions}" \
+    --bootappend-live "boot=live config hostname="${DEBIAN_HOSTNAME}" locales=${DEBIAN_LOCALES} keyboard-layouts=${DEBIAN_KEYBOARD_LAYOUTS} timezone=${DEBIAN_TIMEZONE} username=${DEBIAN_USERNAME} ${liveConfigOptions}" \
     --image-name debian-live-"${DEBIAN_VERSION}"-"${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Debian image configuration failed"
@@ -474,14 +474,14 @@ function installPrerequisites {
   fi
 
   loginfo "${FUNCNAME[0]}" "Update the apt index"
-  #sudo apt update --yes
+  sudo apt update --yes
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "apt update failed"
     exit 1
   fi
 
   loginfo "${FUNCNAME[0]}" "Install packages"
-  sudo dpkg --install /tmp/live-build_"${DEBIAN_LIVE_BUILD_VERSION}"_all.deb
+  sudo apt install --no-install-recommends --yes /tmp/live-build_"${DEBIAN_LIVE_BUILD_VERSION}"_all.deb debian-archive-keyring
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "apt install failed"
     exit 1
