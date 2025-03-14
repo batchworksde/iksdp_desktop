@@ -6,6 +6,7 @@
 * added smbclient and nfs-common
 * added chromium to gnome favorites
 * updated to new version of package live-build (20250225)
+* added default documenation bookmark  
 * added iksdp desktop wallpaper
 
 ## v0.4.0
