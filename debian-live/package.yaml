@@ -224,6 +224,9 @@ packages:
       nextcloud-desktop:
         enable: true
         name: nextcloud-desktop
+      gimp:
+        enable: true
+        name: gimp
 
   github:
     enable: true
