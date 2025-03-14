@@ -2,7 +2,6 @@
 
 ## v0.5.0
 
-=======
 * added gimp application
 * added smbclient and nfs-common
 * added chromium to gnome favorites
