@@ -212,6 +212,12 @@ packages:
       zramtools:
         enable: true
         name: zram-tools
+      smbclient:
+        enable: true
+        name: smbclient
+      nfs-common:
+        enable: true
+        name: nfs-common
       thunderbird:
         enable: true
         name: thunderbird
