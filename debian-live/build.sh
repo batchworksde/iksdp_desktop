@@ -634,6 +634,25 @@ function uploadIso {
   fi
 }
 
+function uploadIsoS3 {
+  loginfo "${FUNCNAME[0]}" "Upload the ISO to amazon s3"
+ 
+  sudo snap install aws-cli --classic
+
+  aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
+  aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
+  aws configure set default.region eu-central-1
+
+  aws s3 cp "${BUILD_DIR}"/debian-live-"${DEBIAN_VERSION}"-"${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"-"${DEBIAN_ARCH}".hybrid.iso s3://iksdplinux/
+  
+  #scp -P "${SSH_PORT}" "${BUILD_DIR}"/debian-live-"${DEBIAN_VERSION}"-"${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"-"${DEBIAN_ARCH}".hybrid.iso "${RELEASE_USER}"@"${RELEASE_HOST}":"${RELEASE_FOLDER}"
+
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "ISO upload to amazon s3 failed"
+    exit 1
+  fi
+}
+
 function checkChangedFiles {
   loginfo "${FUNCNAME[0]}" "Check for changes in debian-live folder"
   local folderList
@@ -852,7 +871,7 @@ case "${USE_CASE}" in
     buildImage
     ;;
   "uploadIso")
-    uploadIso
+    uploadIsoS3
     ;;
   "generateBom")
     generateBom
