@@ -1,7 +1,9 @@
 # Changelog
 
 ## v0.6.0
+
 * add s3 upload to github action
+* added Epson Scan software
 
 ## v0.5.0
 

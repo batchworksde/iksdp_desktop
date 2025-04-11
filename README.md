@@ -41,7 +41,7 @@ We create versioned [releases](https://github.com/batchworksde/iksdp_desktop/rel
 
 | Parameter   | Value       | Description     |
 | :---        | :----:      | :---            |
-| `DEBIAN_LIVE_BUILD_VERSION` | 20230502 | version of the [live-build](https://packages.debian.org/bookworm/live-build) package that should be installed on the Github runner to build the live image |
+| `DEBIAN_LIVE_BUILD_VERSION` | 20250225 | version of the [live-build](https://packages.debian.org/bookworm/live-build) package that should be installed on the Github runner to build the live image |
 | `RUNNER_CLEANUP` | false | remove [not required folders](https://github.com/actions/runner-images/issues/10386) from the runner to free up some space for the image build process |
 | `RUNNER_SYSINFO` | false | collect some system information from the runner |
 | `RUNNER_PACKAGES` | () | additional [Ubuntu 24.04 packages](https://packages.ubuntu.com/) that should be installed on the runner |
@@ -50,7 +50,7 @@ We create versioned [releases](https://github.com/batchworksde/iksdp_desktop/rel
 
 | Parameter   | Value       | Description     |
 | :---        | :----:      | :---            |
-| `RELEASE_VERSION` | 0.4.0 | version number for the generated live image |
+| `RELEASE_VERSION` | 0.6.0 | version number for the generated live image |
 
 ## Changelog
 
