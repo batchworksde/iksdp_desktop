@@ -637,10 +637,10 @@ function uploadIso {
 function uploadIsoS3 {
   loginfo "${FUNCNAME[0]}" "Upload the ISO to amazon s3"
  
-  snap install aws-cli --classic
+  sudo snap install aws-cli --classic
 
   aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
-  aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY }
+  aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
   aws configure set default.region eu-central-1
 
   aws s3 cp "${BUILD_DIR}"/debian-live-"${DEBIAN_VERSION}"-"${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"-"${DEBIAN_ARCH}".hybrid.iso s3://iksdplinux/
