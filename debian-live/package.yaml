@@ -12,7 +12,7 @@ packages:
         enable: true
         name: chromium
       ublockchromium:
-        enable: true
+        enable: false
         name: webext-ublock-origin-chromium  
       firefoxesr:
         enable: true
@@ -300,3 +300,14 @@ packages:
       gtk4-desktop-icons-ng:
         enable: true
         id: 5263
+  chromium:
+    enable: true
+    extension:
+      ublock-origin-lite:
+        enable: true
+        repo: uBOL-home
+        org: uBlockOrigin
+      keepassxc:
+        enable: true
+        repo: keepassxc-browser
+        org: keepassxreboot

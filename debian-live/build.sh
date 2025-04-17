@@ -197,6 +197,18 @@ function configHooks {
     logerror "${FUNCNAME[0]}" "Debian Live envsubst for gnome shell extensions failed"
     exit 1
   fi
+
+  CHROMIUM_EXTENSIONS="$(yq '.packages.chromium | select(.enable) | .extension | filter(.enable) | map (.org + "/" + .repo) | join (" ")' "${WORK_DIR}"/debian-live/package.yaml)"
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" ".packages.chromium parsing failed"
+    exit 1
+  fi
+
+  envsubst '${CHROMIUM_EXTENSIONS}' <"${WORK_DIR}"/debian-live/config/hooks/normal/9500-chromium-extensions.hook.chroot.template >"${BUILD_DIR}"/config/hooks/normal/9500-chromium-extensions.hook.chroot
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "Debian Live envsubst for chromium extensions failed"
+    exit 1
+  fi
 }
 
 function setRootPw {

@@ -3,6 +3,7 @@
 ## v0.7.0
 
 * disabled dbus service of nextcloud client (see https://forum.manjaro.org/t/vs-code-open-file-starts-nextcloud-desktop-client/158149/10)
+* removed chromium extensions for keepassxc and ublock origin and replaced them with their github version
 
 ## v0.6.0
 
