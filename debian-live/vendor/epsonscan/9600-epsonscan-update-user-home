@@ -1,0 +1,38 @@
+#!/bin/bash
+CmdLine ()
+{
+  # Reading kernel command line
+  for _PARAMETER in ${_CMDLINE}
+  do
+    case "${_PARAMETER}" in
+      live-config.username=*|username=*)
+        LIVE_USERNAME="${_PARAMETER#*username=}"
+        ;;
+    esac
+  done
+}
+
+CopyFilesFromSkel ()
+{
+  # copy epsonscan config from skel directory
+  cp --recursive --force /etc/skel/.epsonscan2 /home/${LIVE_USERNAME}
+  chown --recursive ${LIVE_USERNAME}:${LIVE_USERNAME} /home/${LIVE_USERNAME}/.epsonscan2
+}
+
+CmdLine
+
+# check if epsonscan is installed
+if [[ -f "/usr/bin/epsonscan2" ]]; then
+  # check if epsonscan config already exists
+  if [[ ! -f "/home/${LIVE_USERNAME}/.epsonscan2/Network/epsonscan2.conf" ]]; then
+    # copy config from skel
+    CopyFilesFromSkel
+  else
+    # check if configuration is valid for iksdp printer
+    $(grep --fixed-strings --silent --no-message "192.168.200.10" "/home/${LIVE_USERNAME}/.epsonscan2/Network/epsonscan2.conf")
+    if [ "$?" -ne 0 ]; then
+      # copy config from skel
+      CopyFilesFromSkel
+    fi
+  fi
+fi
