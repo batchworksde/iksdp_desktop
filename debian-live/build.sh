@@ -600,7 +600,7 @@ function createChangeLogForRelease {
     exit 1
   fi
 
-  echo "* ISO image: [iksdp-desktop-${RELEASE_VERSION}](http://${RELEASE_HOST}/debian-live-${DEBIAN_VERSION}-${RELEASE_VERSION}-${IMAGE_TIMESTAMP}-amd64.hybrid.iso)" >>"${BUILD_DIR}"/changeLogForRelease.md
+  echo "* ISO image: [iksdp-desktop-${RELEASE_VERSION}](https://${RELEASE_HOST}/debian-live-${DEBIAN_VERSION}-${RELEASE_VERSION}-${IMAGE_TIMESTAMP}-amd64.hybrid.iso)" >>"${BUILD_DIR}"/changeLogForRelease.md
 }
 
 function createSourceArchive {

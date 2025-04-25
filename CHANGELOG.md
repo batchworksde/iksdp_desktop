@@ -5,6 +5,7 @@
 * removed nextcloud package from image
 * removed chromium extensions for keepassxc and ublock origin and replaced them with their github version
 * configure epsonscan also for old persistent users
+* use https instead of http for release link
 
 ## v0.6.0
 
