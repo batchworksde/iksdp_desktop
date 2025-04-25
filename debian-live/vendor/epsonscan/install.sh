@@ -39,6 +39,18 @@ function fetchEpsonScannerPackage {
     exit 1
   fi
 
+  SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+  mkdir -p "${BUILD_DIR}"/config/includes.chroot/lib/live/config/
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "create live hook directory failed"
+    exit 1
+  fi
+  cp "${SCRIPT_DIR}"/9600-epsonscan-update-user-home "${BUILD_DIR}"/config/includes.chroot/lib/live/config/
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "copy of live hook failed"
+    exit 1
+  fi
+
   loginfo "${FUNCNAME[0]}" "package download done"
 }
 
