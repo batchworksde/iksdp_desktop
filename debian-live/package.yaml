@@ -222,7 +222,7 @@ packages:
         enable: true
         name: thunderbird
       nextcloud-desktop:
-        enable: false
+        enable: true
         name: nextcloud-desktop
       gimp:
         enable: true
@@ -244,10 +244,10 @@ packages:
         enable: true
       icaclient:
         name: icaclient
-        enable: false
+        enable: true
       teams:
         name: teams
-        enable: false
+        enable: true
       vscode:
         name: vscode
         enable: true
@@ -256,10 +256,10 @@ packages:
         enable: true
       edge:
         name: edge
-        enable: false
+        enable: true
       yubico:
         name: yubico
-        enable: false
+        enable: true
       drawio:
         name: drawio
         enable: true
@@ -271,7 +271,7 @@ packages:
         enable: true
       epsonscan:
         name: epsonscan
-        enable: true
+        enable: false
         version: 6.7.70.0
         id: 'f/03/00/16/14/38/7b1780ace96e2c6033bbb667c7f3ed281e4e9f38'
   flatpak:
