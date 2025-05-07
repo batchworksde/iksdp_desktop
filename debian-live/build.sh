@@ -133,6 +133,9 @@ function configImage {
     --checksums "sha256" \
     --chroot-squashfs-compression-level "${DEBIAN_SQUASHFS_COMPRESSION_LEVEL}" \
     --chroot-squashfs-compression-type "${DEBIAN_SQUASHFS_COMPRESSION_TYPE}" \
+    --binary-image "${DEBIAN_BINARY_IMAGE}" \
+    --bootloaders "${DEBIAN_BOOTLOADERS}" \
+    --binary-filesystem "${DEBIAN_BINARY_FILESYSTEM}" \
     --compression xz \
     --archive-areas "main non-free-firmware" \
     --bootappend-live "boot=live config hostname="${DEBIAN_HOSTNAME}" locales=${DEBIAN_LOCALES} keyboard-layouts=${DEBIAN_KEYBOARD_LAYOUTS} timezone=${DEBIAN_TIMEZONE} username=${DEBIAN_USERNAME} ${liveConfigOptions}" \
@@ -811,7 +814,7 @@ function createFolder {
 function configBootLoader {
   loginfo "${FUNCNAME[0]}" "Configure boot loader"
   local folderlist
-  folderlist=("grub-pc" "grub-efi" "isolinux")
+  folderlist=("grub-pc" "grub-efi" "isolinux" "syslinux_common")
 
   for folder in "${folderlist[@]}"; do
     createFolder "${BUILD_DIR}/config/bootloaders/${folder}"

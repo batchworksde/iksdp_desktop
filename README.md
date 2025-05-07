@@ -36,6 +36,9 @@ We create versioned [releases](https://github.com/batchworksde/iksdp_desktop/rel
 | `DEBIAN_USERNAME` | user | username for the live user |
 | `DEBIAN_HOSTNAME` | desktop | hostname for the live linux |
 | `DEBIAN_MEDIUM_NOEJECT` | true | (do not) request to eject the CD on shutdown |
+| `DEBIAN_BINARY_IMAGE` | iso-hybrid | image type to build (options are iso|iso-hybrid|netboot|tar|hdd) |
+| `DEBIAN_BOOTLOADERS` | syslinux | which bootloaders to use in the generated image (options are grub-legacy|grub-pc|syslinux|grub-efi) |
+| `DEBIAN_BINARY_FILESYSTEM` | ext4 | filesystem to be used in the image type (options are fat16|fat32|ext2|ext3|ext4|ntfs) |
 
 ### Github runner configuration
 
