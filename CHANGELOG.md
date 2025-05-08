@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.8.0
+
+* added more options to build different types of the image (e.g hdd and tar)
+* fix for chromium extenions (needed if debian package webext-keepassxc-browser is not enabled)
+* enabled "tap to click" for touchpads
+* added vendor package enpass (not installed by default)
+
 ## v0.7.0
 
 * removed nextcloud package from image
