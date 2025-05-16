@@ -10,3 +10,6 @@ idle-delay=uint32 900
 
 [org/gnome/desktop/background]
 picture-uri='file:///usr/share/backgrounds/iksdp_desktop_wallpaper.jpg'
+
+[org/gnome/desktop/peripherals/touchpad]
+tap-to-click=true
