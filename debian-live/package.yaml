@@ -277,6 +277,9 @@ packages:
       enpass:
         name: enpass
         enable: false
+      owncloud:
+        name: owncloud
+        enable: false
   flatpak:
     enable: true
     flathub:
