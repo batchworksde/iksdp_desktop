@@ -1,0 +1,18 @@
+label live-@FLAVOUR@
+	menu label ^Live system (@FLAVOUR@)
+	menu default
+	linux @LINUX@
+	initrd @INITRD@
+	append @APPEND_LIVE@
+
+label live-@FLAVOUR@-failsafe
+	menu label Live system (@FLAVOUR@ fail-safe mode)
+	linux @LINUX@
+	initrd @INITRD@
+	append @APPEND_LIVE_FAILSAFE@
+
+label live-@FLAVOUR@
+	menu label Live system (@FLAVOUR@ update)
+	linux @LINUX@
+	initrd @INITRD@
+	append @APPEND_LIVE@ toram

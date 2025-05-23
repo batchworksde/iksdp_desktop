@@ -5,15 +5,14 @@ set -o pipefail
 
 declare -a EXTENSIONS
 EXTENSIONS=(${CHROMIUM_EXTENSIONS})
-# EXTENSIONS=(uBlockOrigin/uBOL-home keepassxreboot/keepassxc-browser)
 EXTENSIONS_TARGET_DIR="/usr/share/chromium/extensions"
 
-# remove symlink for keepassxc
-if [[ -L "/usr/share/chromium/extensions/keepassxc-browser" ]]; then
-    rm /usr/share/chromium/extensions/keepassxc-browser
-fi
+mkdir -p ${EXTENSIONS_TARGET_DIR}
 
-# mkdir -p /usr/share/chromium/extensions
+# remove symlink for keepassxc
+if [[ -L "${EXTENSIONS_TARGET_DIR}/keepassxc-browser" ]]; then
+    rm ${EXTENSIONS_TARGET_DIR}/keepassxc-browser
+fi
 
 # download yq
 curl --silent --location https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 --output /tmp/yq
@@ -42,7 +41,7 @@ for extension in "${EXTENSIONS[@]}"; do
 CmdLine ()
 {
   # Reading kernel command line
-  for _PARAMETER in ${_CMDLINE}
+  for _PARAMETER in ${LIVE_CONFIG_CMDLINE}
   do
     case "${_PARAMETER}" in
       live-config.username=*|username=*)
