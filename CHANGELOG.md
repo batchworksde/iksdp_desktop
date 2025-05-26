@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.7.1
+
+- updated packages
+- using newer debian live build package
+
 ## v0.7.0
 
 * removed nextcloud package from image
