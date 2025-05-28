@@ -113,6 +113,19 @@ function configImage {
     liveConfigOptions+=" noautologin"
   fi
 
+  if [ ${DEBIAN_USER_FULLNAME+x} ]; then
+    mkdir -p "${BUILD_DIR}"/config/includes.chroot/etc/live/config.conf.d/
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "live-config dir creation failed"
+      exit 1
+    fi
+    echo "LIVE_USER_FULLNAME=\"${DEBIAN_USER_FULLNAME}\"" > "${BUILD_DIR}"/config/includes.chroot/etc/live/config.conf.d/user-fullname.conf
+    if [ "$?" -ne 0 ]; then
+      logerror "${FUNCNAME[0]}" "setting user fullname in live-config failed"
+      exit 1
+    fi
+  fi
+
   cd "${BUILD_DIR}"
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "cd ${BUILD_DIR} failed"
@@ -142,7 +155,7 @@ function configImage {
     --binary-filesystem "${DEBIAN_BINARY_FILESYSTEM}" \
     --compression "${DEBIAN_TAR_COMPRESSION_TYPE}" \
     --archive-areas "main non-free-firmware" \
-    --bootappend-live "boot=live config hostname="${DEBIAN_HOSTNAME}" locales=${DEBIAN_LOCALES} keyboard-layouts=${DEBIAN_KEYBOARD_LAYOUTS} timezone=${DEBIAN_TIMEZONE} username=${DEBIAN_USERNAME} user-fullname='${DEBIAN_USER_FULLNAME}' ${liveConfigOptions}" \
+    --bootappend-live "boot=live config hostname="${DEBIAN_HOSTNAME}" locales=${DEBIAN_LOCALES} keyboard-layouts=${DEBIAN_KEYBOARD_LAYOUTS} timezone=${DEBIAN_TIMEZONE} username=${DEBIAN_USERNAME} ${liveConfigOptions}" \
     --image-name debian-live-"${DEBIAN_VERSION}"-"${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "Debian image configuration failed"
