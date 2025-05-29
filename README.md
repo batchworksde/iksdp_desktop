@@ -35,7 +35,13 @@ We create versioned [releases](https://github.com/batchworksde/iksdp_desktop/rel
 | `DEBIAN_USER_PERSISTENCE` | true | The user home should be [persisted](https://live-team.pages.debian.net/live-manual/html/live-manual/customizing-run-time-behaviours.en.html#556) on some attached (USB) storage |
 | `DEBIAN_USERNAME` | user | username for the live user |
 | `DEBIAN_HOSTNAME` | desktop | hostname for the live linux |
+| `DEBIAN_AUTOLOGIN` | true | automatic login of user |
+| `DEBIAN_USER_FULLNAME` | Debian Live user | fullname of the user |
 | `DEBIAN_MEDIUM_NOEJECT` | true | (do not) request to eject the CD on shutdown |
+| `DEBIAN_BINARY_IMAGE` | iso-hybrid | image type to build (options are iso|iso-hybrid|netboot|tar|hdd) |
+| `DEBIAN_BOOTLOADERS` | syslinux grub-efi | which bootloaders to use in the generated image (options are grub-legacy|grub-pc|syslinux|grub-efi) |
+| `DEBIAN_BINARY_FILESYSTEM` | fat32 | filesystem to be used in the image type (options are fat16|fat32|ext2|ext3|ext4|ntfs) |
+| `DEBIAN_TAR_COMPRESSION_TYPE` | none | compression program to be used to compress tarballs (options are bzip2|gzip|lzip|xz|none) |
 
 ### Github runner configuration
 
