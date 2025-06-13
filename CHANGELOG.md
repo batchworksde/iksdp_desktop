@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.8.2
+
+- autologin now configured again
+
 ## v0.8.1
 
 - fixed path for icaclient
