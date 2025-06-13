@@ -222,7 +222,7 @@ packages:
         enable: true
         name: thunderbird
       nextcloud-desktop:
-        enable: false
+        enable: true
         name: nextcloud-desktop
       gimp:
         enable: true
