@@ -229,7 +229,7 @@ packages:
         name: gimp
       lm-sensors:
         enable: true
-        name: sensors
+        name: lm-sensors
       awscli:
         enable: true
         name: awscli
