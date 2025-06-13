@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.8.1
+
+- fixed path for icaclient
+
 ## v0.8.0
 
 * added more options to build different types of the image (e.g hdd and tar)
