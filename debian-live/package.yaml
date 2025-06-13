@@ -227,6 +227,12 @@ packages:
       gimp:
         enable: true
         name: gimp
+      lm-sensors:
+        enable: true
+        name: sensors
+      awscli:
+        enable: true
+        name: awscli
 
   github:
     enable: true
@@ -244,10 +250,10 @@ packages:
         enable: true
       icaclient:
         name: icaclient
-        enable: false
+        enable: true
       teams:
         name: teams
-        enable: false
+        enable: true
       vscode:
         name: vscode
         enable: true
@@ -256,10 +262,10 @@ packages:
         enable: true
       edge:
         name: edge
-        enable: false
+        enable: true
       yubico:
         name: yubico
-        enable: false
+        enable: true
       drawio:
         name: drawio
         enable: true
