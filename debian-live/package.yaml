@@ -30,7 +30,7 @@ packages:
         enable: true
         name: vlc
       supertux:
-        enable: true
+        enable: false
         name: supertux
       torcs:
         enable: true
@@ -72,7 +72,7 @@ packages:
         enable: true
         name: webext-keepassxc-browser
       obs-studio:
-        enable: true
+        enable: false
         name: obs-studio
       golang:
         enable: true
@@ -90,7 +90,7 @@ packages:
         enable: true
         name: rust-all
       scratch:
-        enable: true
+        enable: false
         name: scratch
       alsautils:
         enable: true
