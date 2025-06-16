@@ -286,6 +286,10 @@ packages:
       owncloud:
         name: owncloud
         enable: false
+      webex:
+        name: webex
+        enable: true
+
   flatpak:
     enable: true
     flathub:
