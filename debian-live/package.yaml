@@ -280,6 +280,12 @@ packages:
       owncloud:
         name: owncloud
         enable: false
+      spotify:
+        enable: false
+        name: spotify
+      onlyoffice:
+        enable: false
+        name: onlyoffice
   flatpak:
     enable: true
     flathub:

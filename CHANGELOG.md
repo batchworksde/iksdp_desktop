@@ -1,12 +1,16 @@
 # Changelog
 
+## v0.8.3
+
+* added vendor packages for spotify and onyloffice (not installed by default)
+
 ## v0.8.2
 
-- autologin now configured again
+* autologin now configured again
 
 ## v0.8.1
 
-- fixed path for icaclient
+* fixed path for icaclient
 
 ## v0.8.0
 
