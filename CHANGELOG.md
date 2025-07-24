@@ -3,6 +3,7 @@
 ## v0.8.3
 
 * added vendor packages for spotify and onyloffice (not installed by default)
+* disabled PackageKit (prevents showing Debian packages in Gnome-Software)
 
 ## v0.8.2
 
