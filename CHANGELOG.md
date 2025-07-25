@@ -1,5 +1,6 @@
 # Changelog
 
+<<<<<<< HEAD
 ## v0.8.3
 
 * added vendor packages for spotify and onyloffice (not installed by default)
@@ -8,6 +9,11 @@
 ## v0.8.2
 
 * autologin now configured again
+=======
+## v0.8.2
+
+- autologin now configured again
+>>>>>>> origin/schose_desktop
 
 ## v0.8.1
 

@@ -30,7 +30,7 @@ packages:
         enable: true
         name: vlc
       supertux:
-        enable: true
+        enable: false
         name: supertux
       torcs:
         enable: true
@@ -72,7 +72,7 @@ packages:
         enable: true
         name: webext-keepassxc-browser
       obs-studio:
-        enable: true
+        enable: false
         name: obs-studio
       golang:
         enable: true
@@ -90,7 +90,7 @@ packages:
         enable: true
         name: rust-all
       scratch:
-        enable: true
+        enable: false
         name: scratch
       alsautils:
         enable: true
@@ -222,11 +222,26 @@ packages:
         enable: true
         name: thunderbird
       nextcloud-desktop:
-        enable: false
+        enable: true
         name: nextcloud-desktop
       gimp:
         enable: true
         name: gimp
+      lm-sensors:
+        enable: true
+        name: lm-sensors
+      awscli:
+        enable: true
+        name: awscli
+      linux-image-6.12.30+bpo-amd64:
+        enable: true
+        name: linux-image-6.12.30+bpo-amd64
+      firmware-amd-graphics/bookworm-backports:
+        enable: true
+        name: firmware-amd-graphics/bookworm-backports
+
+
+#
 
   github:
     enable: true
@@ -244,10 +259,10 @@ packages:
         enable: true
       icaclient:
         name: icaclient
-        enable: false
+        enable: true
       teams:
         name: teams
-        enable: false
+        enable: true
       vscode:
         name: vscode
         enable: true
@@ -256,10 +271,10 @@ packages:
         enable: true
       edge:
         name: edge
-        enable: false
+        enable: true 
       yubico:
         name: yubico
-        enable: false
+        enable: true 
       drawio:
         name: drawio
         enable: true
@@ -271,7 +286,7 @@ packages:
         enable: true
       epsonscan:
         name: epsonscan
-        enable: true
+        enable: false
         version: 6.7.70.0
         id: 'f/03/00/16/14/38/7b1780ace96e2c6033bbb667c7f3ed281e4e9f38'
       enpass:
@@ -280,12 +295,19 @@ packages:
       owncloud:
         name: owncloud
         enable: false
+<<<<<<< HEAD
       spotify:
         enable: false
         name: spotify
       onlyoffice:
         enable: false
         name: onlyoffice
+=======
+      webex:
+        name: webex
+        enable: true
+
+>>>>>>> origin/schose_desktop
   flatpak:
     enable: true
     flathub:
