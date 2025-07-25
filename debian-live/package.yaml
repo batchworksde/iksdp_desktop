@@ -295,19 +295,15 @@ packages:
       owncloud:
         name: owncloud
         enable: false
-<<<<<<< HEAD
       spotify:
         enable: false
         name: spotify
       onlyoffice:
         enable: false
         name: onlyoffice
-=======
       webex:
         name: webex
         enable: true
-
->>>>>>> origin/schose_desktop
   flatpak:
     enable: true
     flathub:
