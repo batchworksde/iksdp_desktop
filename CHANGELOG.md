@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.9.0
+
+- Debian updated from Bookworm to Trixie
+- Scratch disabled in package list because it is not supported in Trixie
+
 ## v0.8.2
 
 - autologin now configured again

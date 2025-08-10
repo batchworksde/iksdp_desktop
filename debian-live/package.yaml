@@ -90,7 +90,7 @@ packages:
         enable: true
         name: rust-all
       scratch:
-        enable: true
+        enable: false # not supported in Debian Trixie
         name: scratch
       alsautils:
         enable: true
