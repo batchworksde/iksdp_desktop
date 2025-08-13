@@ -2,16 +2,18 @@
 
 ## v0.9.0
 
-- Debian updated from Bookworm to Trixie
-- Scratch disabled in package list because it is not supported in Trixie
+* Debian updated from Bookworm to Trixie
+* Scratch disabled in package list because it is not supported in Trixie
+* added vendor packages for spotify and onyloffice (not installed by default)
+* disabled PackageKit (prevents showing Debian packages in Gnome-Software)
 
 ## v0.8.2
 
-- autologin now configured again
+* autologin now configured again
 
 ## v0.8.1
 
-- fixed path for icaclient
+* fixed path for icaclient
 
 ## v0.8.0
 
