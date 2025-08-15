@@ -7,6 +7,7 @@
 * added vendor packages for spotify and onyloffice (not installed by default)
 * disabled PackageKit (prevents showing Debian packages in Gnome-Software)
 * added packages gnome-shell-extensions and gnome-shell-extension-prefs (not installed by defalt with Trixie)
+* changed gnome shell extension persistence-indicator@batchworks.de to be compatible with version 48
 
 ## v0.8.2
 
