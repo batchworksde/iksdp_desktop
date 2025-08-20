@@ -6,8 +6,9 @@
 * Scratch disabled in package list because it is not supported in Trixie
 * added vendor packages for spotify and onyloffice (not installed by default)
 * disabled PackageKit (prevents showing Debian packages in Gnome-Software)
-* added packages gnome-shell-extensions and gnome-shell-extension-prefs (not installed by defalt with Trixie)
+* added packages gnome-shell-extensions and gnome-shell-extension-prefs (not installed by default with Trixie)
 * changed gnome shell extension persistence-indicator@batchworks.de to be compatible with version 48
+* added option to remove debian packages via package.yaml (e.g. gnome-tour which gets installed as a recommended package)
 
 ## v0.8.2
 

@@ -53,6 +53,10 @@ packages:
       gnomeshellextensions:
         enable: true
         name: gnome-shell-extensions
+      gnometour:
+        enable: false
+        name: gnome-tour
+        remove: true
       handbrake:
         enable: true
         name: handbrake

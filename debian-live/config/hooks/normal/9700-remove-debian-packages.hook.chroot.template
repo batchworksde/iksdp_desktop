@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -e
+set -u
+set -o pipefail
+
+declare -a REMOVE_PACKAGES
+REMOVE_PACKAGES=(${DEBIAN_REMOVE_PACKAGES})
+
+for package in "${REMOVE_PACKAGES[@]}"; do
+  echo "Removing $package..."
+  apt-get --purge --yes autoremove "$package"
+done
