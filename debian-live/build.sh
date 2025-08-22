@@ -194,6 +194,18 @@ function configHooks {
     exit 1
   fi
 
+  DEBIAN_REMOVE_PACKAGES="$(yq '.packages.debian | select(.enable) | .app[] | select(.enable == false and .remove == true) | .name' "${WORK_DIR}"/debian-live/package.yaml)"
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "Debian package list of packages marked for removal failed"
+    exit 1
+  fi
+  
+  envsubst '${DEBIAN_REMOVE_PACKAGES}' <"${WORK_DIR}"/debian-live/config/hooks/normal/9700-remove-debian-packages.hook.chroot.template >"${BUILD_DIR}"/config/hooks/normal/9700-remove-debian-packages.hook.chroot
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "Debian Live envsubst for removal of debian packages failed"
+    exit 1
+  fi
+
   DEBIAN_FLATPAK_PACKAGES="$(yq '.packages.flatpak | select(.enable) | .flathub | select(.enable) | .app | filter(.enable) | map (.name) | join (" ")' "${WORK_DIR}"/debian-live/package.yaml)"
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" ".packages.flatpak parsing failed"

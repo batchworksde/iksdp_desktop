@@ -2,6 +2,9 @@
   "name": "Persistence Indicator",
   "uuid": "persistence-indicator@batchworks.de",
   "description": "Display the persistence mode of IKSDP Linux",
-  "shell-version": [ "3.36", "40", "41", "42", "43", "44", "45" ],
-  "url": "https://gitlab.com/schose/gnome-shell-extension-persistence-indicator"
+  "shell-version": [ "48" ],
+  "url": "https://gitlab.com/schose/gnome-shell-extension-persistence-indicator",
+  "version": 1,
+  "main": "extension.js",
+  "module": true
 }

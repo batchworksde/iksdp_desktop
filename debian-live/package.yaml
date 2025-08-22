@@ -47,6 +47,16 @@ packages:
       gnomeconnections:
         enable: true
         name: gnome-connections
+      gnomeshellextensionprefs:
+        enable: true
+        name: gnome-shell-extension-prefs
+      gnomeshellextensions:
+        enable: true
+        name: gnome-shell-extensions
+      gnometour:
+        enable: false
+        name: gnome-tour
+        remove: true
       handbrake:
         enable: true
         name: handbrake
@@ -90,7 +100,7 @@ packages:
         enable: true
         name: rust-all
       scratch:
-        enable: true
+        enable: false # not supported in Debian Trixie
         name: scratch
       alsautils:
         enable: true
@@ -280,6 +290,12 @@ packages:
       owncloud:
         name: owncloud
         enable: false
+      spotify:
+        enable: false
+        name: spotify
+      onlyoffice:
+        enable: false
+        name: onlyoffice
   flatpak:
     enable: true
     flathub:
