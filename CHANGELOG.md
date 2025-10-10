@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.1
+
+* Package versions updated
+
 ## v0.9.0
 
 * Debian updated from Bookworm to Trixie
