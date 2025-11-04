@@ -194,6 +194,18 @@ function configHooks {
     exit 1
   fi
 
+  DEBIAN_REMOVE_PACKAGES="$(yq '.packages.debian | select(.enable) | .app[] | select(.enable == false and .remove == true) | .name' "${WORK_DIR}"/debian-live/package.yaml)"
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "Debian package list of packages marked for removal failed"
+    exit 1
+  fi
+  
+  envsubst '${DEBIAN_REMOVE_PACKAGES}' <"${WORK_DIR}"/debian-live/config/hooks/normal/9700-remove-debian-packages.hook.chroot.template >"${BUILD_DIR}"/config/hooks/normal/9700-remove-debian-packages.hook.chroot
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "Debian Live envsubst for removal of debian packages failed"
+    exit 1
+  fi
+
   DEBIAN_FLATPAK_PACKAGES="$(yq '.packages.flatpak | select(.enable) | .flathub | select(.enable) | .app | filter(.enable) | map (.name) | join (" ")' "${WORK_DIR}"/debian-live/package.yaml)"
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" ".packages.flatpak parsing failed"
@@ -310,7 +322,7 @@ function downloadGithubRelease {
 
     loginfo "${FUNCNAME[0]}" "${repo} package download started"
 
-    releases="$(curl --silent --header "${GITHUB_API_MIMETYPE}" --header "${GITHUB_API_VERSION}" https://api.github.com/repos/"${org}"/"${repo}"/releases/latest)"
+    releases="$(curl --silent --fail --header "${GITHUB_API_MIMETYPE}" --header "${GITHUB_API_VERSION}" https://api.github.com/repos/"${org}"/"${repo}"/releases/latest)"
     if [ "$?" -ne 0 ]; then
       logerror "${FUNCNAME[0]}" "Github release list download failed"
       exit 1
@@ -499,9 +511,10 @@ function installPrerequisites {
   loginfo "${FUNCNAME[0]}" "Install required packages"
 
   loginfo "${FUNCNAME[0]}" "Fetch live-build.deb from Debian mirror"
-  curl --silent --location "${DEBIAN_MIRROR}"/pool/main/l/live-build/live-build_"${DEBIAN_LIVE_BUILD_VERSION}"_all.deb --output /tmp/live-build_"${DEBIAN_LIVE_BUILD_VERSION}"_all.deb
+  local url="${DEBIAN_MIRROR}/pool/main/l/live-build/live-build_${DEBIAN_LIVE_BUILD_VERSION}_all.deb"
+  curl --silent --fail --location "${url}" --output /tmp/live-build.deb
   if [ "$?" -ne 0 ]; then
-    logerror "${FUNCNAME[0]}" "live-build.deb fetch failed"
+    logerror "${FUNCNAME[0]}" "${url} fetch failed"
     exit 1
   fi
 
@@ -513,7 +526,7 @@ function installPrerequisites {
   fi
 
   loginfo "${FUNCNAME[0]}" "Install packages"
-  sudo apt install --no-install-recommends --yes /tmp/live-build_"${DEBIAN_LIVE_BUILD_VERSION}"_all.deb debian-archive-keyring
+  sudo apt install --no-install-recommends --yes /tmp/live-build.deb debian-archive-keyring
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "apt install failed"
     exit 1
@@ -540,7 +553,7 @@ function downloadYq {
   loginfo "${FUNCNAME[0]}" "Install yq"
 
 
-  sudo curl --silent --location https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${DEBIAN_ARCH} --output /usr/local/bin/yq
+  sudo curl --silent --fail --location https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${DEBIAN_ARCH} --output /usr/local/bin/yq
   
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "yq download failed"
@@ -561,7 +574,7 @@ function downloadTrivy {
     loginfo "${FUNCNAME[0]}" "Install trivy"
     local trivyurl
 
-    trivyurl="$(curl --silent --header "${GITHUB_API_MIMETYPE}" --header "${GITHUB_API_VERSION}" https://api.github.com/repos/aquasecurity/trivy/releases/latest | yq --input-format json '.assets[] | select(.name == "*_Linux-64bit.tar.gz") | .browser_download_url')"
+    trivyurl="$(curl --silent --fail --header "${GITHUB_API_MIMETYPE}" --header "${GITHUB_API_VERSION}" https://api.github.com/repos/aquasecurity/trivy/releases/latest | yq --input-format json '.assets[] | select(.name == "*_Linux-64bit.tar.gz") | .browser_download_url')"
     if [ "$?" -ne 0 ]; then
       logerror "${FUNCNAME[0]}" "trivy version check failed"
       exit 1
@@ -569,7 +582,7 @@ function downloadTrivy {
 
     createFolder "${BUILD_DIR}/trivy"
 
-    curl --silent --location "${trivyurl}" --output "${BUILD_DIR}"/trivy/trivy.tar.gz
+    curl --silent --fail --location "${trivyurl}" --output "${BUILD_DIR}"/trivy/trivy.tar.gz
     if [ "$?" -ne 0 ]; then
       logerror "${FUNCNAME[0]}" "trivy download failed"
       exit 1

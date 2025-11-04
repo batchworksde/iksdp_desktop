@@ -47,6 +47,16 @@ packages:
       gnomeconnections:
         enable: true
         name: gnome-connections
+      gnomeshellextensionprefs:
+        enable: true
+        name: gnome-shell-extension-prefs
+      gnomeshellextensions:
+        enable: true
+        name: gnome-shell-extensions
+      gnometour:
+        enable: false
+        name: gnome-tour
+        remove: true
       handbrake:
         enable: true
         name: handbrake
@@ -90,7 +100,7 @@ packages:
         enable: true
         name: rust-all
       scratch:
-        enable: false
+        enable: false # not supported in Debian Trixie
         name: scratch
       alsautils:
         enable: true
@@ -233,15 +243,7 @@ packages:
       awscli:
         enable: true
         name: awscli
-      linux-image-6.12.30+bpo-amd64:
-        enable: true
-        name: linux-image-6.12.30+bpo-amd64
-      firmware-amd-graphics/bookworm-backports:
-        enable: true
-        name: firmware-amd-graphics/bookworm-backports
 
-
-#
 
   github:
     enable: true
@@ -298,7 +300,12 @@ packages:
       webex:
         name: webex
         enable: true
-
+      spotify:
+        enable: false
+        name: spotify
+      onlyoffice:
+        enable: false
+        name: onlyoffice
   flatpak:
     enable: true
     flathub:

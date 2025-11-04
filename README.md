@@ -56,7 +56,7 @@ We create versioned [releases](https://github.com/batchworksde/iksdp_desktop/rel
 
 | Parameter   | Value       | Description     |
 | :---        | :----:      | :---            |
-| `RELEASE_VERSION` | 0.6.0 | version number for the generated live image |
+| `RELEASE_VERSION` | 0.9.0 | version number for the generated live image |
 
 ## Changelog
 

@@ -1,47 +1,44 @@
-// vim: set sw=4 sts=4 et:
-// -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
+import St from 'gi://St';
+import Gio from 'gi://Gio';
+import Clutter from 'gi://Clutter';
 
-const Clutter = imports.gi.Clutter;
-const GObject = imports.gi.GObject;
-const Shell = imports.gi.Shell;
-const St = imports.gi.St;
+import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
+import * as ExtensionUtils from 'resource:///org/gnome/shell/misc/extensionUtils.js';
 
-const Main = imports.ui.main;
-const PanelMenu = imports.ui.panelMenu;
+const FILE_PATH = '/tmp/iksdp_mode';
 
-function getFileContent(filePath) {
-    try {
-        return Shell.get_file_contents_utf8_sync(filePath).trim();
-    } catch (e) {
-        log(`Error reading file '${filePath}': ${e.message}`);
-        return 'File not found';
+export default class PersistenceIndicatorExtension {
+    constructor() {
+        this._indicator = null;
     }
-}
 
-let FileContentButton = GObject.registerClass(
-class FileContentButton extends PanelMenu.Button {
-    _init() {
-        super._init(0.0, 'File Content Indicator');
+    enable() {
+        this._indicator = new PanelMenu.Button(0.0, 'PersistenceIndicator', false);
 
-        let content = getFileContent('/tmp/iksdp_mode');
-
-        let label = new St.Label({
-            text: content,
-            y_expand: true,
-            y_align: Clutter.ActorAlign.CENTER
+        const label = new St.Label({
+            text: this._readFileContent(FILE_PATH),
+            y_align: Clutter.ActorAlign.CENTER,
         });
-        this.add_actor(label);
+
+        this._indicator.add_child(label);
+        Main.panel.addToStatusArea('PersistenceIndicator', this._indicator);
     }
-});
 
-let fileContentIndicatorButton;
+    disable() {
+        if (this._indicator) {
+            this._indicator.destroy();
+            this._indicator = null;
+        }
+    }
 
-function enable() {
-    fileContentIndicatorButton = new FileContentButton();
-    Main.panel.addToStatusArea('file-content-indicator', fileContentIndicatorButton);
+    _readFileContent(path) {
+        try {
+            const file = Gio.File.new_for_path(path);
+            const [, contents] = file.load_contents(null);
+            return new TextDecoder().decode(contents).trim();
+        } catch (e) {
+            return 'File not found';
+        }
+    }
 }
-
-function disable() {
-    fileContentIndicatorButton.destroy();
-}
-

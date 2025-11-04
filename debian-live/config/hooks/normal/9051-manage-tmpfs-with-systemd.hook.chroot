@@ -4,5 +4,5 @@ set -u
 set -o pipefail
 
 sed --in-place 's|^tmpfs \/tmp nosuid,nodev 0 0|# tmpfs \/tmp nosuid,nodev 0 0|' /etc/fstab
-cp /usr/share/systemd/tmp.mount /etc/systemd/system/
+cp /usr/lib/systemd/system/tmp.mount /etc/systemd/system/
 systemctl enable tmp.mount
