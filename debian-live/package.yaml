@@ -243,7 +243,18 @@ packages:
       awscli:
         enable: true
         name: awscli
-
+      ncdu:
+        enable: true
+        name: ncdu
+      btop:
+        enable: true
+        name: btop
+      asciinema:
+        enable: true
+        name: asciinema
+      npm:
+        enable: true
+        name: npm
 
   github:
     enable: true
