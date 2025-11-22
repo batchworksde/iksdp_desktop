@@ -330,6 +330,6 @@ packages:
         repo: uBOL-home
         org: uBlockOrigin
       keepassxc:
-        enable: true
+        enable: false
         repo: keepassxc-browser
         org: keepassxreboot
