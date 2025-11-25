@@ -1,0 +1,9 @@
+#!/bin/bash
+
+wget --inet4-only -qO- https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor > packages.helm.gpg
+sudo install -D -o root -g root -m 644 packages.helm.gpg /etc/apt/keyrings/packages.helm.gpg && rm packages.microsoft.gpg
+echo "deb [signed-by=/etc/apt/keyrings/packages.helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+
+sudo apt -o Acquire::ForceIPv4=true install apt-transport-https
+sudo apt -o Acquire::ForceIPv4=true update && sudo apt -o Acquire::ForceIPv4=true install helm -y
+# sed -i -e 's/^Exec.*/& --password-store=basic/' /usr/share/applications/code.desktop

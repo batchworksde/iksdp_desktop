@@ -255,6 +255,15 @@ packages:
       npm:
         enable: true
         name: npm
+      nload:
+        enable: true
+        name: nload
+      virt-manager:
+        enable: true
+        name: virt-manager
+      inetutils-telnet:
+        enable: true
+        name: inetutils-telnet
 
   github:
     enable: true
@@ -312,11 +321,15 @@ packages:
         name: webex
         enable: true
       spotify:
-        enable: false
+        enable: true
         name: spotify
       onlyoffice:
         enable: false
         name: onlyoffice
+      helm:
+        enable: true
+        name: helm
+
   flatpak:
     enable: true
     flathub:
