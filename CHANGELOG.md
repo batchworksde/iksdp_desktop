@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.9.3
+
+* Package versions updated
+* use Debian package for the Keepassxc browser extension
+
 ## v0.9.2
 
 * Package versions updated
