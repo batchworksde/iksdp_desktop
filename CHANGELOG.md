@@ -4,6 +4,7 @@
 
 * added MD5 hash of ISO image to release files
 * indicator for update mode in the top bar
+* script for updating the image
 
 ## v0.9.3
 
