@@ -812,6 +812,15 @@ function generateBom {
   loginfo "${FUNCNAME[0]}" "bill of materials generation done"
 }
 
+function generateMd5 {
+  loginfo "${FUNCNAME[0]}" "generate md5sum of ISO image"
+  md5sum "${BUILD_DIR}"/debian-live-"${DEBIAN_VERSION}"-"${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"-"${DEBIAN_ARCH}".hybrid.iso > "${BUILD_DIR}"/iso.md5.txt
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "Generating md5sum failed"
+    exit 1
+  fi
+}
+
 function createFolder {
   if [ -n "${1}" ]; then
     local foldernames rootfolder folderindex foldercount
@@ -920,6 +929,9 @@ case "${USE_CASE}" in
     ;;
   "generateBom")
     generateBom
+    ;;
+  "generateMd5")
+    generateMd5
     ;;
   "localBuild")
     checkRootPw

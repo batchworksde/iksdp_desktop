@@ -53,6 +53,8 @@ jobs:
         run: debian-live/build.sh buildImage
       - name: generate Bill of materials
         run: debian-live/build.sh generateBom
+      - name: generate md5sum of iso
+        run: debian-live/build.sh generateMd5
       - name: upload iso
         env:
           SSH_UPLOAD_KEY: ${{ secrets.SSH_UPLOAD_KEY }}
@@ -63,7 +65,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           name: iksdp-desktop-${{ env.RELEASE_VERSION }}
-          artifacts: "${{ env.BUILD_DIR }}/iksdp-desktop-source-${{ env.RELEASE_VERSION }}.tar.gz,${{ env.BUILD_DIR }}/bom/bov.cyclone.json,${{ env.BUILD_DIR }}/bom/bom.cyclone.json,${{ env.BUILD_DIR }}/bom/bov.spdx,${{ env.BUILD_DIR }}/bom/bom.spdx,${{ env.BUILD_DIR }}/bom/bom.spdx.json,${{ env.BUILD_DIR }}/bom/bov.spdx.json,${{ env.BUILD_DIR }}/bom/bom.json,${{ env.BUILD_DIR }}/bom/bom.html,${{ env.BUILD_DIR }}/bom/debian.packages.txt"
+          artifacts: "${{ env.BUILD_DIR }}/iksdp-desktop-source-${{ env.RELEASE_VERSION }}.tar.gz,${{ env.BUILD_DIR }}/bom/bov.cyclone.json,${{ env.BUILD_DIR }}/bom/bom.cyclone.json,${{ env.BUILD_DIR }}/bom/bov.spdx,${{ env.BUILD_DIR }}/bom/bom.spdx,${{ env.BUILD_DIR }}/bom/bom.spdx.json,${{ env.BUILD_DIR }}/bom/bov.spdx.json,${{ env.BUILD_DIR }}/bom/bom.json,${{ env.BUILD_DIR }}/bom/bom.html,${{ env.BUILD_DIR }}/bom/debian.packages.txt,${{ env.BUILD_DIR }}/iso.md5.txt"
           bodyFile: "${{ env.BUILD_DIR }}/changeLogForRelease.md"
           tag: "v${{ env.RELEASE_VERSION }}"
           draft: true
