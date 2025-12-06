@@ -259,6 +259,7 @@ function configIncludes {
     logerror "${FUNCNAME[0]}" "Debian Live includes.chroot failed"
     exit 1
   fi
+  echo "${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}" > "${BUILD_DIR}"/config/includes.chroot/etc/iksdp_version
 }
 
 function fetchExternalPackages {
