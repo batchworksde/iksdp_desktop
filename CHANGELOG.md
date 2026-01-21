@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.10.1
+
+* Package versions updated
+
 ## v0.10.0
 
 * added MD5 hash of ISO image to release files
