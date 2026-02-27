@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.11.0
+
+* Package versions updated
+* use /etc/apt/keyrings for all vendor packages
+
 ## v0.10.2
 
 * Package versions updated
