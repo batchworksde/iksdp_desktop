@@ -8,6 +8,7 @@
 * updated repository signing key for Spotify
 * temporary (unsecure) fix for repositories still using SHA1 signing keys
 * new vendor packages (docker and ghostty)
+* new update script for updating installations using the tar method
 
 ## v0.10.2
 
