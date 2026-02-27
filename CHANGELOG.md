@@ -5,6 +5,7 @@
 * Package versions updated
 * use /etc/apt/keyrings for all vendor packages
 * updated to Debian 13 packages for owncloud package
+* updated repository signing key for Spotify
 
 ## v0.10.2
 
