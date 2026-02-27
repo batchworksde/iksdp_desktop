@@ -6,6 +6,7 @@
 * use /etc/apt/keyrings for all vendor packages
 * updated to Debian 13 packages for owncloud package
 * updated repository signing key for Spotify
+* temporary (unsecure) fix for repositories still using SHA1 signing keys
 
 ## v0.10.2
 
