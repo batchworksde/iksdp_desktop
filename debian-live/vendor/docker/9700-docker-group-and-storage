@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# get username
+LIVE_CONFIG_CMDLINE="${LIVE_CONFIG_CMDLINE:-$(cat /proc/cmdline)}"
+for _PARAMETER in ${LIVE_CONFIG_CMDLINE}
+do
+    case "${_PARAMETER}" in
+        live-config.username=*|username=*)
+            LIVE_USERNAME="${_PARAMETER#*username=}"
+            ;;
+    esac
+done
+
+# check if docker is installed
+if [[ -f "/usr/bin/docker" ]]; then
+  # check if docker config already exists
+  if [[ ! -f "/home/${LIVE_USERNAME}/docker/config/daemon.json" ]]; then
+    # create docker directories
+    install -d -o ${LIVE_USERNAME} -g ${LIVE_USERNAME} /home/${LIVE_USERNAME}/docker
+    install -d -o ${LIVE_USERNAME} -g ${LIVE_USERNAME} /home/${LIVE_USERNAME}/docker/config
+    install -d -o ${LIVE_USERNAME} -g ${LIVE_USERNAME} /home/${LIVE_USERNAME}/docker/data
+    # create docker config
+    cat > /home/${LIVE_USERNAME}/docker/config/daemon.json <<EOL
+{
+  "data-root": "/home/${LIVE_USERNAME}/docker/data",
+  "storage-driver": "vfs"
+}
+EOL
+    chown ${LIVE_USERNAME}:${LIVE_USERNAME} /home/${LIVE_USERNAME}/docker/config/daemon.json
+  fi
+  # configure environment file
+  echo "CONFIG_PATH=/home/${LIVE_USERNAME}/docker/config/daemon.json" > /run/docker-runtime.conf
+  # add user to group docker (could also be done with config/includes.chroot/etc/live/config.conf.d/10-user-setup.conf => https://live-team.pages.debian.net/live-manual/html/live-manual/customizing-run-time-behaviours.en.html)
+  usermod -a -G docker ${LIVE_USERNAME}
+fi
