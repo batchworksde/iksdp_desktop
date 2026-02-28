@@ -1,30 +1,14 @@
-name: 'build Debian Live image and maintain draft release'
+name: 'build Debian Live image and publish release'
 on:
   push:
-    branches-ignore:
+    branches:
       - "main"
     paths-ignore:
       - '.github/**'
       - 'docs/**'
 jobs:
-  checkFileChanges:
+  buildImageRelease:
     runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-    outputs:
-      run_buildImageRelease: ${{ steps.checkFiles.outputs.run_buildImageRelease }}
-    steps:
-      - name: checkout code
-        uses: "actions/checkout@v6.0.2"
-        with:
-          fetch-depth: 0
-      - name: check changed files
-        id: checkFiles
-        run: debian-live/build.sh checkChangedFiles
-  buildImageDraftRelease:
-    runs-on: ubuntu-24.04
-    needs: checkFileChanges
-    if: ${{ needs.checkFileChanges.outputs.run_buildImageRelease }}
     permissions:
       contents: write
     steps:
@@ -62,8 +46,8 @@ jobs:
           name: iksdp-desktop-${{ env.RELEASE_VERSION }}
           artifacts: "${{ env.BUILD_DIR }}/iksdp-desktop-source-${{ env.RELEASE_VERSION }}.tar.gz,${{ env.BUILD_DIR }}/bom/bov.cyclone.json,${{ env.BUILD_DIR }}/bom/bom.cyclone.json,${{ env.BUILD_DIR }}/bom/bov.spdx,${{ env.BUILD_DIR }}/bom/bom.spdx,${{ env.BUILD_DIR }}/bom/bom.spdx.json,${{ env.BUILD_DIR }}/bom/bov.spdx.json,${{ env.BUILD_DIR }}/bom/bom.json,${{ env.BUILD_DIR }}/bom/bom.html,${{ env.BUILD_DIR }}/bom/debian.packages.txt,${{ env.BUILD_DIR }}/iso.md5.txt"
           bodyFile: "${{ env.BUILD_DIR }}/changeLogForRelease.md"
-          tag: "v${{ env.RELEASE_VERSION }}"
-          draft: true
+          tag: "${{ env.RELEASE_VERSION }}"
+          draft: false
           makeLatest: "legacy"
           skipIfReleaseExists: true
           allowUpdates: true
