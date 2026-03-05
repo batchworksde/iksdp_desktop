@@ -7,7 +7,7 @@
 * updated to Debian 13 packages for owncloud package
 * updated repository signing key for Spotify
 * temporary (unsecure) fix for repositories still using SHA1 signing keys
-* new vendor packages (docker, albert and ghostty)
+* new vendor packages (docker, albert, ulauncher and ghostty)
 * new update script for updating installations using the tar method
 
 ## v0.10.2

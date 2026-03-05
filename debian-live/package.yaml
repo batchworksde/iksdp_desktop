@@ -305,6 +305,9 @@ packages:
       albert:
         name: albert
         enable: false
+      ulauncher:
+        name: ulauncher
+        enable: false
   flatpak:
     enable: true
     flathub:
