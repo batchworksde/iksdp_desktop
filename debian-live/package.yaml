@@ -308,6 +308,9 @@ packages:
       ulauncher:
         name: ulauncher
         enable: false
+      bitwarden:
+        name: bitwarden
+        enable: false
   flatpak:
     enable: true
     flathub:

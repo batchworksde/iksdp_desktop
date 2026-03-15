@@ -19,13 +19,3 @@ if [ "$?" -ne 0 ]; then
   logerror "fetchExternalPackages" "copy of autostart failed"
   exit 1
 fi
-
-# loginfo "fetchExternalPackages" "ulauncher package vendor package started"
-
-# loginfo "fetchExternalPackages" "ulauncher package download started"
-# curl --silent https://api.github.com/repos/Ulauncher/Ulauncher/releases/latest | yq --input-format json ".assets[] | select(.name == \"ulauncher*_all.deb\") | .browser_download_url" | wget --no-verbose --output-document="${BUILD_DIR}"/config/packages.chroot/ulauncher.deb --input-file -
-# if [ "$?" -ne 0 ]; then
-#     logerror "fetchExternalPackages" "ulauncher package download failed"
-#     exit 1
-# fi
-# loginfo "fetchExternalPackages" "ulauncher package download done"
