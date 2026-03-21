@@ -291,11 +291,26 @@ packages:
         name: owncloud
         enable: false
       spotify:
-        enable: false
         name: spotify
-      onlyoffice:
         enable: false
+      onlyoffice:
         name: onlyoffice
+        enable: false
+      docker:
+        name: docker
+        enable: false
+      ghostty:
+        name: ghostty
+        enable: false
+      albert:
+        name: albert
+        enable: false
+      ulauncher:
+        name: ulauncher
+        enable: false
+      bitwarden:
+        name: bitwarden
+        enable: false
   flatpak:
     enable: true
     flathub:

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=ownCloud
+Exec=owncloud
+Icon=owncloud
+Terminal=false
+X-GNOME-Autostart-enabled=true
+OnlyShowIn=GNOME;

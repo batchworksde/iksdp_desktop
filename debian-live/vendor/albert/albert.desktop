@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Albert
+Exec=albert
+OnlyShowIn=GNOME;
+X-GNOME-Autostart-enabled=true

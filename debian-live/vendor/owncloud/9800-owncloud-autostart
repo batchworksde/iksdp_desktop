@@ -1,0 +1,33 @@
+#!/bin/bash
+CmdLine ()
+{
+  # Reading kernel command line
+  for _PARAMETER in ${LIVE_CONFIG_CMDLINE}
+  do
+    case "${_PARAMETER}" in
+      live-config.username=*|username=*)
+        LIVE_USERNAME="${_PARAMETER#*username=}"
+        ;;
+    esac
+  done
+}
+
+CmdLine
+
+# check if owncloud is installed
+if [[ -f "/usr/bin/owncloud" ]]; then
+  # check if owncloud config already exists
+  if [[ -f "/home/${LIVE_USERNAME}/.config/ownCloud/owncloud.cfg" ]] && grep -Fxq "persistent" /tmp/iksdp_mode; then
+    # add ownlcoud to autostart
+    cat > /etc/xdg/autostart/owncloud.desktop <<EOL
+[Desktop Entry]
+Type=Application
+Name=ownCloud
+Exec=owncloud
+Icon=owncloud
+Terminal=false
+X-GNOME-Autostart-enabled=true
+OnlyShowIn=GNOME;
+EOL
+  fi
+fi
