@@ -406,6 +406,7 @@ function buildImage {
 }
 
 function prepareEnvironment {
+  downloadYq
   downloadMdq
   IMAGE_TIMESTAMP="$(date +%Y%m%d%H%M%S)"
   if [ "$?" -ne 0 ]; then
@@ -558,7 +559,6 @@ function installPrerequisites {
     fi
   done
 
-  downloadYq
   downloadTrivy
 }
 
@@ -586,8 +586,9 @@ function downloadTrivy {
   if isGithubRunner; then
     loginfo "${FUNCNAME[0]}" "Install trivy"
     local trivyurl
+    local trivyversion="v0.69.3"
 
-    trivyurl="$(curl --silent --fail --header "${GITHUB_API_MIMETYPE}" --header "${GITHUB_API_VERSION}" https://api.github.com/repos/aquasecurity/trivy/releases/latest | yq --input-format json '.assets[] | select(.name == "*_Linux-64bit.tar.gz") | .browser_download_url')"
+    trivyurl="$(curl --silent --fail --header "${GITHUB_API_MIMETYPE}" --header "${GITHUB_API_VERSION}" https://api.github.com/repos/aquasecurity/trivy/releases/tags/"${trivyversion}" | yq --input-format json '.assets[] | select(.name == "*_Linux-64bit.tar.gz") | .browser_download_url')"
     if [ "$?" -ne 0 ]; then
       logerror "${FUNCNAME[0]}" "trivy version check failed"
       exit 1
