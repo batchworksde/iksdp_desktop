@@ -4,8 +4,6 @@ set +e
 set -u
 set -o pipefail
 
-declare USE_CASE WORK_DIR BUILD_DIR IMAGE_TIMESTAMP GITHUB_API_VERSION GITHUB_API_MIMETYPE
-
 DEBIAN_ARCH="$(dpkg --print-architecture)"
 USE_CASE="${1-localBuild}"
 WORK_DIR="$(pwd)"
@@ -408,12 +406,27 @@ function buildImage {
 }
 
 function prepareEnvironment {
+  downloadYq
+  downloadMdq
   IMAGE_TIMESTAMP="$(date +%Y%m%d%H%M%S)"
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "IMAGE_TIMESTAMP env var setup failed"
     exit 1
   fi
   export IMAGE_TIMESTAMP
+
+  RELEASE_VERSION="$(mdq -o json "#" ${WORK_DIR}/CHANGELOG.md | jq -r .items[0].section.body[0].section.title)"
+  if [[ ! "${RELEASE_VERSION}" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+    echo "Invalid version format: ${RELEASE_VERSION} does not match pattern X.Y.Z"
+    echo 'Examples:'
+    echo -e "  valid:\t0.0.1"
+    echo -e "  invalid:\t00.0.1"
+    echo -e "  invalid:\t01.0.1"
+    echo -e "  valid:\t1.0.1"
+    echo 'Please check the CHANGELOG.md for a valid version heading'
+    exit 1
+  fi
+  export RELEASE_VERSION
 
   if isGithubRunner; then
     loginfo "${FUNCNAME[0]}" "Set Github env vars"
@@ -546,7 +559,6 @@ function installPrerequisites {
     fi
   done
 
-  downloadYq
   downloadTrivy
 }
 
@@ -574,8 +586,9 @@ function downloadTrivy {
   if isGithubRunner; then
     loginfo "${FUNCNAME[0]}" "Install trivy"
     local trivyurl
+    local trivyversion="v0.69.3"
 
-    trivyurl="$(curl --silent --fail --header "${GITHUB_API_MIMETYPE}" --header "${GITHUB_API_VERSION}" https://api.github.com/repos/aquasecurity/trivy/releases/latest | yq --input-format json '.assets[] | select(.name == "*_Linux-64bit.tar.gz") | .browser_download_url')"
+    trivyurl="$(curl --silent --fail --header "${GITHUB_API_MIMETYPE}" --header "${GITHUB_API_VERSION}" https://api.github.com/repos/aquasecurity/trivy/releases/tags/"${trivyversion}" | yq --input-format json '.assets[] | select(.name == "*_Linux-64bit.tar.gz") | .browser_download_url')"
     if [ "$?" -ne 0 ]; then
       logerror "${FUNCNAME[0]}" "trivy version check failed"
       exit 1
@@ -611,6 +624,51 @@ function downloadTrivy {
   fi
 }
 
+function downloadMdq {
+  loginfo "${FUNCNAME[0]}" "Install mdq"
+  local mdqurl
+  
+  if isGithubRunner; then
+    INSTALL_TMP=${RUNNER_TEMP}
+  else
+    INSTALL_TMP="$(mktemp --directory)"
+  fi
+  
+  mdqurl="$(curl --silent --fail --header "${GITHUB_API_MIMETYPE}" --header "${GITHUB_API_VERSION}" https://api.github.com/repos/yshavit/mdq/releases/latest | yq --input-format json '.assets[] | select(.name == "*-linux-x64.tar.gz") | .browser_download_url')"
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "mdq version check failed"
+    exit 1
+  fi
+
+  createFolder "${INSTALL_TMP}/mdq"
+
+  curl --silent --fail --location "${mdqurl}" --output "${INSTALL_TMP}"/mdq/mdq.tar.gz
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "mdq download failed"
+    exit 1
+  fi
+
+  tar --extract --gzip --no-same-owner --no-same-permissions --file="${INSTALL_TMP}"/mdq/mdq.tar.gz --directory "${INSTALL_TMP}"/mdq/
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "mdq archive extraction failed"
+    exit 1
+  fi
+
+  mv "${INSTALL_TMP}"/mdq/mdq /usr/local/bin/mdq
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "mdq installation failed"
+    exit 1
+  fi
+
+  chmod 755 /usr/local/bin/mdq
+  if [ "$?" -ne 0 ]; then
+    logerror "${FUNCNAME[0]}" "mdq permission update failed"
+    exit 1
+  fi
+
+  loginfo "${FUNCNAME[0]}" "mdq installation done"
+}
+
 function isGithubRunner {
   if [ -z ${GITHUB_ACTIONS+x} ]; then
     return 1
@@ -622,13 +680,13 @@ function isGithubRunner {
 function createChangeLogForRelease {
   loginfo "${FUNCNAME[0]}" "Extract the change description for the release from the CHANGELOG.md"
 
-  grep --perl-regexp --null-data --only-matching "## v${RELEASE_VERSION}[\s\S]*?(?=\n.*?#.{2}|$)" "${WORK_DIR}"/CHANGELOG.md | tr -d '\0' >"${BUILD_DIR}"/changeLogForRelease.md
+  mdq '# "'"${RELEASE_VERSION}"'"' "${WORK_DIR}"/CHANGELOG.md >"${BUILD_DIR}"/changeLogForRelease.md
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "changelog query failed"
     exit 1
   fi
 
-  grep --silent --perl-regexp --null-data --only-matching "## v${RELEASE_VERSION}[\s\S]*?(?=\n.*?#.{2}|$)" "${BUILD_DIR}"/changeLogForRelease.md
+  mdq --quiet '# "'"${RELEASE_VERSION}"'"' "${BUILD_DIR}"/changeLogForRelease.md
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "changeLogForRelease.md does not contain valid content"
     exit 1
@@ -690,9 +748,6 @@ function uploadIsoS3 {
   aws configure set default.region eu-central-1
 
   aws s3 cp "${BUILD_DIR}"/debian-live-"${DEBIAN_VERSION}"-"${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"-"${DEBIAN_ARCH}".hybrid.iso s3://iksdplinux/
-  
-  #scp -P "${SSH_PORT}" "${BUILD_DIR}"/debian-live-"${DEBIAN_VERSION}"-"${RELEASE_VERSION}"-"${IMAGE_TIMESTAMP}"-"${DEBIAN_ARCH}".hybrid.iso "${RELEASE_USER}"@"${RELEASE_HOST}":"${RELEASE_FOLDER}"
-
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" "ISO upload to amazon s3 failed"
     exit 1
