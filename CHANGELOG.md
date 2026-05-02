@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.11.2
+
+* Package versions updated
+* [copy fail](https://security-tracker.debian.org/tracker/CVE-2026-31431) patches included
+* ncipollo/release-action version fixed
+* workaround for chromium extensions if chromium not part of latest release
+* small fix for vendor owncloud
+
 ## 0.11.1
 
 * [mdq](https://github.com/yshavit/mdq/) added to generate the `RELEASE_VERSION` from the [change log](CHANGELOG.md)
