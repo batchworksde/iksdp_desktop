@@ -4,6 +4,7 @@
 
 * Package versions updated
 * [copy fail](https://security-tracker.debian.org/tracker/CVE-2026-31431) patches included
+* ncipollo/release-action version fixed
 
 ## 0.11.1
 
