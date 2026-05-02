@@ -33,10 +33,10 @@ for extension in "${EXTENSIONS[@]}"; do
   fi
 
   # download chromium extension
-  curl --continue-at - --silent --location "${url}" --output "${EXTENSIONS_TARGET_DIR}"/"${repo}".zip
+  curl --continue-at - --silent --location "${url}" --output /tmp/"${repo}".zip
 
   # unzip chromium extension
-  unzip -qq ${EXTENSIONS_TARGET_DIR}/${repo}.zip -d ${EXTENSIONS_TARGET_DIR}/${repo}
+  unzip -qq /tmp/${repo}.zip -d ${EXTENSIONS_TARGET_DIR}/${repo}
   
   # create hook for uBOL-home
   if [[ "${repo}" == "uBOL-home" ]]; then
@@ -68,7 +68,7 @@ EOL
   fi
 
   # delete zip file
-  rm ${EXTENSIONS_TARGET_DIR}/${repo}.zip
+  rm /tmp/"${repo}".zip
 done
 
 # delete yq
