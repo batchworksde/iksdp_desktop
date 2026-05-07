@@ -1,0 +1,14 @@
+[Unit]
+Description=Boot Telemetry – one-time boot event to Splunk
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/iksdp/bin/telemetry.sh --boot
+RemainAfterExit=yes
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

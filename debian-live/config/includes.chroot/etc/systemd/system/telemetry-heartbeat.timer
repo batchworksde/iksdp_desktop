@@ -1,0 +1,13 @@
+[Unit]
+Description=Run heartbeat telemetry every 15 minutes
+After=network-online.target
+
+[Timer]
+# First run 2 minutes after boot, then every 15 minutes
+OnBootSec=2min
+OnUnitActiveSec=15min
+# Do not attempt to catch up on missed runs after reboot (live system)
+Persistent=false
+
+[Install]
+WantedBy=timers.target

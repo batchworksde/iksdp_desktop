@@ -1,0 +1,10 @@
+[Unit]
+Description=Heartbeat Telemetry – periodic runtime metrics to Splunk
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/iksdp/bin/telemetry.sh --heartbeat
+StandardOutput=journal
+StandardError=journal

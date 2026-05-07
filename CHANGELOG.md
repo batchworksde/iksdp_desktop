@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.12.0
+
+* send telemetry data (sending of data is disabled if file `.disable_iksdp_telemetry` exists in either `/opt/iksdp/etc/` or the home directory of the live user)
+
 ## 0.11.2
 
 * Package versions updated
