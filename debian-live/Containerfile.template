@@ -1,5 +1,5 @@
-ARG debian_version
-FROM debian:$debian_version-slim
+ARG debian_version="trixie"
+FROM debian:${debian_version}-slim
 
 {{ IMAGE_OPTIONS }}
 RUN apt-get update; \

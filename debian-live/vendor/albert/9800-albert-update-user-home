@@ -1,0 +1,34 @@
+#!/bin/bash
+CmdLine ()
+{
+  # Reading kernel command line
+  for _PARAMETER in ${LIVE_CONFIG_CMDLINE}
+  do
+    case "${_PARAMETER}" in
+      live-config.username=*|username=*)
+        LIVE_USERNAME="${_PARAMETER#*username=}"
+        ;;
+    esac
+  done
+}
+
+CopyFilesFromSkel ()
+{
+  # copy epsonscan config from skel directory
+  cp --recursive --force /etc/skel/.config/albert /home/${LIVE_USERNAME}/.config/
+  chown --recursive ${LIVE_USERNAME}:${LIVE_USERNAME} /home/${LIVE_USERNAME}/.config/albert
+  sed -i "s|/home/user|/home/$LIVE_USERNAME|g; s|home\\\\user|home\\\\$LIVE_USERNAME|g" /home/${LIVE_USERNAME}/.config/albert/config
+  cp --recursive --force /etc/skel/.local/share/albert /home/${LIVE_USERNAME}/.local/share/
+  chown --recursive ${LIVE_USERNAME}:${LIVE_USERNAME} /home/${LIVE_USERNAME}/.local/share/albert
+}
+
+CmdLine
+
+# check if albert is installed
+if [[ -f "/usr/bin/albert" ]]; then
+  # check if epsonscan config already exists
+  if [[ ! -f "/home/${LIVE_USERNAME}/.config/albert/config" ]]; then
+    # copy config from skel
+    CopyFilesFromSkel
+  fi
+fi

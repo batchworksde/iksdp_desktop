@@ -1,0 +1,7 @@
+#!/bin/bash
+
+wget -qO- https://download.opensuse.org/repositories/home:/clayrisser:/sid/Debian_Unstable/Release.key | gpg --dearmor > ghostty.gpg
+sudo install -D -o root -g root -m 644 ghostty.gpg /etc/apt/keyrings/ghostty.gpg && rm ghostty.gpg
+echo "deb [signed-by=/etc/apt/keyrings/ghostty.gpg] http://download.opensuse.org/repositories/home:/clayrisser:/sid/Debian_Unstable/ /" |sudo tee /etc/apt/sources.list.d/ghostty.list > /dev/null
+
+sudo apt update && sudo apt install ghostty -y

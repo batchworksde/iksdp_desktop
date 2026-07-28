@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Ulauncher
+Exec=ulauncher --hide-window
+OnlyShowIn=GNOME;
+X-GNOME-Autostart-enabled=true

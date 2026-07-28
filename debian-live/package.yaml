@@ -324,11 +324,16 @@ packages:
         enable: true
         name: spotify
       onlyoffice:
-        enable: false
         name: onlyoffice
       helm:
         enable: true
         name: helm
+      ghostty:
+        enable: true
+        name: ghostty
+      glab:
+        enable: true
+        name: glab
 
   flatpak:
     enable: true
@@ -364,6 +369,6 @@ packages:
         repo: uBOL-home
         org: uBlockOrigin
       keepassxc:
-        enable: true
+        enable: false
         repo: keepassxc-browser
         org: keepassxreboot

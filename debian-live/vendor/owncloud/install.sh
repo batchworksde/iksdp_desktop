@@ -6,3 +6,10 @@ if [ "$?" -ne 0 ]; then
     logerror "fetchExternalPackages" "copy of owncloud hook failed"
     exit 1
 fi
+
+mkdir -p "${BUILD_DIR}"/config/includes.chroot/lib/live/config/
+cp "${SCRIPT_DIR}"/9800-owncloud-autostart "${BUILD_DIR}"/config/includes.chroot/lib/live/config/
+if [ "$?" -ne 0 ]; then
+  logerror "fetchExternalPackages" "copy of live hook failed"
+  exit 1
+fi
