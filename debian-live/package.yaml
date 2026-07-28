@@ -264,6 +264,9 @@ packages:
       inetutils-telnet:
         enable: true
         name: inetutils-telnet
+      flameshot:
+        enable: true
+        name: flameshot
 
   github:
     enable: true
