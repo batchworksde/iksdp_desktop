@@ -2,7 +2,7 @@
 
 ## 0.11.3
 
-* package versions updated including [Debian 13.5](https://www.debian.org/News/2026/20260516)
+* package versions updated including [Debian 13.6](https://www.debian.org/News/2026/20260711)
 
 ## 0.11.2
 
