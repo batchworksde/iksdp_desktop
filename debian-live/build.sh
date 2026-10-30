@@ -327,7 +327,7 @@ function downloadGithubRelease {
       exit 1
     fi
 
-    url="$(echo "${releases}" | yq --input-format json ".assets[] | select(.name | test(\"^${repo}-[0-9].*${suffix}[.]deb$\")) | .browser_download_url")"
+    url="$(echo "${releases}" | yq --input-format json ".assets[] | select(.name | test(\"^${repo}-[0-9]\.[0-9]\.[0-9]\.*-${suffix}\.deb$\")) | .browser_download_url")"
     if [ "$?" -ne 0 ]; then
       logerror "${FUNCNAME[0]}" "${repo} release url check failed"
       exit 1
