@@ -11,18 +11,30 @@ EXTENSIONS_TARGET_DIR="/usr/share/gnome-shell/extensions"
 gnome_shell_version="$(gnome-shell --version 2> /dev/null | sed -n "s/^.* \([0-9]\+\.[0-9]\+\).*$/\1/p")"
 
 for extension in "${EXTENSIONS[@]}"; do
+  # split optional version pin extension syntax: <pk> or <pk>:<version_tag>
+  extension_pk="${extension%%:*}"
+  extension_tag=""
+  if [[ "${extension}" == *:* ]]; then
+    extension_tag="${extension#*:}"
+  fi
+
   # get latest version of shell extensions
-  extension_info=$(curl --silent "https://extensions.gnome.org/extension-info/?pk=${extension}&shell_version=${gnome_shell_version}")
+  extension_info=$(curl --silent "https://extensions.gnome.org/extension-info/?pk=${extension_pk}&shell_version=${gnome_shell_version}")
   extension_uuid=$(echo ${extension_info} | jq -r ".uuid")
-  extension_download="https://extensions.gnome.org"$(echo ${extension_info} | jq -r ".download_url")
+  if [ -n "${extension_tag}" ]; then
+    # pinned extension version
+    extension_download="https://extensions.gnome.org/download-extension/${extension_uuid}.shell-extension.zip?version_tag=${extension_tag}"
+  else
+    extension_download="https://extensions.gnome.org"$(echo ${extension_info} | jq -r ".download_url")
+  fi
 
   # download shell extension
-  curl --silent --location ${extension_download} --output ${EXTENSIONS_TARGET_DIR}/${extension}.zip
+  curl --silent --fail --location ${extension_download} --output ${EXTENSIONS_TARGET_DIR}/${extension_pk}.zip
 
   # unzip shell extension
-  unzip -qq ${EXTENSIONS_TARGET_DIR}/${extension}.zip -d ${EXTENSIONS_TARGET_DIR}/${extension_uuid}
+  unzip -qq ${EXTENSIONS_TARGET_DIR}/${extension_pk}.zip -d ${EXTENSIONS_TARGET_DIR}/${extension_uuid}
   chmod +r ${EXTENSIONS_TARGET_DIR}/${extension_uuid}/*
 
   # delete zip file
-  rm ${EXTENSIONS_TARGET_DIR}/${extension}.zip
+  rm ${EXTENSIONS_TARGET_DIR}/${extension_pk}.zip
 done

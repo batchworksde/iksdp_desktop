@@ -216,7 +216,7 @@ function configHooks {
     exit 1
   fi
 
-  GNOME_SHELL_EXTENSIONS="$(yq '.packages.gnome-shell | select(.enable) | .extension | filter(.enable) | map (.id) | join (" ")' "${WORK_DIR}"/debian-live/package.yaml)"
+  GNOME_SHELL_EXTENSIONS="$(yq '.packages.gnome-shell | select(.enable) | .extension | filter(.enable) | map ((.id | tostring) + (if .versiontag then (":" + (.versiontag | tostring)) else "" end)) | join (" ")' "${WORK_DIR}"/debian-live/package.yaml)"
   if [ "$?" -ne 0 ]; then
     logerror "${FUNCNAME[0]}" ".packages.gnome-shell parsing failed"
     exit 1
