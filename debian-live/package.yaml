@@ -334,8 +334,6 @@ packages:
       dash-to-dock:
         enable: true
         id: 307
-        # pin extension version 105 (extensions.gnome.org download/review id)
-        versiontag: 69959
       gtk4-desktop-icons-ng:
         enable: true
         id: 5263
