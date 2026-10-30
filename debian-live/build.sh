@@ -334,7 +334,7 @@ function downloadGithubRelease {
     fi
 
     if [ "$(echo "${url}" | grep -c '^https://')" -ne 1 ]; then
-      logerror "${FUNCNAME[0]}" "${repo} release asset match count for suffix ${suffix} is not exactly 1"
+      logerror "${FUNCNAME[0]}" "${repo} release asset match count for suffix ${suffix} is not exactly 1, but ${url}"
       exit 1
     fi
 
