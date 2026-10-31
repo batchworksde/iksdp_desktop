@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.5
+
+* package versions updated
+
 ## 0.11.4
 
 * package versions updated

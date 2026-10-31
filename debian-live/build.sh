@@ -327,9 +327,14 @@ function downloadGithubRelease {
       exit 1
     fi
 
-    url="$(echo "${releases}" | yq --input-format json ".assets[] | select(.name == \"*${suffix}.deb\") | .browser_download_url")"
+    url="$(echo "${releases}" | yq --input-format json ".assets[] | select(.name | test(\"^${repo}-[0-9]\.[0-9]\.[0-9]\.*${suffix}\.deb$\")) | .browser_download_url")"
     if [ "$?" -ne 0 ]; then
       logerror "${FUNCNAME[0]}" "${repo} release url check failed"
+      exit 1
+    fi
+
+    if [ "$(echo "${url}" | grep -c '^https://')" -ne 1 ]; then
+      logerror "${FUNCNAME[0]}" "${repo} release asset match count for suffix ${suffix} is not exactly 1, but ${url}"
       exit 1
     fi
 

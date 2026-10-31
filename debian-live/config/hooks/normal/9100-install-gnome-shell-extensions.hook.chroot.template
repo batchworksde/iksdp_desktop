@@ -22,6 +22,9 @@ for extension in "${EXTENSIONS[@]}"; do
   # unzip shell extension
   unzip -qq ${EXTENSIONS_TARGET_DIR}/${extension}.zip -d ${EXTENSIONS_TARGET_DIR}/${extension_uuid}
   chmod +r ${EXTENSIONS_TARGET_DIR}/${extension_uuid}/*
+  if [ -d "${EXTENSIONS_TARGET_DIR}/${extension_uuid}/schemas" ]; then
+    glib-compile-schemas "${EXTENSIONS_TARGET_DIR}/${extension_uuid}/schemas"
+  fi
 
   # delete zip file
   rm ${EXTENSIONS_TARGET_DIR}/${extension}.zip
