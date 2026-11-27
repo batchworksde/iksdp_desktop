@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.6
+
+* package versions updated including [Debian 13.8](https://www.debian.org/News/2026/20261121)
+
 ## 0.11.5
 
 * package versions updated
