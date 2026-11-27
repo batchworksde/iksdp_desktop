@@ -15,7 +15,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: 'actions/checkout@v6.0.2'
+      uses: 'actions/checkout@v7.0.1'
 
     - name: create docs
       run: | 
@@ -23,7 +23,7 @@ jobs:
         sh run_pandoc.sh
     
     - name: upload PDF
-      uses: 'actions/upload-artifact@v7.0.0'
+      uses: 'actions/upload-artifact@v7.0.2'
       with:
         name: pdf
         path: |
